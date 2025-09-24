@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 우산꽂이 프로젝트 쇼케이스</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chosen Palette: Modern Tech Neutral (Slate Gray, Soft Blue, Light Beige) -->
+    <!-- Application Structure Plan: The application transforms the linear report into a dynamic, thematic journey. It starts with a hero section to introduce the product, followed by a narrative-driven "Problem & Solution" section. Interactive charts visualize the "Market Opportunity," and a "How It Works" section uses an interactive diagram for the system architecture. A detailed "Features" section and a "Development Roadmap" provide deeper insights. This structure allows users to explore content based on interest rather than report order, significantly improving engagement and comprehension. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Method -> Interaction -> Justification. 1. Market Growth Data -> Inform/Compare -> Bar Chart (Chart.js) -> Hover for details -> Visually compelling way to show growth trends. 2. Market Drivers (1-person households, Hygiene concern) -> Inform -> Animated Counters/Donut Charts -> On-scroll animation -> Quickly convey key statistics. 3. System Architecture -> Organize/Explain -> Interactive Diagram (HTML/CSS/JS) -> Hover over components to see descriptions -> Breaks down complex tech into digestible parts. 4. Development Plan -> Inform -> Timeline (HTML/CSS) -> N/A -> Clearly shows project progression. This approach uses the best tool for each data type, enhancing user understanding. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8f7f4; /* Light Beige */
+        }
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        .tech-diagram-item:hover .tech-diagram-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">
+                <i class="fas fa-umbrella-beach text-blue-600"></i> 스마트 우산꽂이
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#problem" class="text-gray-600 hover:text-blue-600">문제점 & 해결책</a>
+                <a href="#market" class="text-gray-600 hover:text-blue-600">시장 잠재력</a>
+                <a href="#tech" class="text-gray-600 hover:text-blue-600">핵심 기술</a>
+                <a href="#features" class="text-gray-600 hover:text-blue-600">주요 기능</a>
+                <a href="#roadmap" class="text-gray-600 hover:text-blue-600">개발 로드맵</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#problem" class="block py-2 text-gray-600 hover:text-blue-600">문제점 & 해결책</a>
+            <a href="#market" class="block py-2 text-gray-600 hover:text-blue-600">시장 잠재력</a>
+            <a href="#tech" class="block py-2 text-gray-600 hover:text-blue-600">핵심 기술</a>
+            <a href="#features" class="block py-2 text-gray-600 hover:text-blue-600">주요 기능</a>
+            <a href="#roadmap" class="block py-2 text-gray-600 hover:text-blue-600">개발 로드맵</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="container mx-auto px-6 py-20 text-center flex flex-col items-center">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 leading-tight">현관의 품격을 높이는 기술, <br class="hidden md:block"/><span class="text-blue-600">스마트 우산꽂이</span></h1>
+            <p class="text-lg text-gray-600 max-w-2xl mb-8">젖은 우산의 불편함은 이제 그만. 자동 건조, UV 살균, 날씨 정보까지. 당신의 현관을 더 스마트하고 위생적으로 만듭니다.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+                <img src="https://i.postimg.cc/vmTZShLx/1.png" alt="제품 정면도" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                <img src="https://i.postimg.cc/SKPx09DT/2.png" alt="제품 투시도" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                <img src="https://i.postimg.cc/T3CP9FmX/3.png" alt="제품 측면도" class="rounded-lg shadow-lg w-full h-auto object-cover">
+            </div>
+        </section>
+
+        <!-- Problem & Solution Section -->
+        <section id="problem" class="bg-white py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900">일상의 불편함, 기술로 해결하다</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">젖은 우산이 야기하는 안전, 위생, 공간 문제를 스마트 우산꽂이가 어떻게 해결하는지 확인해보세요.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-8 rounded-lg text-center">
+                        <i class="fas fa-bacterium text-4xl text-red-500 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">문제점: 세균과 곰팡이</h3>
+                        <p class="text-gray-600">축축한 우산은 세균 번식의 최적 환경입니다. 불쾌한 냄새는 물론, 가족의 호흡기 건강을 위협할 수 있습니다.</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-lg text-center">
+                        <i class="fas fa-house-damage text-4xl text-yellow-500 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">문제점: 공간과 안전</h3>
+                        <p class="text-gray-600">바닥에 떨어진 물기는 미끄럼 사고를 유발하며, 좁은 현관 공간을 지저분하고 비효율적으로 만듭니다.</p>
+                    </div>
+                    <div class="bg-gray-50 p-8 rounded-lg text-center">
+                        <i class="fas fa-cloud-sun-rain text-4xl text-blue-500 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">문제점: 예측의 부재</h3>
+                        <p class="text-gray-600">바쁜 아침, 갑작스러운 비 소식을 놓쳐 곤란했던 경험. 날씨 확인의 번거로움이 일상에 존재합니다.</p>
+                    </div>
+                </div>
+                 <div class="mt-12 text-center">
+                    <i class="fas fa-arrow-down text-4xl text-blue-600 animate-bounce"></i>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-4">우리의 솔루션: 지능형 현관 케어</h3>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Market Potential Section -->
+        <section id="market" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900">거대한 시장 잠재력</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">스마트홈 시장의 성장과 소비자 니즈 변화는 우리 프로젝트의 밝은 미래를 증명합니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold text-center mb-4">국내 스마트홈 시장 성장 예측</h3>
+                    <div class="chart-container">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                     <p class="text-center text-gray-500 text-sm mt-4">자료: Statista (연평균 15.48% 성장)</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 mt-12 text-center">
+                     <div>
+                        <h4 class="text-5xl font-extrabold text-blue-600 mb-2">34.5%</h4>
+                        <p class="text-lg font-semibold text-gray-700">1인 가구 비율 (2022)</p>
+                        <p class="text-gray-600">공간 효율성을 중시하는 핵심 소비층의 급증</p>
+                    </div>
+                    <div>
+                        <h4 class="text-5xl font-extrabold text-blue-600 mb-2">99.9%</h4>
+                        <p class="text-lg font-semibold text-gray-700">세균 제거 효과</p>
+                        <p class="text-gray-600">건강/위생에 대한 관심 증대로 살균 기능 수요 폭발</p>
+                    </div>
+                    <div>
+                        <h4 class="text-5xl font-extrabold text-blue-600 mb-2">4.5조 원</h4>
+                        <p class="text-lg font-semibold text-gray-700">스마트홈 시장 규모 (2024)</p>
+                        <p class="text-gray-600">'스마트 현관 가전' 카테고리의 높은 잠재력</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Section -->
+        <section id="tech" class="bg-white py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900">핵심 기술 아키텍처</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">각 부품이 어떻게 유기적으로 연결되어 지능적인 시스템을 구성하는지 살펴보세요. 각 요소에 마우스를 올려보세요.</p>
+                </div>
+                <div class="w-full max-w-4xl mx-auto p-8 bg-gray-50 rounded-lg shadow-inner">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <!-- Input -->
+                        <div class="flex flex-col items-center space-y-4">
+                             <div class="text-center font-bold text-lg mb-2">👂 입력부 (Sensors)</div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-magnet text-2xl text-blue-500"></i>
+                                 <p class="font-semibold mt-2">도어 센서</p>
+                                 <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">문의 개폐 상태를 감지하여 모든 자동 기능의 트리거가 됩니다.</div>
+                             </div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-tint text-2xl text-blue-500"></i>
+                                 <p class="font-semibold mt-2">수위 센서</p>
+                                  <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">물받이 통의 수위를 감지하여 물 넘침을 방지합니다.</div>
+                             </div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-hand-pointer text-2xl text-blue-500"></i>
+                                 <p class="font-semibold mt-2">터치 스크린</p>
+                                  <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">사용자의 직접 제어 명령을 입력받는 인터페이스입니다.</div>
+                             </div>
+                        </div>
+                        <!-- MCU -->
+                        <div class="flex flex-col items-center text-center">
+                            <i class="fas fa-arrow-right text-3xl text-gray-400 hidden md:block mb-4"></i>
+                            <i class="fas fa-arrow-down text-3xl text-gray-400 md:hidden my-4"></i>
+                            <div class="tech-diagram-item relative w-full bg-blue-600 text-white p-6 rounded-full shadow-xl">
+                                <i class="fas fa-brain text-4xl"></i>
+                                <p class="font-bold text-xl mt-2">ESP32 (MCU)</p>
+                                <p class="text-sm">시스템의 두뇌</p>
+                                <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">Wi-Fi, 블루투스 기능이 내장된 고성능 컨트롤러로, 모든 센서 데이터를 처리하고 액추에이터를 제어하며 외부와 통신합니다.</div>
+                            </div>
+                            <i class="fas fa-arrow-right text-3xl text-gray-400 hidden md:block mt-4"></i>
+                             <i class="fas fa-arrow-down text-3xl text-gray-400 md:hidden my-4"></i>
+                        </div>
+                        <!-- Output -->
+                         <div class="flex flex-col items-center space-y-4">
+                             <div class="text-center font-bold text-lg mb-2">🦾 출력부 (Actuators)</div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-fan text-2xl text-green-500"></i>
+                                 <p class="font-semibold mt-2">저소음 쿨러</p>
+                                 <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">우산을 건조시키는 바람을 생성하며, PWM 제어로 속도를 조절합니다.</div>
+                             </div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-virus-slash text-2xl text-green-500"></i>
+                                 <p class="font-semibold mt-2">UV-C LED</p>
+                                 <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">세균과 곰팡이를 99.9% 제거하는 살균 기능을 수행합니다.</div>
+                             </div>
+                             <div class="tech-diagram-item relative w-full bg-white p-4 rounded-lg shadow-md text-center">
+                                 <i class="fas fa-desktop text-2xl text-green-500"></i>
+                                 <p class="font-semibold mt-2">LCD 디스플레이</p>
+                                 <div class="tech-diagram-tooltip absolute bottom-full mb-2 w-64 bg-gray-800 text-white text-sm rounded-lg py-2 px-3 opacity-0 visibility-hidden transition-all duration-300">날씨, 상태 등 모든 시각 정보를 사용자에게 전달합니다.</div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section id="features" class="py-20">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900">상상을 현실로 만드는 기능들</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">사용자 경험을 최우선으로 설계된 스마트 우산꽂이의 핵심 기능들을 만나보세요.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-wind text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">지능형 자동 건조</h3>
+                        </div>
+                        <p class="text-gray-600">문을 닫는 즉시 4개의 저소음 쿨러가 작동합니다. 초기 고속 건조 후 저소음 모드로 전환되어 효율과 정숙성을 모두 잡았습니다.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-shield-virus text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">안전한 UV-C 살균</h3>
+                        </div>
+                        <p class="text-gray-600">문이 완벽히 닫혔을 때만 UV-C LED가 작동하여 유해 세균을 99.9% 박멸합니다. 이중 안전장치로 완벽한 안전을 보장합니다.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-broadcast-tower text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">현관 정보 허브</h3>
+                        </div>
+                        <p class="text-gray-600">전면 LCD 디스플레이가 실시간 날씨, 강수 확률, 미세먼지 정보까지 제공하여 현관을 스마트한 정보 공간으로 바꿔줍니다.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-lightbulb text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">UX 중심 내부 조명</h3>
+                        </div>
+                        <p class="text-gray-600">문을 열면 따뜻한 색의 조명이 부드럽게 켜져, 어두운 밤에도 눈부심 없이 편안하게 우산을 넣고 뺄 수 있습니다.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-mobile-alt text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">모바일 앱 연동</h3>
+                        </div>
+                        <p class="text-gray-600">전용 앱으로 비 소식 푸시 알림을 받고, 원격으로 기기를 제어하며, 사용 리포트까지 확인할 수 있는 확장성을 제공합니다.</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-faucet text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-xl font-bold">물 넘침 방지</h3>
+                        </div>
+                        <p class="text-gray-600">수위 센서가 물받이 통이 가득 차면 자동으로 알려주고 건조 기능을 멈춰, 물 넘침으로 인한 고장이나 바닥 손상을 예방합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="bg-white py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900">아이디어에서 현실로, 개발 로드맵</h2>
+                    <p class="text-gray-600 mt-2 max-w-2xl mx-auto">체계적인 계획과 실행으로 프로젝트를 완성해 나갑니다.</p>
+                </div>
+                <div class="relative w-full max-w-4xl mx-auto">
+                    <div class="absolute left-1/2 h-full w-0.5 bg-blue-200 hidden md:block"></div>
+                    <div class="space-y-12">
+                        <!-- Step 1 -->
+                        <div class="relative flex items-center md:justify-start">
+                            <div class="md:w-1/2 md:pr-8">
+                                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                                    <p class="text-blue-600 font-bold mb-1">1단계 (1-3주차)</p>
+                                    <h4 class="text-lg font-semibold mb-2">기술 연구 및 학습</h4>
+                                    <p class="text-sm text-gray-600">ESP32 Wi-Fi 통신, API 연동, Flutter 앱 개발 등 핵심 기술에 대한 집중 스터디를 진행합니다.</p>
+                                </div>
+                            </div>
+                             <div class="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        </div>
+                         <!-- Step 2 -->
+                        <div class="relative flex items-center md:justify-end">
+                            <div class="md:w-1/2 md:pl-8 text-left md:text-right">
+                                 <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                                    <p class="text-blue-600 font-bold mb-1">2단계 (4-6주차)</p>
+                                    <h4 class="text-lg font-semibold mb-2">단위 기능 프로토타이핑</h4>
+                                    <p class="text-sm text-gray-600">학습한 기술을 바탕으로 각 기능을 개별 모듈로 구현하고 테스트하여 안정성을 확보합니다.</p>
+                                </div>
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        </div>
+                         <!-- Step 3 -->
+                        <div class="relative flex items-center md:justify-start">
+                             <div class="md:w-1/2 md:pr-8">
+                                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                                    <p class="text-blue-600 font-bold mb-1">3단계 (7-10주차)</p>
+                                    <h4 class="text-lg font-semibold mb-2">시스템 통합 및 1차 제작</h4>
+                                    <p class="text-sm text-gray-600">3D 프린팅으로 외관을 제작하고, 개발된 모든 기능 모듈을 하나의 시스템으로 통합합니다.</p>
+                                </div>
+                            </div>
+                           <div class="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        </div>
+                         <!-- Step 4 -->
+                        <div class="relative flex items-center md:justify-end">
+                            <div class="md:w-1/2 md:pl-8 text-left md:text-right">
+                                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                                    <p class="text-blue-600 font-bold mb-1">4단계 (11-14주차)</p>
+                                    <h4 class="text-lg font-semibold mb-2">테스트, 디버깅 및 고도화</h4>
+                                    <p class="text-sm text-gray-600">완성된 프로토타입을 실사용 환경에서 테스트하며 안정성을 검증하고, 사용자 피드백을 반영하여 개선합니다.</p>
+                                </div>
+                            </div>
+                           <div class="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-2xl font-bold mb-2">스마트 우산꽂이 프로젝트</h3>
+            <p class="text-gray-400">일상의 혁신을 위한 끊임없는 도전.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Close mobile menu on link click
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Market Chart
+            const ctx = document.getElementById('marketChart').getContext('2d');
+            const marketChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['2024', '2025', '2026', '2027', '2028'],
+                    datasets: [{
+                        label: '국내 스마트홈 시장 규모 (단위: 조 원)',
+                        data: [4.5, 5.2, 6.0, 6.9, 8.0],
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '시장 규모 (조 원)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '조 원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
