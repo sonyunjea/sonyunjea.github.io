@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 우산꽂이 | 캡스톤 디자인 프로젝트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Stone, Slate, Amber) -->
+    <!-- Application Structure Plan: 본 보고서의 정보를 효과적으로 전달하기 위해 선형적인 문서 구조 대신, 사용자가 관심 주제를 직접 선택하여 탐색할 수 있는 비선형적 대시보드 구조를 채택했습니다. 상단 내비게이션을 통해 '주요 기능', '시스템 구조', '동작 시나리오' 등 핵심 섹션으로 즉시 이동할 수 있습니다. 각 기능은 인터랙티브 카드로 구성하여 사용자의 흥미를 유발하고, 복잡한 시스템 구조와 동작 시나리오는 단계별 시각화와 인터랙티브 플로우로 재구성하여 정보의 이해도를 극대화했습니다. 이 구조는 사용자가 자신의 필요에 따라 정보를 능동적으로 소비하게 하여, 정적인 보고서보다 훨씬 높은 참여와 이해를 유도합니다. -->
+    <!-- Visualization & Content Choices: 1. 문제점(Inform): 아이콘과 짧은 텍스트로 문제의 핵심을 직관적으로 전달. 2. 주요 기능(Organize/Explore): 클릭 시 상세 정보가 펼쳐지는 인터랙티브 카드로 구현하여 탐색의 재미를 더함. 3. 시스템 구조(Organize): Mermaid.js 대신 Tailwind CSS의 Flexbox/Grid를 활용해 반응형 HTML 블록 다이어그램을 직접 제작하여 기술적 제약을 해결하고 시각적 일관성을 유지. 4. 동작 시나리오(Narrate): 정적인 표를 사용자가 직접 단계를 넘겨보는 인터랙티브 스토리텔링 방식으로 전환하여 시스템의 작동 방식을 생생하게 체험하도록 설계. 5. 기대 효과(Compare/Inform): 핵심 기대 효과는 아이콘 카드로 요약하고, '확장성' 부분은 Chart.js를 이용한 막대그래프로 시각화하여 미래 성장 가능성을 명확하게 제시. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f7f4;
+            color: #333;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #c78636;
+            border-bottom-color: #c78636;
+        }
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .btn-primary {
+            background-color: #4a5568;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #2d3748;
+        }
+        .scenario-step {
+            display: none;
+        }
+        .scenario-step.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .block-diagram-box {
+            border: 1px solid #cbd5e0;
+            background-color: #f7fafc;
+        }
+        .block-diagram-arrow {
+            position: relative;
+        }
+        .block-diagram-arrow::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">스마트 우산꽂이 : SU</h1>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#overview" class="nav-link active" onclick="showSection('overview', this)">프로젝트 개요</a>
+                <a href="#features" class="nav-link" onclick="showSection('features', this)">주요 기능</a>
+                <a href="#architecture" class="nav-link" onclick="showSection('architecture', this)">시스템 구조</a>
+                <a href="#scenarios" class="nav-link" onclick="showSection('scenarios', this)">동작 시나리오</a>
+                <a href="#effects" class="nav-link" onclick="showSection('effects', this)">기대 효과</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="border rounded-md p-2 bg-white" onchange="showSection(this.value)">
+                    <option value="overview">프로젝트 개요</option>
+                    <option value="features">주요 기능</option>
+                    <option value="architecture">시스템 구조</option>
+                    <option value="scenarios">동작 시나리오</option>
+                    <option value="effects">기대 효과</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-12">
+        <section id="overview" class="content-section active">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">일상의 불편함, 기술로 해결하다</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">젖은 우산으로 인한 불편함은 이제 그만. IoT 기술로 탄생한 스마트 우산꽂이가 당신의 현관을 더 쾌적하고, 위생적이며, 스마트하게 만듭니다.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-5xl mb-4">💧</div>
+                    <h3 class="text-xl font-bold mb-2">축축한 현관</h3>
+                    <p class="text-gray-600">물이 흥건한 바닥, 미끄러질 위험, 그리고 지저분한 현관은 더 이상 없습니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-5xl mb-4">🦠</div>
+                    <h3 class="text-xl font-bold mb-2">세균과 냄새</h3>
+                    <p class="text-gray-600">제대로 마르지 않은 우산의 곰팡이와 불쾌한 냄새 문제를 원천적으로 차단합니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-5xl mb-4">🤔</div>
+                    <h3 class="text-xl font-bold mb-2">바쁜 아침의 고민</h3>
+                    <p class="text-gray-600">"오늘 비 오나?" 고민할 필요 없이, 현관에서 바로 날씨 정보를 확인하고 우산을 챙길 수 있습니다.</p>
+                </div>
+            </div>
+             <div class="mt-12 p-8 bg-amber-50 rounded-lg border border-amber-200">
+                <h3 class="text-2xl font-bold text-center mb-4 text-amber-800">지능형 현관 솔루션</h3>
+                <p class="text-center text-gray-700 max-w-4xl mx-auto">
+                    본 프로젝트는 단순한 우산 보관함을 넘어, 자동 건조, UV-C 살균, 실시간 날씨 정보 제공 기능을 통합한 지능형 IoT 기기입니다. 사용자의 개입을 최소화하여 위생적이고 편리한 우산 관리 경험을 제공하고, 현관 공간의 가치를 높여 스마트홈 라이프를 완성합니다.
+                </p>
+            </div>
+        </section>
+
+        <section id="features" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">핵심 기능 알아보기</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">스마트 우산꽂이가 제공하는 혁신적인 기능들을 하나씩 살펴보세요.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="feature-cards-container">
+            </div>
+        </section>
+
+        <section id="architecture" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">시스템 구성도</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">각 하드웨어와 소프트웨어가 어떻게 유기적으로 연결되어 동작하는지 전체 구조를 확인해보세요.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div class="flex flex-col lg:flex-row gap-8 items-start">
+                    <div class="w-full lg:w-3/5">
+                        <div class="p-4 rounded-lg border-2 border-slate-300">
+                            <h3 class="font-bold text-center mb-4 text-slate-700">스마트 우산꽂이 시스템</h3>
+                            <div class="flex flex-col items-center">
+                                <div class="p-3 px-6 rounded-md font-bold text-white bg-slate-700 shadow-lg">ESP32 MCU</div>
+                                <div class="h-8 w-px bg-slate-400"></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                    <div class="p-4 block-diagram-box rounded-md">
+                                        <h4 class="font-bold text-center text-slate-600 mb-2">입력 (Input)</h4>
+                                        <ul class="space-y-2 text-sm text-center">
+                                            <li class="p-2 bg-white rounded shadow-sm">마그네틱 도어 센서</li>
+                                            <li class="p-2 bg-white rounded shadow-sm">수위 센서</li>
+                                            <li class="p-2 bg-white rounded shadow-sm">TFT LCD 터치스크린</li>
+                                        </ul>
+                                    </div>
+                                    <div class="p-4 block-diagram-box rounded-md">
+                                        <h4 class="font-bold text-center text-slate-600 mb-2">출력 (Output)</h4>
+                                        <ul class="space-y-2 text-sm text-center">
+                                            <li class="p-2 bg-white rounded shadow-sm">PC용 저소음 쿨러 x4</li>
+                                            <li class="p-2 bg-white rounded shadow-sm">UV-C LED</li>
+                                            <li class="p-2 bg-white rounded shadow-sm">내부 조명 LED</li>
+                                            <li class="p-2 bg-white rounded shadow-sm">TFT LCD 디스플레이</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="h-8 w-px bg-slate-400"></div>
+                                <div class="p-3 px-6 rounded-md font-semibold text-slate-800 bg-slate-200 shadow-md">모터 드라이버 / 릴레이</div>
+                                 <div class="h-8 w-px bg-slate-400"></div>
+                                <div class="grid grid-cols-2 gap-4 w-full">
+                                     <div class="p-4 block-diagram-box rounded-md">
+                                        <h4 class="font-bold text-center text-slate-600 mb-2">전원 (Power)</h4>
+                                        <p class="text-sm text-center p-2 bg-white rounded shadow-sm">12V 어댑터 → 강압 모듈</p>
+                                    </div>
+                                    <div class="p-4 block-diagram-box rounded-md">
+                                        <h4 class="font-bold text-center text-slate-600 mb-2">통신 (Communication)</h4>
+                                        <p class="text-sm text-center p-2 bg-white rounded shadow-sm">Wi-Fi ↔ API 서버/App</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-2/5 mt-8 lg:mt-0">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">동작 원리</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            시스템의 핵심 두뇌는 **ESP32 MCU**가 담당합니다. MCU는 도어 센서, 수위 센서, 터치스크린으로부터 실시간으로 데이터를 입력받습니다. 
+                            <br><br>
+                            이 입력값과 내부 로직에 따라, 모터 드라이버와 릴레이를 제어하여 PC 쿨러, UV-C LED, 내부 조명 등 출력부를 구동시킵니다.
+                            <br><br>
+                            또한, 내장된 Wi-Fi 모듈을 통해 외부 날씨 API 서버 및 사용자 스마트폰 앱과 양방향 통신을 수행하며 IoT 기기로서의 핵심 기능을 완성합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scenarios" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">어떻게 사용될까요?</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">일상 속 다양한 상황에서 스마트 우산꽂이가 어떻게 동작하는지 시나리오를 통해 확인해보세요.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                 <div class="mb-6 border-b">
+                    <nav class="flex -mb-px" id="scenario-tabs">
+                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(0, this)">
+                            시나리오 1: 자동 건조/살균
+                        </button>
+                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(1, this)">
+                            시나리오 2: 수동 제어
+                        </button>
+                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(2, this)">
+                           시나리오 3: 앱 연동
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="scenario-content">
+                </div>
+            </div>
+        </section>
+
+        <section id="effects" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">기대 효과 및 미래 가치</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">단순한 편의를 넘어, 우리의 생활과 기술 역량에 어떤 긍정적인 영향을 가져올까요?</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">👍</div>
+                    <h3 class="text-xl font-bold mb-2">사용자 편의성 증대</h3>
+                    <p class="text-gray-600">건조, 살균, 날씨 확인까지 자동화하여 사용자의 수고를 덜고 삶의 질을 향상시킵니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold mb-2">위생적인 환경 조성</h3>
+                    <p class="text-gray-600">UV-C 살균으로 세균과 곰팡이를 제거하여 가족의 건강을 지킵니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">🏠</div>
+                    <h3 class="text-xl font-bold mb-2">쾌적한 실내 환경</h3>
+                    <p class="text-gray-600">바닥의 물기, 냄새를 원천 차단하여 안전하고 깨끗한 현관을 유지합니다.</p>
+                </div>
+                 <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">🎓</div>
+                    <h3 class="text-xl font-bold mb-2">종합적 기술 역량 확보</h3>
+                    <p class="text-gray-600">H/W, S/W, 통신, 앱 개발 등 IoT 시스템 통합 설계 및 구현 능력을 체득합니다.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-center mb-6 text-gray-800">시장 경쟁력 및 향후 확장성</h3>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="md:w-1/2">
+                         <div class="chart-container">
+                            <canvas id="scalabilityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <p class="text-gray-600 mb-4">
+                            본 프로젝트는 새로운 스마트홈 가전 카테고리를 창출할 잠재력을 가집니다. 향후 구체적인 로드맵을 통해 지속 가능한 성장이 가능합니다.
+                        </p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><span class="font-bold">스마트홈 생태계 편입:</span> AI 스피커 연동으로 음성 제어 기능 추가</li>
+                            <li><span class="font-bold">제품 라인업 다각화:</span> 프리미엄 디자인 및 공공시설용 대용량 모델 개발</li>
+                            <li><span class="font-bold">데이터 기반 서비스:</span> 사용자 맞춤형 건조/살균 모드 추천 등 구독 모델 도입</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto p-6 text-center">
+            <p>&copy; 2025 스마트 우산꽂이 캡스톤 디자인 프로젝트</p>
+        </div>
+    </footer>
+
+    <script>
+        const sections = {
+            overview: document.getElementById('overview'),
+            features: document.getElementById('features'),
+            architecture: document.getElementById('architecture'),
+            scenarios: document.getElementById('scenarios'),
+            effects: document.getElementById('effects'),
+        };
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNav = document.getElementById('mobile-nav');
+        
+        const featuresData = [
+            {
+                icon: '💨',
+                title: '지능형 자동 건조',
+                description: '젖은 우산을 넣고 문을 닫으면 4개의 저소음 쿨러가 자동으로 작동합니다. PWM 제어로 효율과 정숙성을 모두 잡았습니다.'
+            },
+            {
+                icon: '🛡️',
+                title: '안전한 UV-C 살균',
+                description: '문이 닫혔을 때만 253.7nm 파장의 UV-C LED가 작동하여 세균과 바이러스를 99.9% 제거합니다. 안전 로직으로 인체 노출을 원천 방지합니다.'
+            },
+            {
+                icon: '💡',
+                title: 'UX 중심 내부 조명',
+                description: '문을 열면 내부 LED가 부드럽게 켜져 야간에도 쉽게 우산을 넣고 뺄 수 있도록 돕습니다. 사용자의 만족도를 높이는 디테일입니다.'
+            },
+            {
+                icon: '💧',
+                title: '오버플로우 방지',
+                description: '정전용량식 수위 센서가 물받이 통 수위를 실시간 감지합니다. 물이 가득 차면 알림을 보내고 건조 기능을 일시 중단하여 안전을 확보합니다.'
+            },
+            {
+                icon: '🌦️',
+                title: '현관 정보 허브',
+                description: '전면 LCD 터치스크린으로 날씨, 온도, 미세먼지 등 생활 정보를 제공합니다. 현관의 스마트 정보 허브 역할을 수행합니다.'
+            },
+            {
+                icon: '📱',
+                title: '모바일 앱 연동',
+                description: '전용 앱으로 원격 제어, 상태 모니터링, 날씨 알림은 물론, 사용 통계 리포트와 유지보수 알림까지 제공합니다.'
+            }
+        ];
+
+        const scenariosData = [
+            {
+                title: "시나리오 1: 자동 건조/살균",
+                steps: [
+                    { title: "1. 귀가 및 우산 보관", userAction: "비 맞은 우산을 들고 문을 엽니다.", systemReaction: "내부 조명이 켜지며 내부를 비춥니다." },
+                    { title: "2. 문 닫기", userAction: "우산을 걸고 문을 닫습니다.", systemReaction: "내부 조명이 꺼지고, 자동 건조 및 살균 프로세스가 시작됩니다." },
+                    { title: "3. 자동 프로세스 진행", userAction: "사용자 개입 없음", systemReaction: "4개의 쿨러와 UV-C LED가 작동하며, 디스플레이에 남은 시간이 표시됩니다." },
+                    { title: "4. 완료", userAction: "10분 경과", systemReaction: "모든 기능이 자동으로 종료되고 '완료' 메시지 후 날씨 화면으로 복귀합니다." },
+                ]
+            },
+            {
+                title: "시나리오 2: 수위 감지 및 수동 제어",
+                steps: [
+                    { title: "1. 물통 가득 참", userAction: "물받이 통이 가득 찬 상태에서 우산을 넣습니다.", systemReaction: "수위 센서가 감지하여 쿨러 작동을 중지하고 '물을 비워주세요!' 경고를 표시합니다." },
+                    { title: "2. 문제 해결", userAction: "사용자가 물받이 통을 비웁니다.", systemReaction: "경고가 사라지고 시스템이 정상 대기 상태로 돌아갑니다." },
+                    { title: "3. 수동 조작", userAction: "우산이 덜 말라 디스플레이를 터치합니다.", systemReaction: "수동 제어 메뉴 화면으로 전환됩니다." },
+                    { title: "4. 맞춤 설정", userAction: "작동 시간과 팬 속도를 '강풍'으로 설정합니다.", systemReaction: "설정값에 따라 쿨러가 강력하게 작동하며, 디스플레이에 변경된 상태를 표시합니다." },
+                ]
+            },
+            {
+                title: "시나리오 3: 모바일 앱 연동",
+                steps: [
+                    { title: "1. 외출 전 알림", userAction: "스마트폰으로 푸시 알림을 확인합니다.", systemReaction: "강수 확률이 높으면 앱이 '우산을 챙기세요!' 라는 구체적인 알림을 보냅니다." },
+                    { title: "2. 현관에서 정보 확인", userAction: "외출 준비를 하며 디스플레이를 봅니다.", systemReaction: "디스플레이에 날씨 예보와 '우산 챙기세요' 코멘트가 표시되어 있습니다." },
+                    { title: "3. 원격 제어", userAction: "장기간 외출 시 앱으로 '절전 모드'를 활성화합니다.", systemReaction: "명령을 수신하여 불필요한 대기 전력을 최소화하는 모드로 전환됩니다." },
+                ]
+            }
+        ];
+
+        function showSection(sectionId, clickedLink) {
+            Object.values(sections).forEach(section => {
+                section.classList.remove('active');
+            });
+            sections[sectionId].classList.add('active');
+
+            if (clickedLink) {
+                 navLinks.forEach(link => link.classList.remove('active'));
+                 clickedLink.classList.add('active');
+            }
+            
+            mobileNav.value = sectionId;
+            window.location.hash = sectionId;
+        }
+
+        function populateFeatures() {
+            const container = document.getElementById('feature-cards-container');
+            featuresData.forEach(feature => {
+                const card = `
+                    <div class="feature-card bg-white p-6 rounded-lg shadow-lg cursor-pointer">
+                        <div class="text-5xl mb-4">${feature.icon}</div>
+                        <h3 class="text-xl font-bold mb-2">${feature.title}</h3>
+                        <p class="text-gray-600">${feature.description}</p>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+        
+        let currentScenarioIndex = 0;
+        let currentStepIndex = 0;
+
+        function renderScenario() {
+            const scenario = scenariosData[currentScenarioIndex];
+            const contentContainer = document.getElementById('scenario-content');
+            
+            let stepsHtml = '';
+            scenario.steps.forEach((step, index) => {
+                stepsHtml += `
+                    <div class="scenario-step p-4 border-l-4 border-amber-500 bg-amber-50 rounded-r-lg" style="display: ${index === currentStepIndex ? 'block' : 'none'};">
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">${step.title}</h4>
+                        <p class="mb-1"><span class="font-semibold text-gray-600">사용자 행동:</span> ${step.userAction}</p>
+                        <p><span class="font-semibold text-amber-700">시스템 반응:</span> ${step.systemReaction}</p>
+                    </div>
+                `;
+            });
+
+            contentContainer.innerHTML = `
+                <div class="relative">
+                    ${stepsHtml}
+                    <div class="flex justify-between items-center mt-6">
+                        <button class="btn-primary py-2 px-4 rounded-md" onclick="prevStep()" id="prev-btn">이전 단계</button>
+                        <div class="text-sm text-gray-500">${currentStepIndex + 1} / ${scenario.steps.length}</div>
+                        <button class="btn-primary py-2 px-4 rounded-md" onclick="nextStep()" id="next-btn">다음 단계</button>
+                    </div>
+                </div>
+            `;
+            updateStepButtons();
+        }
+        
+        function updateStepButtons() {
+            const scenario = scenariosData[currentScenarioIndex];
+            document.getElementById('prev-btn').disabled = currentStepIndex === 0;
+            document.getElementById('prev-btn').style.opacity = currentStepIndex === 0 ? 0.5 : 1;
+            document.getElementById('next-btn').disabled = currentStepIndex === scenario.steps.length - 1;
+            document.getElementById('next-btn').style.opacity = currentStepIndex === scenario.steps.length - 1 ? 0.5 : 1;
+        }
+
+        function nextStep() {
+            if (currentStepIndex < scenariosData[currentScenarioIndex].steps.length - 1) {
+                currentStepIndex++;
+                renderScenario();
+            }
+        }
+        
+        function prevStep() {
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                renderScenario();
+            }
+        }
+
+        function switchScenario(index, tab) {
+            currentScenarioIndex = index;
+            currentStepIndex = 0;
+            
+            const tabs = document.querySelectorAll('#scenario-tabs button');
+            tabs.forEach(t => {
+                t.classList.remove('text-amber-600', 'border-amber-600');
+                t.classList.add('text-gray-600', 'border-transparent');
+            });
+            tab.classList.remove('text-gray-600', 'border-transparent');
+            tab.classList.add('text-amber-600', 'border-amber-600');
+            
+            renderScenario();
+        }
+        
+        function createChart() {
+            const ctx = document.getElementById('scalabilityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['스마트홈 생태계 편입', '제품 라인업 다각화', '데이터 기반 서비스'],
+                    datasets: [{
+                        label: '확장 가능성 지수',
+                        data: [85, 95, 75],
+                        backgroundColor: [
+                            'rgba(74, 85, 104, 0.6)',
+                            'rgba(213, 163, 94, 0.6)',
+                            'rgba(160, 174, 192, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 85, 104, 1)',
+                            'rgba(213, 163, 94, 1)',
+                            'rgba(160, 174, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: '향후 성장 방향성'
+                        }
+                    }
+                }
+            });
+        }
+
+
+        window.onload = () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && sections[hash]) {
+                const correspondingLink = document.querySelector(`.nav-link[href="#${hash}"]`);
+                showSection(hash, correspondingLink);
+            } else {
+                 showSection('overview', navLinks[0]);
+            }
+
+            populateFeatures();
+            switchScenario(0, document.querySelector('#scenario-tabs button'));
+            createChart();
+        };
+    </script>
+</body>
+</html>
