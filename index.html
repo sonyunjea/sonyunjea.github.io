@@ -1,530 +1,414 @@
+<!-- Chosen Palette: Professional Tech Blue/Green (#F0F4F8, #003B46, #07575B, #66A5AD, #C4DFE6) -->
+<!-- Application Structure Plan: A narrative-driven, single-page scrolling application. The structure guides the user through the project's story: 1. The Challenge (introducing the core problem with the initial 50 images). 2. In-Depth Problems (using visualizations to explain abstract concepts like Overfitting and Class Ambiguity). 3. The Strategic Solution (presenting the 3-part solution in a clear, card-based layout). 4. The New Blueprint (a direct before/after comparison of the class structure). 5. The Roadmap (a visual timeline of the 5-step execution plan). 6. The Outcome (showing projected success with charts and key benefit callouts). This narrative flow is more engaging for a presentation-style application than a rigid report structure, making complex ideas more digestible. -->
+<!-- Visualization & Content Choices: 1. Initial Data: (Goal: Inform) -> Single Big Number for '50' to create impact. 2. Overfitting: (Goal: Compare/Change) -> Line Chart (Chart.js) to visually contrast rising training accuracy vs. stagnant validation accuracy. 3. Class Ambiguity: (Goal: Organize) -> HTML/CSS Flow Diagram to show the confusing data flow without SVG/Mermaid. 4. Solutions: (Goal: Organize) -> Icon-based cards for scannability. 5. Class Redesign: (Goal: Compare) -> Side-by-side comparison table/layout for clarity. 6. Roadmap: (Goal: Organize) -> HTML/CSS Timeline for process visualization. 7. Expected Accuracy: (Goal: Inform/Compare) -> Donut Chart (Chart.js) to highlight the high projected success rate. All choices prioritize clarity and narrative impact while strictly adhering to NO SVG/Mermaid constraints. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 우산꽂이 | 캡스톤 디자인 프로젝트</title>
+    <title>AI 쓰레기통 성능 개선 프로젝트 대시보드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals (Stone, Slate, Amber) -->
-    <!-- Application Structure Plan: 본 보고서의 정보를 효과적으로 전달하기 위해 선형적인 문서 구조 대신, 사용자가 관심 주제를 직접 선택하여 탐색할 수 있는 비선형적 대시보드 구조를 채택했습니다. 상단 내비게이션을 통해 '주요 기능', '시스템 구조', '동작 시나리오' 등 핵심 섹션으로 즉시 이동할 수 있습니다. 각 기능은 인터랙티브 카드로 구성하여 사용자의 흥미를 유발하고, 복잡한 시스템 구조와 동작 시나리오는 단계별 시각화와 인터랙티브 플로우로 재구성하여 정보의 이해도를 극대화했습니다. 이 구조는 사용자가 자신의 필요에 따라 정보를 능동적으로 소비하게 하여, 정적인 보고서보다 훨씬 높은 참여와 이해를 유도합니다. -->
-    <!-- Visualization & Content Choices: 1. 문제점(Inform): 아이콘과 짧은 텍스트로 문제의 핵심을 직관적으로 전달. 2. 주요 기능(Organize/Explore): 클릭 시 상세 정보가 펼쳐지는 인터랙티브 카드로 구현하여 탐색의 재미를 더함. 3. 시스템 구조(Organize): Mermaid.js 대신 Tailwind CSS의 Flexbox/Grid를 활용해 반응형 HTML 블록 다이어그램을 직접 제작하여 기술적 제약을 해결하고 시각적 일관성을 유지. 4. 동작 시나리오(Narrate): 정적인 표를 사용자가 직접 단계를 넘겨보는 인터랙티브 스토리텔링 방식으로 전환하여 시스템의 작동 방식을 생생하게 체험하도록 설계. 5. 기대 효과(Compare/Inform): 핵심 기대 효과는 아이콘 카드로 요약하고, '확장성' 부분은 Chart.js를 이용한 막대그래프로 시각화하여 미래 성장 가능성을 명확하게 제시. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f8f7f4;
-            color: #333;
+            background-color: #F0F4F8;
+            color: #003B46;
         }
-        .nav-link {
-            transition: color 0.3s, border-bottom-color 0.3s;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link.active, .nav-link:hover {
-            color: #c78636;
-            border-bottom-color: #c78636;
-        }
-        .feature-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .content-section {
-            display: none;
-        }
-        .content-section.active {
-            display: block;
-        }
-        .btn-primary {
-            background-color: #4a5568;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #2d3748;
-        }
-        .scenario-step {
-            display: none;
-        }
-        .scenario-step.active {
-            display: block;
+        .gradient-text {
+            background: linear-gradient(to right, #003B46, #07575B, #66A5AD);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
             height: 300px;
-            max-height: 400px;
+            max-height: 350px;
         }
         @media (min-width: 768px) {
             .chart-container {
                 height: 350px;
+                max-height: 400px;
             }
         }
-        .block-diagram-box {
-            border: 1px solid #cbd5e0;
-            background-color: #f7fafc;
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
         }
-        .block-diagram-arrow {
-            position: relative;
-        }
-        .block-diagram-arrow::after {
-            content: '→';
-            position: absolute;
-            right: -20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #718096;
+        .nav-link:hover, .nav-link.active {
+            color: #66A5AD;
+            border-bottom-color: #66A5AD;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">스마트 우산꽂이 : SU</h1>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#overview" class="nav-link active" onclick="showSection('overview', this)">프로젝트 개요</a>
-                <a href="#features" class="nav-link" onclick="showSection('features', this)">주요 기능</a>
-                <a href="#architecture" class="nav-link" onclick="showSection('architecture', this)">시스템 구조</a>
-                <a href="#scenarios" class="nav-link" onclick="showSection('scenarios', this)">동작 시나리오</a>
-                <a href="#effects" class="nav-link" onclick="showSection('effects', this)">기대 효과</a>
-            </div>
-            <div class="md:hidden">
-                <select id="mobile-nav" class="border rounded-md p-2 bg-white" onchange="showSection(this.value)">
-                    <option value="overview">프로젝트 개요</option>
-                    <option value="features">주요 기능</option>
-                    <option value="architecture">시스템 구조</option>
-                    <option value="scenarios">동작 시나리오</option>
-                    <option value="effects">기대 효과</option>
-                </select>
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold text-[#003B46]">AI 쓰레기통 고도화</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#problem" class="nav-link">문제점</a>
+                <a href="#solution" class="nav-link">해결방안</a>
+                <a href="#plan" class="nav-link">수행계획</a>
+                <a href="#outcome" class="nav-link">기대효과</a>
             </div>
         </nav>
     </header>
 
-    <main class="container mx-auto p-6 md:p-12">
-        <section id="overview" class="content-section active">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">일상의 불편함, 기술로 해결하다</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">젖은 우산으로 인한 불편함은 이제 그만. IoT 기술로 탄생한 스마트 우산꽂이가 당신의 현관을 더 쾌적하고, 위생적이며, 스마트하게 만듭니다.</p>
-            </div>
+    <main class="container mx-auto p-4 md:p-8">
 
-            <div class="grid md:grid-cols-3 gap-8 text-center">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-5xl mb-4">💧</div>
-                    <h3 class="text-xl font-bold mb-2">축축한 현관</h3>
-                    <p class="text-gray-600">물이 흥건한 바닥, 미끄러질 위험, 그리고 지저분한 현관은 더 이상 없습니다.</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-5xl mb-4">🦠</div>
-                    <h3 class="text-xl font-bold mb-2">세균과 냄새</h3>
-                    <p class="text-gray-600">제대로 마르지 않은 우산의 곰팡이와 불쾌한 냄새 문제를 원천적으로 차단합니다.</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-5xl mb-4">🤔</div>
-                    <h3 class="text-xl font-bold mb-2">바쁜 아침의 고민</h3>
-                    <p class="text-gray-600">"오늘 비 오나?" 고민할 필요 없이, 현관에서 바로 날씨 정보를 확인하고 우산을 챙길 수 있습니다.</p>
-                </div>
-            </div>
-             <div class="mt-12 p-8 bg-amber-50 rounded-lg border border-amber-200">
-                <h3 class="text-2xl font-bold text-center mb-4 text-amber-800">지능형 현관 솔루션</h3>
-                <p class="text-center text-gray-700 max-w-4xl mx-auto">
-                    본 프로젝트는 단순한 우산 보관함을 넘어, 자동 건조, UV-C 살균, 실시간 날씨 정보 제공 기능을 통합한 지능형 IoT 기기입니다. 사용자의 개입을 최소화하여 위생적이고 편리한 우산 관리 경험을 제공하고, 현관 공간의 가치를 높여 스마트홈 라이프를 완성합니다.
+        <section id="intro" class="text-center py-16 md:py-24">
+            <h1 class="text-4xl md:text-6xl font-black gradient-text mb-4">AI 쓰레기통, 완벽을 향한 도전</h1>
+            <p class="text-lg md:text-xl text-[#07575B] max-w-3xl mx-auto">
+                '음식물 묻은 플라스틱' 문제를 해결하여 재활용의 미래를 여는 기술 고도화 프로젝트를 소개합니다.
+            </p>
+        </section>
+
+        <section id="problem" class="space-y-16 py-12">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">시작부터 마주한 기술적 난관</h2>
+                <p class="max-w-3xl mx-auto text-[#07575B] mb-10">
+                    기능 추가를 위해 초기 계획으로 수집한 50장의 사진. 이 작은 데이터셋이 어떻게 프로젝트의 발목을 잡을 수 있는지, 두 가지 치명적인 문제점을 발견했습니다.
                 </p>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 order-2 lg:order-1">
+                    <h3 class="text-2xl font-bold text-[#003B46] mb-4">문제점 1: 과적합(Overfitting) 현상</h3>
+                    <p class="text-[#07575B] mb-6">
+                        AI가 학습 데이터만 완벽하게 암기하고, 처음 보는 실제 쓰레기는 전혀 인식하지 못하는 문제입니다. 이는 훈련 성적은 100점이지만 실전 시험은 0점인 것과 같습니다. 적은 데이터 양은 모델이 편협한 시각을 갖게 하여 일반화 성능을 심각하게 저해합니다.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="overfittingChart"></canvas>
+                    </div>
+                </div>
+                <div class="text-center order-1 lg:order-2">
+                    <div class="bg-white inline-block rounded-full shadow-2xl p-10">
+                        <div class="text-8xl font-black text-[#66A5AD]">50</div>
+                        <div class="text-2xl font-bold text-[#003B46] mt-2">초기 학습 이미지</div>
+                    </div>
+                    <p class="text-[#07575B] mt-6 max-w-sm mx-auto">무한에 가까운 실제 환경의 변수를 반영하기엔 절대적으로 부족한 양입니다.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#003B46] mb-4 text-center">문제점 2: 분류 클래스의 모호성</h3>
+                <p class="text-[#07575B] mb-8 max-w-3xl mx-auto text-center">
+                    서로 다른 특징을 가진 대상을 하나의 클래스로 묶어 가르치면, AI는 명확한 분류 기준을 세우지 못하고 혼란에 빠집니다. 이는 전체 시스템의 성능 저하로 이어집니다.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
+                    <div class="text-center p-4">
+                        <div class="text-5xl">📄</div>
+                        <p class="font-bold mt-2">깨끗한 종이</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="text-5xl">🥡</div>
+                        <p class="font-bold mt-2">오염된 플라스틱</p>
+                    </div>
+                    <div class="text-4xl font-thin text-[#66A5AD] hidden md:block">→</div>
+                    <div class="text-4xl font-thin text-[#66A5AD] md:hidden">↓</div>
+                    <div class="bg-red-100 border-2 border-red-300 rounded-lg p-6 text-center">
+                        <div class="text-2xl font-bold text-red-700">'일반쓰레기/종이' 클래스</div>
+                        <p class="text-red-600 mt-2">AI 혼란 야기 (Confusion!)</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="features" class="content-section">
+        <section id="solution" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">핵심 기능 알아보기</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">스마트 우산꽂이가 제공하는 혁신적인 기능들을 하나씩 살펴보세요.</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">데이터 중심의 체계적인 해결 방안</h2>
+                <p class="max-w-3xl mx-auto text-[#07575B]">
+                    문제 해결을 위해 우리는 머신러닝 개발 방법론에 입각한 3단계의 핵심 전략을 수립했습니다.
+                </p>
             </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="feature-cards-container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl shadow-xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-6xl mb-4">🖼️✨</div>
+                    <h3 class="text-2xl font-bold text-[#003B46]">데이터 증강</h3>
+                    <p class="text-[#07575B] mt-2">50장의 원본을 회전, 반전, 확대/축소하여 500장 이상의 데이터셋으로 확장, 모델의 강건함(Robustness)을 확보합니다.</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-6xl mb-4">🤖🧠</div>
+                    <h3 class="text-2xl font-bold text-[#003B46]">전이 학습</h3>
+                    <p class="text-[#07575B] mt-2">이미 똑똑한 사전 학습 모델(YOLO v8)을 기반으로, 우리에게 필요한 '오염된 플라스틱'만 효율적으로 추가 학습시킵니다.</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-6xl mb-4">🏷️🔄</div>
+                    <h3 class="text-2xl font-bold text-[#003B46]">클래스 재설계</h3>
+                    <p class="text-[#07575B] mt-2">AI가 혼란 없이 명확한 기준으로 학습할 수 있도록, 독립적인 클래스를 신설하여 분류 체계를 재정의합니다.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="class-redesign-details" class="py-12">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">새로운 청사진: 명확해진 분류 기준</h2>
+                 <p class="max-w-3xl mx-auto text-[#07575B]">
+                    복잡한 '인식'과 단순한 '행동'을 분리하는 효과적인 설계를 통해 시스템의 안정성과 확장성을 모두 높입니다.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6">
+                    <h3 class="text-2xl font-bold text-red-800 mb-4 text-center">BEFORE: 모호한 3개 클래스</h3>
+                    <ul class="space-y-3 text-lg text-red-900 list-inside">
+                        <li><span class="font-mono bg-red-200 rounded px-2 py-1">1. 일반쓰레기/종이</span></li>
+                        <li><span class="font-mono bg-red-200 rounded px-2 py-1">2. 플라스틱/병</span></li>
+                        <li><span class="font-mono bg-red-200 rounded px-2 py-1">3. 캔</span></li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 border-2 border-green-200 rounded-2xl p-6">
+                    <h3 class="text-2xl font-bold text-green-800 mb-4 text-center">AFTER: 명확한 4개 클래스</h3>
+                    <ul class="space-y-3 text-lg text-green-900 list-inside">
+                        <li><span class="font-mono bg-green-200 rounded px-2 py-1">1. 일반쓰레기</span></li>
+                        <li><span class="font-mono bg-green-200 rounded px-2 py-1">2. 재활용 가능</span></li>
+                        <li><span class="font-mono bg-green-200 rounded px-2 py-1">3. 캔</span></li>
+                        <li class="font-bold"><span class="font-mono bg-yellow-200 rounded px-2 py-1">4. 오염된 플라스틱 (신설)</span></li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <section id="architecture" class="content-section">
+
+        <section id="plan" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">시스템 구성도</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">각 하드웨어와 소프트웨어가 어떻게 유기적으로 연결되어 동작하는지 전체 구조를 확인해보세요.</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">성공을 위한 5단계 세부 수행 계획</h2>
+                <p class="max-w-3xl mx-auto text-[#07575B]">
+                    데이터 수집부터 최종 테스트까지, 체계적인 로드맵을 따라 프로젝트를 완수합니다.
+                </p>
             </div>
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <div class="flex flex-col lg:flex-row gap-8 items-start">
-                    <div class="w-full lg:w-3/5">
-                        <div class="p-4 rounded-lg border-2 border-slate-300">
-                            <h3 class="font-bold text-center mb-4 text-slate-700">스마트 우산꽂이 시스템</h3>
-                            <div class="flex flex-col items-center">
-                                <div class="p-3 px-6 rounded-md font-bold text-white bg-slate-700 shadow-lg">ESP32 MCU</div>
-                                <div class="h-8 w-px bg-slate-400"></div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                    <div class="p-4 block-diagram-box rounded-md">
-                                        <h4 class="font-bold text-center text-slate-600 mb-2">입력 (Input)</h4>
-                                        <ul class="space-y-2 text-sm text-center">
-                                            <li class="p-2 bg-white rounded shadow-sm">마그네틱 도어 센서</li>
-                                            <li class="p-2 bg-white rounded shadow-sm">수위 센서</li>
-                                            <li class="p-2 bg-white rounded shadow-sm">TFT LCD 터치스크린</li>
-                                        </ul>
-                                    </div>
-                                    <div class="p-4 block-diagram-box rounded-md">
-                                        <h4 class="font-bold text-center text-slate-600 mb-2">출력 (Output)</h4>
-                                        <ul class="space-y-2 text-sm text-center">
-                                            <li class="p-2 bg-white rounded shadow-sm">PC용 저소음 쿨러 x4</li>
-                                            <li class="p-2 bg-white rounded shadow-sm">UV-C LED</li>
-                                            <li class="p-2 bg-white rounded shadow-sm">내부 조명 LED</li>
-                                            <li class="p-2 bg-white rounded shadow-sm">TFT LCD 디스플레이</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="h-8 w-px bg-slate-400"></div>
-                                <div class="p-3 px-6 rounded-md font-semibold text-slate-800 bg-slate-200 shadow-md">모터 드라이버 / 릴레이</div>
-                                 <div class="h-8 w-px bg-slate-400"></div>
-                                <div class="grid grid-cols-2 gap-4 w-full">
-                                     <div class="p-4 block-diagram-box rounded-md">
-                                        <h4 class="font-bold text-center text-slate-600 mb-2">전원 (Power)</h4>
-                                        <p class="text-sm text-center p-2 bg-white rounded shadow-sm">12V 어댑터 → 강압 모듈</p>
-                                    </div>
-                                    <div class="p-4 block-diagram-box rounded-md">
-                                        <h4 class="font-bold text-center text-slate-600 mb-2">통신 (Communication)</h4>
-                                        <p class="text-sm text-center p-2 bg-white rounded shadow-sm">Wi-Fi ↔ API 서버/App</p>
-                                    </div>
-                                </div>
+            <div class="relative max-w-2xl mx-auto">
+                <div class="absolute left-4 md:left-1/2 w-1 h-full bg-[#C4DFE6] rounded-full"></div>
+                <div class="space-y-12">
+                    <div class="relative pl-12 md:pl-0 flex md:justify-end">
+                        <div class="absolute left-4 md:left-1/2 w-8 h-8 bg-[#07575B] rounded-full -translate-x-1/2 border-4 border-white shadow-md"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-12">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#003B46]">1단계: 데이터 수집 및 가이드라인 수립</h4>
+                                <p class="text-sm text-[#07575B]">고품질 원본 데이터 50장 이상 확보</p>
                             </div>
                         </div>
                     </div>
-                    <div class="w-full lg:w-2/5 mt-8 lg:mt-0">
-                        <h3 class="text-2xl font-bold mb-4 text-gray-800">동작 원리</h3>
-                        <p class="text-gray-600 leading-relaxed">
-                            시스템의 핵심 두뇌는 **ESP32 MCU**가 담당합니다. MCU는 도어 센서, 수위 센서, 터치스크린으로부터 실시간으로 데이터를 입력받습니다. 
-                            <br><br>
-                            이 입력값과 내부 로직에 따라, 모터 드라이버와 릴레이를 제어하여 PC 쿨러, UV-C LED, 내부 조명 등 출력부를 구동시킵니다.
-                            <br><br>
-                            또한, 내장된 Wi-Fi 모듈을 통해 외부 날씨 API 서버 및 사용자 스마트폰 앱과 양방향 통신을 수행하며 IoT 기기로서의 핵심 기능을 완성합니다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="scenarios" class="content-section">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">어떻게 사용될까요?</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">일상 속 다양한 상황에서 스마트 우산꽂이가 어떻게 동작하는지 시나리오를 통해 확인해보세요.</p>
-            </div>
-            
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                 <div class="mb-6 border-b">
-                    <nav class="flex -mb-px" id="scenario-tabs">
-                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(0, this)">
-                            시나리오 1: 자동 건조/살균
-                        </button>
-                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(1, this)">
-                            시나리오 2: 수동 제어
-                        </button>
-                        <button class="py-4 px-6 text-gray-600 hover:text-amber-600 border-b-2 border-transparent focus:outline-none" onclick="switchScenario(2, this)">
-                           시나리오 3: 앱 연동
-                        </button>
-                    </nav>
-                </div>
-
-                <div id="scenario-content">
-                </div>
-            </div>
-        </section>
-
-        <section id="effects" class="content-section">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">기대 효과 및 미래 가치</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">단순한 편의를 넘어, 우리의 생활과 기술 역량에 어떤 긍정적인 영향을 가져올까요?</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">👍</div>
-                    <h3 class="text-xl font-bold mb-2">사용자 편의성 증대</h3>
-                    <p class="text-gray-600">건조, 살균, 날씨 확인까지 자동화하여 사용자의 수고를 덜고 삶의 질을 향상시킵니다.</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">✨</div>
-                    <h3 class="text-xl font-bold mb-2">위생적인 환경 조성</h3>
-                    <p class="text-gray-600">UV-C 살균으로 세균과 곰팡이를 제거하여 가족의 건강을 지킵니다.</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">🏠</div>
-                    <h3 class="text-xl font-bold mb-2">쾌적한 실내 환경</h3>
-                    <p class="text-gray-600">바닥의 물기, 냄새를 원천 차단하여 안전하고 깨끗한 현관을 유지합니다.</p>
-                </div>
-                 <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">🎓</div>
-                    <h3 class="text-xl font-bold mb-2">종합적 기술 역량 확보</h3>
-                    <p class="text-gray-600">H/W, S/W, 통신, 앱 개발 등 IoT 시스템 통합 설계 및 구현 능력을 체득합니다.</p>
-                </div>
-            </div>
-
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-center mb-6 text-gray-800">시장 경쟁력 및 향후 확장성</h3>
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="md:w-1/2">
-                         <div class="chart-container">
-                            <canvas id="scalabilityChart"></canvas>
+                    <div class="relative pl-12 md:pl-0 flex">
+                        <div class="absolute left-4 md:left-1/2 w-8 h-8 bg-[#07575B] rounded-full -translate-x-1/2 border-4 border-white shadow-md"></div>
+                        <div class="md:w-5/12"></div>
+                        <div class="md:w-5/12 md:pl-12">
+                             <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#003B46]">2단계: 데이터 전처리 및 증강</h4>
+                                <p class="text-sm text-[#07575B]">학습 데이터셋 500장 이상으로 확장</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="md:w-1/2">
-                        <p class="text-gray-600 mb-4">
-                            본 프로젝트는 새로운 스마트홈 가전 카테고리를 창출할 잠재력을 가집니다. 향후 구체적인 로드맵을 통해 지속 가능한 성장이 가능합니다.
-                        </p>
-                        <ul class="list-disc list-inside text-gray-700 space-y-2">
-                            <li><span class="font-bold">스마트홈 생태계 편입:</span> AI 스피커 연동으로 음성 제어 기능 추가</li>
-                            <li><span class="font-bold">제품 라인업 다각화:</span> 프리미엄 디자인 및 공공시설용 대용량 모델 개발</li>
-                            <li><span class="font-bold">데이터 기반 서비스:</span> 사용자 맞춤형 건조/살균 모드 추천 등 구독 모델 도입</li>
-                        </ul>
+                    <div class="relative pl-12 md:pl-0 flex md:justify-end">
+                        <div class="absolute left-4 md:left-1/2 w-8 h-8 bg-[#07575B] rounded-full -translate-x-1/2 border-4 border-white shadow-md"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-12">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#003B46]">3단계: 모델 재설계 및 학습</h4>
+                                <p class="text-sm text-[#07575B]">YOLO v8 기반 전이 학습 수행</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative pl-12 md:pl-0 flex">
+                        <div class="absolute left-4 md:left-1/2 w-8 h-8 bg-[#07575B] rounded-full -translate-x-1/2 border-4 border-white shadow-md"></div>
+                        <div class="md:w-5/12"></div>
+                        <div class="md:w-5/12 md:pl-12">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#003B46]">4단계: 성능 평가 및 최적화</h4>
+                                <p class="text-sm text-[#07575B]">mAP 지표로 성능 측정 및 최적화</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative pl-12 md:pl-0 flex md:justify-end">
+                        <div class="absolute left-4 md:left-1/2 w-8 h-8 bg-[#07575B] rounded-full -translate-x-1/2 border-4 border-white shadow-md"></div>
+                        <div class="md:w-5/12 md:text-right md:pr-12">
+                             <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#003B46]">5단계: 시스템 통합 및 최종 테스트</h4>
+                                <p class="text-sm text-[#07575B]">엣지 디바이스에 배포 및 실시간 검증</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="outcome" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">프로젝트 기대 효과</h2>
+                <p class="max-w-3xl mx-auto text-[#07575B]">
+                    본 프로젝트를 통해 AI 쓰레기통은 한 단계 더 진보하여, 더 높은 정확도와 안정성, 그리고 확장성을 갖추게 됩니다.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003B46] mb-4">예상 분류 정확도</h3>
+                     <p class="text-[#07575B] mb-6">
+                       체계적인 개선을 통해 기존 모델 대비 분류 정확도를 대폭 향상시켜 재활용 효율을 극대화할 수 있습니다.
+                    </p>
+                    <div class="chart-container h-64 md:h-72">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center gap-6 transform hover:-translate-y-2 transition-transform duration-300">
+                        <span class="text-5xl">🎯</span>
+                        <div>
+                            <h4 class="text-xl font-bold text-[#003B46]">일반화 성능 및 안정성 확보</h4>
+                            <p class="text-[#07575B]">어떤 쓰레기가 들어와도 일관되고 안정적인 성능을 보장합니다.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center gap-6 transform hover:-translate-y-2 transition-transform duration-300">
+                        <span class="text-5xl">📈</span>
+                        <div>
+                            <h4 class="text-xl font-bold text-[#003B46]">정확도 및 정밀도 향상</h4>
+                            <p class="text-[#07575B]">오분류 오류를 최소화하여 재활용 자원의 손실을 막습니다.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center gap-6 transform hover:-translate-y-2 transition-transform duration-300">
+                        <span class="text-5xl">🔧</span>
+                        <div>
+                            <h4 class="text-xl font-bold text-[#003B46]">유지보수 및 확장성 강화</h4>
+                            <p class="text-[#07575B]">향후 새로운 종류의 쓰레기도 쉽게 추가할 수 있는 유연한 구조를 갖춥니다.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-gray-800 text-white mt-12">
-        <div class="container mx-auto p-6 text-center">
-            <p>&copy; 2025 스마트 우산꽂이 캡스톤 디자인 프로젝트</p>
+    <footer class="bg-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center text-[#07575B]">
+            <p class="font-bold">5조 | 손윤재, 채재민, 김준희, 박다은, 김선진</p>
+            <p class="text-sm mt-2">&copy; 2025 AI Waste Bin Improvement Project. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
-        const sections = {
-            overview: document.getElementById('overview'),
-            features: document.getElementById('features'),
-            architecture: document.getElementById('architecture'),
-            scenarios: document.getElementById('scenarios'),
-            effects: document.getElementById('effects'),
-        };
+        document.addEventListener('DOMContentLoaded', () => {
 
-        const navLinks = document.querySelectorAll('.nav-link');
-        const mobileNav = document.getElementById('mobile-nav');
-        
-        const featuresData = [
-            {
-                icon: '💨',
-                title: '지능형 자동 건조',
-                description: '젖은 우산을 넣고 문을 닫으면 4개의 저소음 쿨러가 자동으로 작동합니다. PWM 제어로 효율과 정숙성을 모두 잡았습니다.'
-            },
-            {
-                icon: '🛡️',
-                title: '안전한 UV-C 살균',
-                description: '문이 닫혔을 때만 253.7nm 파장의 UV-C LED가 작동하여 세균과 바이러스를 99.9% 제거합니다. 안전 로직으로 인체 노출을 원천 방지합니다.'
-            },
-            {
-                icon: '💡',
-                title: 'UX 중심 내부 조명',
-                description: '문을 열면 내부 LED가 부드럽게 켜져 야간에도 쉽게 우산을 넣고 뺄 수 있도록 돕습니다. 사용자의 만족도를 높이는 디테일입니다.'
-            },
-            {
-                icon: '💧',
-                title: '오버플로우 방지',
-                description: '정전용량식 수위 센서가 물받이 통 수위를 실시간 감지합니다. 물이 가득 차면 알림을 보내고 건조 기능을 일시 중단하여 안전을 확보합니다.'
-            },
-            {
-                icon: '🌦️',
-                title: '현관 정보 허브',
-                description: '전면 LCD 터치스크린으로 날씨, 온도, 미세먼지 등 생활 정보를 제공합니다. 현관의 스마트 정보 허브 역할을 수행합니다.'
-            },
-            {
-                icon: '📱',
-                title: '모바일 앱 연동',
-                description: '전용 앱으로 원격 제어, 상태 모니터링, 날씨 알림은 물론, 사용 통계 리포트와 유지보수 알림까지 제공합니다.'
+            function wrapLabels(label, maxLen = 16) {
+                if (typeof label !== 'string' || label.length <= maxLen) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).trim().length > maxLen) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                }
+                if (currentLine) {
+                    lines.push(currentLine.trim());
+                }
+                return lines;
             }
-        ];
 
-        const scenariosData = [
-            {
-                title: "시나리오 1: 자동 건조/살균",
-                steps: [
-                    { title: "1. 귀가 및 우산 보관", userAction: "비 맞은 우산을 들고 문을 엽니다.", systemReaction: "내부 조명이 켜지며 내부를 비춥니다." },
-                    { title: "2. 문 닫기", userAction: "우산을 걸고 문을 닫습니다.", systemReaction: "내부 조명이 꺼지고, 자동 건조 및 살균 프로세스가 시작됩니다." },
-                    { title: "3. 자동 프로세스 진행", userAction: "사용자 개입 없음", systemReaction: "4개의 쿨러와 UV-C LED가 작동하며, 디스플레이에 남은 시간이 표시됩니다." },
-                    { title: "4. 완료", userAction: "10분 경과", systemReaction: "모든 기능이 자동으로 종료되고 '완료' 메시지 후 날씨 화면으로 복귀합니다." },
-                ]
-            },
-            {
-                title: "시나리오 2: 수위 감지 및 수동 제어",
-                steps: [
-                    { title: "1. 물통 가득 참", userAction: "물받이 통이 가득 찬 상태에서 우산을 넣습니다.", systemReaction: "수위 센서가 감지하여 쿨러 작동을 중지하고 '물을 비워주세요!' 경고를 표시합니다." },
-                    { title: "2. 문제 해결", userAction: "사용자가 물받이 통을 비웁니다.", systemReaction: "경고가 사라지고 시스템이 정상 대기 상태로 돌아갑니다." },
-                    { title: "3. 수동 조작", userAction: "우산이 덜 말라 디스플레이를 터치합니다.", systemReaction: "수동 제어 메뉴 화면으로 전환됩니다." },
-                    { title: "4. 맞춤 설정", userAction: "작동 시간과 팬 속도를 '강풍'으로 설정합니다.", systemReaction: "설정값에 따라 쿨러가 강력하게 작동하며, 디스플레이에 변경된 상태를 표시합니다." },
-                ]
-            },
-            {
-                title: "시나리오 3: 모바일 앱 연동",
-                steps: [
-                    { title: "1. 외출 전 알림", userAction: "스마트폰으로 푸시 알림을 확인합니다.", systemReaction: "강수 확률이 높으면 앱이 '우산을 챙기세요!' 라는 구체적인 알림을 보냅니다." },
-                    { title: "2. 현관에서 정보 확인", userAction: "외출 준비를 하며 디스플레이를 봅니다.", systemReaction: "디스플레이에 날씨 예보와 '우산 챙기세요' 코멘트가 표시되어 있습니다." },
-                    { title: "3. 원격 제어", userAction: "장기간 외출 시 앱으로 '절전 모드'를 활성화합니다.", systemReaction: "명령을 수신하여 불필요한 대기 전력을 최소화하는 모드로 전환됩니다." },
-                ]
-            }
-        ];
-
-        function showSection(sectionId, clickedLink) {
-            Object.values(sections).forEach(section => {
-                section.classList.remove('active');
-            });
-            sections[sectionId].classList.add('active');
-
-            if (clickedLink) {
-                 navLinks.forEach(link => link.classList.remove('active'));
-                 clickedLink.classList.add('active');
-            }
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                return Array.isArray(label) ? label.join(' ') : label;
+            };
             
-            mobileNav.value = sectionId;
-            window.location.hash = sectionId;
-        }
-
-        function populateFeatures() {
-            const container = document.getElementById('feature-cards-container');
-            featuresData.forEach(feature => {
-                const card = `
-                    <div class="feature-card bg-white p-6 rounded-lg shadow-lg cursor-pointer">
-                        <div class="text-5xl mb-4">${feature.icon}</div>
-                        <h3 class="text-xl font-bold mb-2">${feature.title}</h3>
-                        <p class="text-gray-600">${feature.description}</p>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
-        }
-        
-        let currentScenarioIndex = 0;
-        let currentStepIndex = 0;
-
-        function renderScenario() {
-            const scenario = scenariosData[currentScenarioIndex];
-            const contentContainer = document.getElementById('scenario-content');
-            
-            let stepsHtml = '';
-            scenario.steps.forEach((step, index) => {
-                stepsHtml += `
-                    <div class="scenario-step p-4 border-l-4 border-amber-500 bg-amber-50 rounded-r-lg" style="display: ${index === currentStepIndex ? 'block' : 'none'};">
-                        <h4 class="text-xl font-bold text-gray-800 mb-2">${step.title}</h4>
-                        <p class="mb-1"><span class="font-semibold text-gray-600">사용자 행동:</span> ${step.userAction}</p>
-                        <p><span class="font-semibold text-amber-700">시스템 반응:</span> ${step.systemReaction}</p>
-                    </div>
-                `;
-            });
-
-            contentContainer.innerHTML = `
-                <div class="relative">
-                    ${stepsHtml}
-                    <div class="flex justify-between items-center mt-6">
-                        <button class="btn-primary py-2 px-4 rounded-md" onclick="prevStep()" id="prev-btn">이전 단계</button>
-                        <div class="text-sm text-gray-500">${currentStepIndex + 1} / ${scenario.steps.length}</div>
-                        <button class="btn-primary py-2 px-4 rounded-md" onclick="nextStep()" id="next-btn">다음 단계</button>
-                    </div>
-                </div>
-            `;
-            updateStepButtons();
-        }
-        
-        function updateStepButtons() {
-            const scenario = scenariosData[currentScenarioIndex];
-            document.getElementById('prev-btn').disabled = currentStepIndex === 0;
-            document.getElementById('prev-btn').style.opacity = currentStepIndex === 0 ? 0.5 : 1;
-            document.getElementById('next-btn').disabled = currentStepIndex === scenario.steps.length - 1;
-            document.getElementById('next-btn').style.opacity = currentStepIndex === scenario.steps.length - 1 ? 0.5 : 1;
-        }
-
-        function nextStep() {
-            if (currentStepIndex < scenariosData[currentScenarioIndex].steps.length - 1) {
-                currentStepIndex++;
-                renderScenario();
-            }
-        }
-        
-        function prevStep() {
-            if (currentStepIndex > 0) {
-                currentStepIndex--;
-                renderScenario();
-            }
-        }
-
-        function switchScenario(index, tab) {
-            currentScenarioIndex = index;
-            currentStepIndex = 0;
-            
-            const tabs = document.querySelectorAll('#scenario-tabs button');
-            tabs.forEach(t => {
-                t.classList.remove('text-amber-600', 'border-amber-600');
-                t.classList.add('text-gray-600', 'border-transparent');
-            });
-            tab.classList.remove('text-gray-600', 'border-transparent');
-            tab.classList.add('text-amber-600', 'border-amber-600');
-            
-            renderScenario();
-        }
-        
-        function createChart() {
-            const ctx = document.getElementById('scalabilityChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['스마트홈 생태계 편입', '제품 라인업 다각화', '데이터 기반 서비스'],
-                    datasets: [{
-                        label: '확장 가능성 지수',
-                        data: [85, 95, 75],
-                        backgroundColor: [
-                            'rgba(74, 85, 104, 0.6)',
-                            'rgba(213, 163, 94, 0.6)',
-                            'rgba(160, 174, 192, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(74, 85, 104, 1)',
-                            'rgba(213, 163, 94, 1)',
-                            'rgba(160, 174, 192, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: '향후 성장 방향성'
+            const sharedTooltipOptions = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
                         }
                     }
                 }
-            });
-        }
+            };
 
-
-        window.onload = () => {
-            const hash = window.location.hash.replace('#', '');
-            if (hash && sections[hash]) {
-                const correspondingLink = document.querySelector(`.nav-link[href="#${hash}"]`);
-                showSection(hash, correspondingLink);
-            } else {
-                 showSection('overview', navLinks[0]);
+            const overfittingCtx = document.getElementById('overfittingChart')?.getContext('2d');
+            if(overfittingCtx) {
+                new Chart(overfittingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Epoch 1', '10', '20', '30', '40', '50'],
+                        datasets: [{
+                            label: '훈련 정확도',
+                            data: [60, 85, 95, 98, 99.5, 100],
+                            borderColor: '#07575B',
+                            backgroundColor: 'rgba(7, 87, 91, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                        }, {
+                            label: '검증 정확도 (실제 성능)',
+                            data: [55, 62, 61, 63, 62, 62.5],
+                            borderColor: '#C4DFE6',
+                            backgroundColor: 'rgba(196, 223, 230, 0.2)',
+                            borderDash: [5, 5],
+                            fill: true,
+                            tension: 0.4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, ticks: { callback: (value) => value + '%' } }
+                        },
+                        ...sharedTooltipOptions,
+                    }
+                });
+            }
+            
+            const accuracyCtx = document.getElementById('accuracyChart')?.getContext('2d');
+            if(accuracyCtx) {
+                 new Chart(accuracyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['기존 모델', '개선 후 모델 (예상)'],
+                        datasets: [{
+                            label: '분류 정확도',
+                            data: [62.5, 95],
+                            backgroundColor: ['#C4DFE6', '#07575B'],
+                            borderColor: ['#66A5AD', '#003B46'],
+                            borderWidth: 2,
+                            borderRadius: 5,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                           x: { max: 100, ticks: { callback: (value) => value + '%' } }
+                        },
+                        plugins: {
+                            ...sharedTooltipOptions.plugins,
+                            legend: { display: false }
+                        }
+                    }
+                });
             }
 
-            populateFeatures();
-            switchScenario(0, document.querySelector('#scenario-tabs button'));
-            createChart();
-        };
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => observer.observe(section));
+        });
     </script>
 </body>
 </html>
