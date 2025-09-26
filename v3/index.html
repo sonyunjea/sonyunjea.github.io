@@ -1,6 +1,6 @@
 <!-- Chosen Palette: Calm Harmony (Slate, White, Indigo, Red) -->
-<!-- Application Structure Plan: Interactive calculator/dashboard. User adjusts sliders (leverage, etc.) and sees real-time updates to key metrics, a dynamic ROI comparison chart, and a contextual summary. This active learning approach is more engaging and effective for demonstrating the impact of fees than a static report. -->
-<!-- Visualization & Content Choices: Report data -> Goal: Demonstrate fee impact -> Viz: Interactive Chart.js bar/line chart and dynamic stat cards -> Interaction: User-controlled sliders for leverage and other inputs trigger real-time recalculations and UI updates. Justification: Turns a static analysis into an exploratory tool for better user understanding. Library: Chart.js for the dynamic chart. -->
+<!-- Application Structure Plan: Interactive calculator/dashboard. User adjusts sliders (leverage, etc.) and sees real-time updates to key metrics, a dynamic ROI comparison table, and a contextual summary. This active learning approach is more engaging and effective for demonstrating the impact of fees than a static report. -->
+<!-- Visualization & Content Choices: Report data -> Goal: Demonstrate fee impact -> Viz: Interactive data table and dynamic stat cards -> Interaction: User-controlled sliders for leverage and other inputs trigger real-time recalculations and UI updates. Justification: Turns a static analysis into an exploratory tool for better user understanding. Library: None needed for table. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>레버리지 수수료 인터랙티브 시뮬레이터</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
@@ -70,6 +69,7 @@
                     <div class="card stat-card">
                         <h3 class="stat-title">왕복 총수수료</h3>
                         <p id="totalFees" class="stat-value text-amber-600">160,000원</p>
+                        <p id="totalFeesPercent" class="text-sm text-slate-500 mt-1"></p>
                     </div>
                     <div class="card stat-card">
                         <h3 class="stat-title">최종 순손익</h3>
@@ -88,9 +88,22 @@
                     </div>
                 </div>
 
-                <div class="card p-4 md:p-6">
-                    <div class="chart-container relative w-full h-[350px] md:h-[400px]">
-                        <canvas id="roiChart"></canvas>
+                <div class="card p-6">
+                    <h2 class="text-xl font-bold text-slate-700 mb-4">레버리지별 상세 분석표</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">레버리지</th>
+                                    <th scope="col" class="px-6 py-3">왕복 수수료</th>
+                                    <th scope="col" class="px-6 py-3">최종 순손익</th>
+                                    <th scope="col" class="px-6 py-3">실제 ROI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analysisTableBody">
+                                <!-- Data rows will be inserted here by JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -114,15 +127,15 @@
 
         const positionSizeEl = document.getElementById('positionSize');
         const totalFeesEl = document.getElementById('totalFees');
+        const totalFeesPercentEl = document.getElementById('totalFeesPercent');
         const netProfitEl = document.getElementById('netProfit');
         const apparentROIEl = document.getElementById('apparentROI');
         const realROIEl = document.getElementById('realROI');
         const analysisTextEl = document.getElementById('analysisText');
+        const analysisTableBodyEl = document.getElementById('analysisTableBody');
 
         const formatKRW = (num) => `${Math.round(num).toLocaleString('ko-KR')}원`;
         const formatPercent = (num) => `${num.toFixed(2)}%`;
-
-        let roiChart;
 
         function calculateAndUpdate() {
             const capital = parseFloat(initialCapitalEl.value) || 0;
@@ -134,8 +147,7 @@
             feeRateValueEl.textContent = `${(feeRate * 100).toFixed(3)} %`;
 
             const positionSize = capital * leverage;
-            const oneWayFee = positionSize * feeRate;
-            const totalFees = oneWayFee * 2;
+            const totalFees = positionSize * feeRate * 2;
             const netProfit = profit - totalFees;
 
             const apparentROI = capital > 0 ? (profit / capital) * 100 : 0;
@@ -143,6 +155,7 @@
             
             positionSizeEl.textContent = positionSize >= 100000000 ? `${(positionSize / 100000000).toFixed(2)}억원` : formatKRW(positionSize);
             totalFeesEl.textContent = formatKRW(totalFees);
+            totalFeesPercentEl.textContent = `(왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
             netProfitEl.textContent = formatKRW(netProfit);
             apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
             realROIEl.textContent = (realROI >= 0 ? '+' : '') + formatPercent(realROI);
@@ -157,72 +170,32 @@
             } else {
                 analysisTextEl.innerHTML = `현재 조건에서는 왕복 수수료 <strong class="text-amber-700">${formatKRW(totalFees)}</strong>를 모두 지불하고도, 최종적으로 <strong class="text-indigo-600">${formatKRW(netProfit)}</strong>의 순수익을 달성했습니다. 이는 수수료를 넘어서는 충분한 수익을 확보한 성공적인 거래입니다.`;
             }
-
-            updateChart(capital, profit, feeRate);
-        }
-
-        function updateChart(capital, profit, feeRate) {
-            const labels = ['1x', '10x', '25x', '50x', '75x', '100x', '125x'];
-            const leveragePoints = [1, 10, 25, 50, 75, 100, 125];
             
-            const realROIData = leveragePoints.map(lev => {
-                const netProfit = profit - (capital * lev * feeRate * 2);
-                return capital > 0 ? (netProfit / capital) * 100 : 0;
-            });
-
-            const apparentROI = capital > 0 ? (profit / capital) * 100 : 0;
-            const apparentROIData = Array(labels.length).fill(apparentROI);
-
-            const backgroundColors = realROIData.map(value => value >= 0 ? 'rgba(79, 70, 229, 0.7)' : 'rgba(220, 38, 38, 0.7)');
-            const borderColors = realROIData.map(value => value >= 0 ? 'rgb(79, 70, 229)' : 'rgb(220, 38, 38)');
-
-            roiChart.data.datasets[0].data = realROIData;
-            roiChart.data.datasets[0].backgroundColor = backgroundColors;
-            roiChart.data.datasets[0].borderColor = borderColors;
-            roiChart.data.datasets[1].data = apparentROIData;
-            roiChart.update();
+            updateTable(capital, profit, feeRate);
         }
 
-        function initializeChart() {
-            const ctx = document.getElementById('roiChart').getContext('2d');
-            roiChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: '실제 최종 ROI',
-                            data: [],
-                            borderWidth: 1
-                        },
-                        {
-                            label: '거래소 표시 ROI',
-                            data: [],
-                            type: 'line',
-                            borderColor: 'rgb(249, 115, 22)',
-                            backgroundColor: 'rgba(249, 115, 22, 0.2)',
-                            fill: false,
-                            tension: 0.1,
-                            pointRadius: 0,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { title: { display: true, text: '레버리지 배율' } },
-                        y: { title: { display: true, text: '수익률 (%)' }, ticks: { callback: value => `${value}%` } }
-                    },
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%` } }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
-                }
+        function updateTable(capital, profit, feeRate) {
+            analysisTableBodyEl.innerHTML = '';
+            const leveragePoints = [1, 5, 10, 25, 50, 75, 100, 125];
+
+            leveragePoints.forEach(lev => {
+                const positionSize = capital * lev;
+                const totalFees = positionSize * feeRate * 2;
+                const netProfit = profit - totalFees;
+                const realROI = capital > 0 ? (netProfit / capital) * 100 : 0;
+                
+                const isProfit = netProfit >= 0;
+                const profitColorClass = isProfit ? 'text-indigo-600' : 'text-red-600';
+
+                const row = `
+                    <tr class="bg-white border-b hover:bg-slate-50">
+                        <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${lev}x</th>
+                        <td class="px-6 py-4">${formatKRW(totalFees)}</td>
+                        <td class="px-6 py-4 font-bold ${profitColorClass}">${formatKRW(netProfit)}</td>
+                        <td class="px-6 py-4 font-bold ${profitColorClass}">${(isProfit ? '+' : '') + formatPercent(realROI)}</td>
+                    </tr>
+                `;
+                analysisTableBodyEl.innerHTML += row;
             });
         }
 
@@ -231,7 +204,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            initializeChart();
             calculateAndUpdate();
         });
     </script>
