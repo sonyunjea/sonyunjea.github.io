@@ -55,22 +55,22 @@
                             <input type="range" id="leverage" min="1" max="125" value="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-2">목표 수익 설정 방식</label>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">목표 손익 설정 방식</label>
                             <div class="flex space-x-2">
                                 <button id="profitModeAmount" class="flex-1 p-2 border rounded-md ctrl-btn-active">금액</button>
-                                <button id="profitModePercent" class="flex-1 p-2 border rounded-md ctrl-btn-inactive">수익률 (%)</button>
+                                <button id="profitModePercent" class="flex-1 p-2 border rounded-md ctrl-btn-inactive">손익률 (%)</button>
                             </div>
                         </div>
                         <div id="profitAmountGroup">
-                            <label for="targetProfit" class="block text-sm font-medium text-slate-600 mb-1">목표 수익 (<span id="profitCurrency">KRW</span>)</label>
+                            <label for="targetProfit" class="block text-sm font-medium text-slate-600 mb-1">목표 손익 (<span id="profitCurrency">KRW</span>)</label>
                             <input type="number" id="targetProfit" value="150000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div id="profitPercentGroup" class="hidden">
                             <label for="targetProfitPercent" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
-                                <span>목표 수익률 (원금 대비)</span>
+                                <span>목표 손익률 (원금 대비)</span>
                                 <span id="targetProfitPercentValue" class="font-bold text-indigo-600">0.75 %</span>
                             </label>
-                            <input type="range" id="targetProfitPercent" min="0.01" max="100" value="0.75" step="0.01" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <input type="range" id="targetProfitPercent" min="-100" max="100" value="0.75" step="0.01" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div>
                             <label for="feeRate" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
@@ -227,8 +227,9 @@
 
             const profitFormatted = (state.currency === 'KRW') ? formatKRW(profit) : formatUSDT(profit);
             const feesFormatted = (state.currency === 'KRW') ? formatKRW(totalFees) : formatUSDT(totalFees);
-            netProfitBreakdownEl.innerHTML = `(목표 ${profitFormatted} - 수수료 ${feesFormatted})`;
-
+            const breakdownPrefix = profit >= 0 ? '목표' : '손절';
+            netProfitBreakdownEl.innerHTML = `(${breakdownPrefix} ${profitFormatted} - 수수료 ${feesFormatted})`;
+            
             const effectiveFeePercent = leverage * feeRate * 2 * 100;
             totalFeesEffectivePercentEl.textContent = `(원금 대비 실질 ${effectiveFeePercent.toFixed(2)}%)`;
             totalFeesPercentEl.textContent = `(기본 왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
@@ -236,16 +237,23 @@
             apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
             realROIEl.textContent = (realROI >= 0 ? '+' : '') + formatPercent(realROI);
             realROIFeeEl.textContent = `(수수료 ${effectiveFeePercent.toFixed(2)}% 차감)`;
+            
+            apparentROIEl.classList.toggle('text-red-600', apparentROI < 0);
+            apparentROIEl.classList.toggle('text-orange-500', apparentROI >= 0);
 
             netProfitEl.classList.toggle('text-red-600', netProfit < 0);
             netProfitEl.classList.toggle('text-indigo-600', netProfit >= 0);
             realROIEl.classList.toggle('text-red-600', realROI < 0);
             realROIEl.classList.toggle('text-indigo-600', realROI >= 0);
 
-            if (netProfit < 0) {
-                analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-orange-600">${formatDual(profit)}</strong>의 수익을 냈음에도 불구하고, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>이 더 커서 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 보게 됩니다.`;
+            if (profit >= 0) {
+                if (netProfit < 0) {
+                    analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-orange-600">${formatDual(profit)}</strong>의 수익을 냈음에도 불구하고, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>이 더 커서 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 보게 됩니다.`;
+                } else {
+                    analysisTextEl.innerHTML = `현재 조건에서는 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>를 모두 지불하고도, 최종적으로 <strong class="text-indigo-600">${formatDual(netProfit)}</strong>의 순수익을 달성했습니다.`;
+                }
             } else {
-                analysisTextEl.innerHTML = `현재 조건에서는 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>를 모두 지불하고도, 최종적으로 <strong class="text-indigo-600">${formatDual(netProfit)}</strong>의 순수익을 달성했습니다.`;
+                 analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-red-600">${formatDual(profit)}</strong>의 손절로 인해, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>까지 더해져 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 확정하게 됩니다.`;
             }
             
             updateTable(capital, profit, feeRate);
@@ -259,6 +267,7 @@
                 const totalFees = (capital * lev) * feeRate * 2;
                 const netProfit = profit - totalFees;
                 const realROI = capital > 0 ? (netProfit / capital) * 100 : 0;
+                const effectiveFeePercent = lev * feeRate * 2 * 100;
                 
                 const isProfit = netProfit >= 0;
                 const profitColorClass = isProfit ? 'text-indigo-600' : 'text-red-600';
@@ -266,7 +275,11 @@
                 const row = `
                     <tr class="bg-white border-b hover:bg-slate-50">
                         <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${lev}x</th>
-                        <td class="px-6 py-4">${formatDual(totalFees)}</td>
+                        <td class="px-6 py-4">
+                            ${formatDual(totalFees)}
+                            <br>
+                            <span class="text-xs text-amber-700 font-medium">(실질 ${effectiveFeePercent.toFixed(2)}%)</span>
+                        </td>
                         <td class="px-6 py-4 font-bold ${profitColorClass}">${formatDual(netProfit)}</td>
                         <td class="px-6 py-4 font-bold ${profitColorClass}">${(isProfit ? '+' : '') + formatPercent(realROI)}</td>
                     </tr>
