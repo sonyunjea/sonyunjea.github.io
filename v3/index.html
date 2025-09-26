@@ -16,8 +16,8 @@
         .stat-card { text-align: center; padding: 1.5rem; }
         .stat-title { font-size: 0.875rem; color: #64748b; font-weight: 500; margin-bottom: 0.5rem; }
         .stat-value { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
-        .currency-btn-active { background-color: #4f46e5; color: white; }
-        .currency-btn-inactive { background-color: white; color: #334155; }
+        .ctrl-btn-active { background-color: #4f46e5; color: white; border-color: #4f46e5;}
+        .ctrl-btn-inactive { background-color: white; color: #334155; }
         input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #4f46e5; border-radius: 50%; cursor: pointer; margin-top: -6px; }
         input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #4f46e5; border-radius: 50%; cursor: pointer; }
     </style>
@@ -39,8 +39,8 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-2">통화 선택 <span id="exchangeRateLabel" class="text-xs">(환율 로딩중...)</span></label>
                             <div class="flex space-x-2">
-                                <button id="currencyKRW" class="flex-1 p-2 border rounded-md currency-btn-active">KRW (원)</button>
-                                <button id="currencyUSDT" class="flex-1 p-2 border rounded-md currency-btn-inactive">USDT (달러)</button>
+                                <button id="currencyKRW" class="flex-1 p-2 border rounded-md ctrl-btn-active">KRW (원)</button>
+                                <button id="currencyUSDT" class="flex-1 p-2 border rounded-md ctrl-btn-inactive">USDT (달러)</button>
                             </div>
                         </div>
                         <div>
@@ -55,8 +55,22 @@
                             <input type="range" id="leverage" min="1" max="125" value="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">목표 수익 설정 방식</label>
+                            <div class="flex space-x-2">
+                                <button id="profitModeAmount" class="flex-1 p-2 border rounded-md ctrl-btn-active">금액</button>
+                                <button id="profitModePercent" class="flex-1 p-2 border rounded-md ctrl-btn-inactive">수익률 (%)</button>
+                            </div>
+                        </div>
+                        <div id="profitAmountGroup">
                             <label for="targetProfit" class="block text-sm font-medium text-slate-600 mb-1">목표 수익 (<span id="profitCurrency">KRW</span>)</label>
                             <input type="number" id="targetProfit" value="150000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div id="profitPercentGroup" class="hidden">
+                            <label for="targetProfitPercent" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
+                                <span>목표 수익률 (원금 대비)</span>
+                                <span id="targetProfitPercentValue" class="font-bold text-indigo-600">0.75 %</span>
+                            </label>
+                            <input type="range" id="targetProfitPercent" min="0.01" max="100" value="0.75" step="0.01" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div>
                             <label for="feeRate" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
@@ -125,19 +139,27 @@
     <script>
         const state = {
             currency: 'KRW',
-            exchangeRate: 1420 
+            exchangeRate: 1420,
+            profitMode: 'amount'
         };
 
         const initialCapitalEl = document.getElementById('initialCapital');
         const leverageEl = document.getElementById('leverage');
         const targetProfitEl = document.getElementById('targetProfit');
         const feeRateEl = document.getElementById('feeRate');
+        const targetProfitPercentEl = document.getElementById('targetProfitPercent');
         
         const currencyKRWBtn = document.getElementById('currencyKRW');
         const currencyUSDTBtn = document.getElementById('currencyUSDT');
         const capitalCurrencyEl = document.getElementById('capitalCurrency');
         const profitCurrencyEl = document.getElementById('profitCurrency');
         const exchangeRateLabelEl = document.getElementById('exchangeRateLabel');
+        
+        const profitModeAmountBtn = document.getElementById('profitModeAmount');
+        const profitModePercentBtn = document.getElementById('profitModePercent');
+        const profitAmountGroupEl = document.getElementById('profitAmountGroup');
+        const profitPercentGroupEl = document.getElementById('profitPercentGroup');
+        const targetProfitPercentValueEl = document.getElementById('targetProfitPercentValue');
 
         const leverageValueEl = document.getElementById('leverageValue');
         const feeRateValueEl = document.getElementById('feeRateValue');
@@ -167,8 +189,20 @@
         function calculateAndUpdate() {
             const capital = parseFloat(initialCapitalEl.value) || 0;
             const leverage = parseInt(leverageEl.value);
-            const profit = parseFloat(targetProfitEl.value) || 0;
             const feeRate = parseFloat(feeRateEl.value) / 100;
+            let profit;
+
+            if (state.profitMode === 'percent') {
+                const profitPercent = parseFloat(targetProfitPercentEl.value) / 100;
+                profit = capital * profitPercent;
+                targetProfitEl.value = profit.toFixed(state.currency === 'USDT' ? 2 : 0);
+                targetProfitPercentValueEl.textContent = `${(profitPercent * 100).toFixed(2)} %`;
+            } else {
+                profit = parseFloat(targetProfitEl.value) || 0;
+                const profitPercent = capital > 0 ? (profit / capital) * 100 : 0;
+                targetProfitPercentEl.value = profitPercent.toFixed(2);
+                targetProfitPercentValueEl.textContent = `${profitPercent.toFixed(2)} %`;
+            }
 
             leverageValueEl.textContent = `${leverage} 배`;
             feeRateValueEl.textContent = `${(feeRate * 100).toFixed(3)} %`;
@@ -228,13 +262,10 @@
 
         function switchCurrency(newCurrency) {
             if (state.currency === newCurrency) return;
-
             const oldCurrency = state.currency;
             state.currency = newCurrency;
-
             const capital = parseFloat(initialCapitalEl.value);
             const profit = parseFloat(targetProfitEl.value);
-
             if (newCurrency === 'USDT' && oldCurrency === 'KRW') {
                 initialCapitalEl.value = (capital / state.exchangeRate).toFixed(2);
                 targetProfitEl.value = (profit / state.exchangeRate).toFixed(2);
@@ -242,7 +273,6 @@
                 initialCapitalEl.value = Math.round(capital * state.exchangeRate);
                 targetProfitEl.value = Math.round(profit * state.exchangeRate);
             }
-            
             updateCurrencyUI();
             calculateAndUpdate();
         }
@@ -250,10 +280,26 @@
         function updateCurrencyUI() {
             capitalCurrencyEl.textContent = state.currency;
             profitCurrencyEl.textContent = state.currency;
-            currencyKRWBtn.classList.toggle('currency-btn-active', state.currency === 'KRW');
-            currencyKRWBtn.classList.toggle('currency-btn-inactive', state.currency !== 'KRW');
-            currencyUSDTBtn.classList.toggle('currency-btn-active', state.currency === 'USDT');
-            currencyUSDTBtn.classList.toggle('currency-btn-inactive', state.currency !== 'USDT');
+            currencyKRWBtn.classList.toggle('ctrl-btn-active', state.currency === 'KRW');
+            currencyKRWBtn.classList.toggle('ctrl-btn-inactive', state.currency !== 'KRW');
+            currencyUSDTBtn.classList.toggle('ctrl-btn-active', state.currency === 'USDT');
+            currencyUSDTBtn.classList.toggle('ctrl-btn-inactive', state.currency !== 'USDT');
+        }
+
+        function switchProfitMode(newMode) {
+            if (state.profitMode === newMode) return;
+            state.profitMode = newMode;
+            updateProfitModeUI();
+            calculateAndUpdate();
+        }
+
+        function updateProfitModeUI() {
+            profitAmountGroupEl.classList.toggle('hidden', state.profitMode !== 'amount');
+            profitPercentGroupEl.classList.toggle('hidden', state.profitMode !== 'percent');
+            profitModeAmountBtn.classList.toggle('ctrl-btn-active', state.profitMode === 'amount');
+            profitModeAmountBtn.classList.toggle('ctrl-btn-inactive', state.profitMode !== 'amount');
+            profitModePercentBtn.classList.toggle('ctrl-btn-active', state.profitMode === 'percent');
+            profitModePercentBtn.classList.toggle('ctrl-btn-inactive', state.profitMode !== 'percent');
         }
         
         async function fetchExchangeRate() {
@@ -273,14 +319,17 @@
             }
         }
 
-        [initialCapitalEl, leverageEl, targetProfitEl, feeRateEl].forEach(el => {
+        [initialCapitalEl, leverageEl, targetProfitEl, feeRateEl, targetProfitPercentEl].forEach(el => {
             el.addEventListener('input', calculateAndUpdate);
         });
         
         currencyKRWBtn.addEventListener('click', () => switchCurrency('KRW'));
         currencyUSDTBtn.addEventListener('click', () => switchCurrency('USDT'));
+        profitModeAmountBtn.addEventListener('click', () => switchProfitMode('amount'));
+        profitModePercentBtn.addEventListener('click', () => switchProfitMode('percent'));
 
         document.addEventListener('DOMContentLoaded', async () => {
+            updateProfitModeUI();
             await fetchExchangeRate();
             calculateAndUpdate();
         });
