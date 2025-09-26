@@ -1,262 +1,235 @@
+<!-- Chosen Palette: Calm Harmony (Slate, White, Indigo, Red) -->
+<!-- Application Structure Plan: Interactive calculator/dashboard. User adjusts sliders (leverage, etc.) and sees real-time updates to key metrics, a dynamic ROI comparison chart, and a contextual summary. This active learning approach is more engaging and effective for demonstrating the impact of fees than a static report. -->
+<!-- Visualization & Content Choices: Report data -> Goal: Demonstrate fee impact -> Viz: Interactive Chart.js bar/line chart and dynamic stat cards -> Interaction: User-controlled sliders for leverage and other inputs trigger real-time recalculations and UI updates. Justification: Turns a static analysis into an exploratory tool for better user understanding. Library: Chart.js for the dynamic chart. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>k-NN 대화형 시뮬레이터</title>
+    <title>레버리지 수수료 인터랙티브 시뮬레이터</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Serene Sage -->
-    <!-- Application Structure Plan: 사용자가 k-NN 알고리즘의 핵심 원리를 직접 체험하고 이해할 수 있도록 '제어 패널'과 '시각화' 영역으로 구성된 2단 대시보드 구조를 설계했습니다. 왼쪽 제어 패널에서는 알고리즘의 핵심 파라미터인 'k'값을 슬라이더로 조절하고, 데이터 포인트를 재생성할 수 있습니다. 오른쪽 시각화 영역에서는 Chart.js를 이용해 데이터 분포와 예측 과정을 실시간으로 보여줍니다. 특히, 차트를 직접 클릭하여 새로운 데이터의 위치를 지정하면 즉시 예측 결과가 업데이트되도록 하여, 사용자의 상호작용을 극대화했습니다. 이러한 구조는 정적인 설명보다 훨씬 깊은 학습 경험을 제공하며, 파라미터 변화에 따른 결과의 민감도를 직관적으로 탐색하게 해줍니다. -->
-    <!-- Visualization & Content Choices: 
-        1. 데이터 분포 및 예측 과정 시각화 -> 목표: 데이터 클러스터, 새로운 데이터, 최근접 이웃의 관계를 명확히 보여주기 -> 시각화 방식: Chart.js를 이용한 캔버스 기반 산점도(Scatter Plot) -> 상호작용: 차트 클릭 시 새로운 데이터 위치 변경, 'k'값 변경 시 강조되는 이웃(neighbor) 실시간 업데이트 -> 정당성: 산점도는 2D 데이터의 공간적 분포와 점들 간의 거리를 표현하는 데 가장 직관적이며, 동적으로 점의 스타일(색상, 크기)을 변경하여 k-NN의 핵심인 '이웃' 개념을 효과적으로 강조할 수 있습니다.
-        2. 'k' 값 제어 -> 목표: k값의 변화가 예측 결과에 미치는 영향을 사용자가 직접 탐색하게 하기 -> 표현 방식: HTML 슬라이더 입력(<input type="range">) 및 텍스트 디스플레이 -> 상호작용: 슬라이더를 움직이면 실시간으로 k값이 변경되고, 즉시 예측 알고리즘이 재실행되어 시각화 및 결과 텍스트가 업데이트됨 -> 정당성: 슬라이더는 특정 범위 내의 숫자를 선택하는 데 가장 직관적인 UI이며, 즉각적인 피드백은 원인(k값)과 결과(예측)의 관계를 사용자가 능동적으로 학습하게 만듭니다. 
-        3. 결과 텍스트 -> 목표: 예측 결과와 그 근거를 명확하게 텍스트로 전달 -> 표현 방식: 동적으로 업데이트되는 HTML 텍스트 블록 -> 상호작용: 예측이 변경될 때마다 JavaScript가 해당 DOM 요소의 내용을 즉시 갱신 -> 정당성: 시각적 표현만으로는 부족할 수 있는 구체적인 정보(예: '5개 이웃의 그룹: [2, 2, 1, 2, 2]', '최종 예측: 2번 그룹')를 명시적으로 전달하여 학습 효과를 극대화합니다.
-        -> Library/Method: Chart.js (Canvas), Vanilla JS, Tailwind CSS. SVG/Mermaid JS는 사용하지 않음. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body { font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; }
-        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); padding: 1.5rem; }
-        .btn { transition: all 0.2s ease-in-out; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        .slider-thumb::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #3b82f6; border-radius: 50%; cursor: pointer; }
-        .slider-thumb::-moz-range-thumb { width: 20px; height: 20px; background: #3b82f6; border-radius: 50%; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); transition: all 0.3s ease-in-out; }
+        .stat-card { text-align: center; padding: 1.5rem; }
+        .stat-title { font-size: 0.875rem; color: #64748b; font-weight: 500; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.025em; }
+        input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #4f46e5; border-radius: 50%; cursor: pointer; margin-top: -6px; }
+        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #4f46e5; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
-<body class="text-gray-800 p-4 lg:p-8">
+<body class="p-4 md:p-8">
+
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">k-최근접 이웃(k-NN) 대화형 시뮬레이터</h1>
-            <p class="mt-2 text-lg text-gray-600">알고리즘의 핵심 원리를 직접 체험하며 이해해보세요.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">레버리지 수수료 시뮬레이터</h1>
+            <p class="mt-2 text-slate-500">수익을 내도 손실이 나는 이유를 직접 확인해보세요.</p>
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <aside class="lg:col-span-1 space-y-6">
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">🤔 k-NN이란?</h2>
-                    <p class="text-gray-600">
-                        새로운 데이터의 소속을 예측할 때, 그 데이터와 가장 가까운 'k'개의 이웃 데이터를 보고 다수결로 소속 그룹을 결정하는 간단하면서도 강력한 머신러닝 알고리즘입니다.
-                    </p>
-                </div>
-                
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">⚙️ 제어 패널</h2>
-                    <div class="space-y-4">
+
+            <section id="controls" class="lg:col-span-1 space-y-6">
+                <div class="card p-6">
+                    <h2 class="text-xl font-bold text-slate-700 mb-4">거래 조건 설정</h2>
+                    <div class="space-y-5">
                         <div>
-                            <label for="k-slider" class="font-semibold">이웃 수 (k): <span id="k-value" class="font-bold text-blue-600">5</span></label>
-                            <input id="k-slider" type="range" min="1" max="15" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb mt-2">
+                            <label for="initialCapital" class="block text-sm font-medium text-slate-600 mb-1">원금 (KRW)</label>
+                            <input type="number" id="initialCapital" value="20000000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
-                        <button id="regenerate-btn" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg btn">
-                            🔄 데이터 재생성
-                        </button>
+                        <div>
+                            <label for="leverage" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
+                                <span>레버리지</span>
+                                <span id="leverageValue" class="font-bold text-indigo-600">10 배</span>
+                            </label>
+                            <input type="range" id="leverage" min="1" max="125" value="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label for="targetProfit" class="block text-sm font-medium text-slate-600 mb-1">목표 수익 (KRW)</label>
+                            <input type="number" id="targetProfit" value="150000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="feeRate" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
+                                <span>편도 수수료율</span>
+                                 <span id="feeRateValue" class="font-bold text-indigo-600">0.04 %</span>
+                            </label>
+                            <input type="range" id="feeRate" min="0.01" max="0.1" value="0.04" step="0.001" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results" class="lg:col-span-2 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card stat-card">
+                        <h3 class="stat-title">총 포지션 규모</h3>
+                        <p id="positionSize" class="stat-value text-slate-800">2억원</p>
+                    </div>
+                    <div class="card stat-card">
+                        <h3 class="stat-title">왕복 총수수료</h3>
+                        <p id="totalFees" class="stat-value text-amber-600">160,000원</p>
+                    </div>
+                    <div class="card stat-card">
+                        <h3 class="stat-title">최종 순손익</h3>
+                        <p id="netProfit" class="stat-value text-red-600">-10,000원</p>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">📊 예측 결과</h2>
-                    <div class="space-y-3 text-gray-700">
-                        <p>📍 새로운 데이터 좌표: <strong id="new-point-coords" class="text-gray-900">(6.0, 5.0)</strong></p>
-                        <p>👥 선택된 이웃 그룹: <strong id="neighbor-labels" class="text-gray-900">계산 중...</strong></p>
-                        <p class="text-lg">✅ 최종 예측 그룹: <strong id="prediction-result" class="text-blue-700 text-xl">계산 중...</strong></p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div class="card stat-card border-t-4 border-orange-400">
+                        <h3 class="stat-title">거래소 표시 ROI (장부상)</h3>
+                        <p id="apparentROI" class="stat-value text-orange-500">+0.75%</p>
+                    </div>
+                     <div class="card stat-card border-t-4 border-indigo-600">
+                        <h3 class="stat-title">실제 최종 ROI (수수료 차감)</h3>
+                        <p id="realROI" class="stat-value text-red-600">-0.05%</p>
                     </div>
                 </div>
-            </aside>
 
-            <section class="lg:col-span-2 card">
-                <p class="text-center text-gray-500 mb-4">차트의 아무 곳이나 클릭하여 새로운 데이터(⭐)의 위치를 옮겨보세요.</p>
-                <div class="chart-container w-full h-[400px] md:h-[500px] lg:h-full max-h-[600px] relative mx-auto">
-                    <canvas id="knn-chart"></canvas>
+                <div class="card p-4 md:p-6">
+                    <div class="chart-container relative w-full h-[350px] md:h-[400px]">
+                        <canvas id="roiChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h2 class="text-xl font-bold text-slate-700 mb-3">분석 요약</h2>
+                    <p id="analysisText" class="text-slate-600 leading-relaxed">
+                        현재 조건에서는 <strong class="text-orange-600">150,000원</strong>의 수익을 냈음에도 불구하고, 레버리지로 인해 증폭된 왕복 수수료 <strong class="text-amber-700">160,000원</strong>이 더 커서 최종적으로 <strong class="text-red-600">10,000원</strong>의 손실을 보게 됩니다.
+                    </p>
                 </div>
             </section>
         </main>
     </div>
 
     <script>
-        const kSlider = document.getElementById('k-slider');
-        const kValueSpan = document.getElementById('k-value');
-        const regenerateBtn = document.getElementById('regenerate-btn');
-        const newPointCoordsSpan = document.getElementById('new-point-coords');
-        const neighborLabelsSpan = document.getElementById('neighbor-labels');
-        const predictionResultSpan = document.getElementById('prediction-result');
-        const chartCanvas = document.getElementById('knn-chart');
+        const initialCapitalEl = document.getElementById('initialCapital');
+        const leverageEl = document.getElementById('leverage');
+        const leverageValueEl = document.getElementById('leverageValue');
+        const targetProfitEl = document.getElementById('targetProfit');
+        const feeRateEl = document.getElementById('feeRate');
+        const feeRateValueEl = document.getElementById('feeRateValue');
 
-        let originalData = [];
-        let labels = [];
-        let newDataPoint = { x: 6, y: 5 };
-        let k = 5;
-        let knnChart;
+        const positionSizeEl = document.getElementById('positionSize');
+        const totalFeesEl = document.getElementById('totalFees');
+        const netProfitEl = document.getElementById('netProfit');
+        const apparentROIEl = document.getElementById('apparentROI');
+        const realROIEl = document.getElementById('realROI');
+        const analysisTextEl = document.getElementById('analysisText');
 
-        const COLORS = {
-            group1: 'rgba(255, 99, 132, 0.8)',
-            group2: 'rgba(54, 162, 235, 0.8)',
-            group3: 'rgba(255, 206, 86, 0.8)',
-            newPoint: 'rgba(255, 0, 0, 1)',
-            neighbor: 'rgba(75, 192, 192, 1)',
-            neighborHighlight: 'rgba(75, 192, 192, 0.3)',
-        };
+        const formatKRW = (num) => `${Math.round(num).toLocaleString('ko-KR')}원`;
+        const formatPercent = (num) => `${num.toFixed(2)}%`;
 
-        function generateRandomData() {
-            originalData = [];
-            labels = [];
+        let roiChart;
 
-            const centers = [ { x: 2, y: 2 }, { x: 8, y: 8 }, { x: 9, y: 2 }];
-            const pointsPerCluster = 15;
+        function calculateAndUpdate() {
+            const capital = parseFloat(initialCapitalEl.value) || 0;
+            const leverage = parseInt(leverageEl.value);
+            const profit = parseFloat(targetProfitEl.value) || 0;
+            const feeRate = parseFloat(feeRateEl.value) / 100;
 
-            centers.forEach((center, i) => {
-                for (let j = 0; j < pointsPerCluster; j++) {
-                    const x = center.x + (Math.random() - 0.5) * 4;
-                    const y = center.y + (Math.random() - 0.5) * 4;
-                    originalData.push({ x, y });
-                    labels.push(i + 1);
-                }
+            leverageValueEl.textContent = `${leverage} 배`;
+            feeRateValueEl.textContent = `${(feeRate * 100).toFixed(3)} %`;
+
+            const positionSize = capital * leverage;
+            const oneWayFee = positionSize * feeRate;
+            const totalFees = oneWayFee * 2;
+            const netProfit = profit - totalFees;
+
+            const apparentROI = capital > 0 ? (profit / capital) * 100 : 0;
+            const realROI = capital > 0 ? (netProfit / capital) * 100 : 0;
+
+            positionSizeEl.textContent = positionSize >= 100000000 ? `${(positionSize / 100000000).toFixed(2)}억원` : formatKRW(positionSize);
+            totalFeesEl.textContent = formatKRW(totalFees);
+            netProfitEl.textContent = formatKRW(netProfit);
+            apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
+            realROIEl.textContent = (realROI >= 0 ? '+' : '') + formatPercent(realROI);
+
+            netProfitEl.classList.toggle('text-red-600', netProfit < 0);
+            netProfitEl.classList.toggle('text-indigo-600', netProfit >= 0);
+            realROIEl.classList.toggle('text-red-600', realROI < 0);
+            realROIEl.classList.toggle('text-indigo-600', realROI >= 0);
+
+            analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-orange-600">${formatKRW(profit)}</strong>의 수익을 냈음에도 불구하고, 레버리지로 인해 증폭된 왕복 수수료 <strong class="text-amber-700">${formatKRW(totalFees)}</strong>이 더 커서 최종적으로 <strong class="${netProfit < 0 ? 'text-red-600' : 'text-indigo-600'}">${formatKRW(netProfit)}</strong>의 ${netProfit < 0 ? '손실을 보게 됩니다' : '수익을 얻게 됩니다'}.`;
+
+            updateChart(capital, profit, feeRate);
+        }
+
+        function updateChart(capital, profit, feeRate) {
+            const labels = ['1x', '10x', '25x', '50x', '75x', '100x', '125x'];
+            const leveragePoints = [1, 10, 25, 50, 75, 100, 125];
+
+            const realROIData = leveragePoints.map(lev => {
+                const netProfit = profit - (capital * lev * feeRate * 2);
+                return capital > 0 ? (netProfit / capital) * 100 : 0;
             });
+
+            const apparentROI = capital > 0 ? (profit / capital) * 100 : 0;
+            const apparentROIData = Array(labels.length).fill(apparentROI);
+
+            const backgroundColors = realROIData.map(value => value >= 0 ? 'rgba(79, 70, 229, 0.7)' : 'rgba(220, 38, 38, 0.7)');
+            const borderColors = realROIData.map(value => value >= 0 ? 'rgb(79, 70, 229)' : 'rgb(220, 38, 38)');
+
+            roiChart.data.datasets[0].data = realROIData;
+            roiChart.data.datasets[0].backgroundColor = backgroundColors;
+            roiChart.data.datasets[0].borderColor = borderColors;
+            roiChart.data.datasets[1].data = apparentROIData;
+            roiChart.update();
         }
 
-        function euclideanDistance(p1, p2) {
-            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-        }
-
-        function predictKNN() {
-            const distances = originalData.map((point, index) => ({
-                dist: euclideanDistance(newDataPoint, point),
-                label: labels[index],
-                index: index
-            }));
-
-            distances.sort((a, b) => a.dist - b.dist);
-
-            const neighbors = distances.slice(0, k);
-            const neighborLabels = neighbors.map(n => n.label);
-
-            if (neighborLabels.length === 0) {
-                predictionResultSpan.textContent = "N/A";
-                neighborLabelsSpan.textContent = "N/A";
-                return { prediction: null, neighbors: [] };
-            }
-
-            const voteCounts = neighborLabels.reduce((acc, label) => {
-                acc[label] = (acc[label] || 0) + 1;
-                return acc;
-            }, {});
-
-            const prediction = Object.keys(voteCounts).reduce((a, b) => voteCounts[a] > voteCounts[b] ? a : b);
-            
-            updateResultsText(prediction, neighborLabels);
-            return { prediction: parseInt(prediction), neighbors: neighbors.map(n => n.index) };
-        }
-        
-        function updateResultsText(prediction, neighborLabels) {
-            newPointCoordsSpan.textContent = `(${newDataPoint.x.toFixed(1)}, ${newDataPoint.y.toFixed(1)})`;
-            neighborLabelsSpan.textContent = `[${neighborLabels.join(', ')}]`;
-            predictionResultSpan.textContent = `${prediction}번 그룹`;
-        }
-
-        function createChart() {
-            const ctx = chartCanvas.getContext('2d');
-            knnChart = new Chart(ctx, {
-                type: 'scatter',
-                data: { datasets: [] },
+        function initializeChart() {
+            const ctx = document.getElementById('roiChart').getContext('2d');
+            roiChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '실제 최종 ROI',
+                            data: [],
+                            borderWidth: 1
+                        },
+                        {
+                            label: '거래소 표시 ROI',
+                            data: [],
+                            type: 'line',
+                            borderColor: 'rgb(249, 115, 22)',
+                            backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0,
+                        }
+                    ]
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { beginAtZero: false, min: -2, max: 14 },
-                        y: { beginAtZero: false, min: -2, max: 12 }
+                        x: { title: { display: true, text: '레버리지 배율' } },
+                        y: { title: { display: true, text: '수익률 (%)' }, ticks: { callback: value => `${value}%` } }
                     },
                     plugins: {
-                        legend: { display: true, position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) { label += ': '; }
-                                    if (context.parsed.x !== null) {
-                                        label += `(${(context.parsed.x).toFixed(1)}, ${(context.parsed.y).toFixed(1)})`;
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
+                        legend: { position: 'top' },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%` } }
                     },
-                    onClick: handleChartClick,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
                 }
             });
         }
-        
-        function updateChart() {
-            if (!knnChart) return;
-            
-            const { prediction, neighbors } = predictKNN();
 
-            const datasets = [
-                {
-                    label: '그룹 1',
-                    data: originalData.filter((_, i) => labels[i] === 1),
-                    backgroundColor: COLORS.group1,
-                    pointRadius: 5,
-                },
-                {
-                    label: '그룹 2',
-                    data: originalData.filter((_, i) => labels[i] === 2),
-                    backgroundColor: COLORS.group2,
-                    pointRadius: 5,
-                },
-                {
-                    label: '그룹 3',
-                    data: originalData.filter((_, i) => labels[i] === 3),
-                    backgroundColor: COLORS.group3,
-                    pointRadius: 5,
-                },
-                {
-                    label: '새로운 데이터',
-                    data: [newDataPoint],
-                    backgroundColor: COLORS.newPoint,
-                    pointStyle: 'star',
-                    radius: 15,
-                    borderColor: 'black',
-                    borderWidth: 2,
-                }
-            ];
-            
-            if(neighbors.length > 0) {
-                const neighborPoints = neighbors.map(i => originalData[i]);
-                datasets.push({
-                    label: '최근접 이웃',
-                    data: neighborPoints,
-                    backgroundColor: 'transparent',
-                    borderColor: COLORS.neighbor,
-                    borderWidth: 3,
-                    pointRadius: 10,
-                });
-            }
-
-            knnChart.data.datasets = datasets;
-            knnChart.update();
-        }
-
-        function handleChartClick(evt) {
-            const rect = chartCanvas.getBoundingClientRect();
-            const x = knnChart.scales.x.getValueForPixel(evt.clientX - rect.left);
-            const y = knnChart.scales.y.getValueForPixel(evt.clientY - rect.top);
-            newDataPoint = { x, y };
-            updateChart();
-        }
-
-        kSlider.addEventListener('input', (e) => {
-            k = parseInt(e.target.value);
-            kValueSpan.textContent = k;
-            updateChart();
+        [initialCapitalEl, leverageEl, targetProfitEl, feeRateEl].forEach(el => {
+            el.addEventListener('input', calculateAndUpdate);
         });
 
-        regenerateBtn.addEventListener('click', () => {
-            generateRandomData();
-            updateChart();
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChart();
+            calculateAndUpdate();
         });
-        
-        // Initial setup
-        createChart();
-        generateRandomData();
-        updateChart();
     </script>
 </body>
 </html>
