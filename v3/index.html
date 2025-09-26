@@ -97,6 +97,7 @@
                     <div class="card stat-card">
                         <h3 class="stat-title">최종 순손익</h3>
                         <p id="netProfit" class="stat-value text-red-600"></p>
+                        <p id="netProfitBreakdown" class="text-xs text-slate-500 mt-1"></p>
                     </div>
                 </div>
 
@@ -169,6 +170,7 @@
         const totalFeesEl = document.getElementById('totalFees');
         const totalFeesPercentEl = document.getElementById('totalFeesPercent');
         const netProfitEl = document.getElementById('netProfit');
+        const netProfitBreakdownEl = document.getElementById('netProfitBreakdown');
         const apparentROIEl = document.getElementById('apparentROI');
         const realROIEl = document.getElementById('realROI');
         const realROIFeeEl = document.getElementById('realROIFee');
@@ -220,6 +222,10 @@
             positionSizeEl.innerHTML = formatDual(positionSize);
             totalFeesEl.innerHTML = formatDual(totalFees);
             netProfitEl.innerHTML = formatDual(netProfit);
+
+            const profitFormatted = (state.currency === 'KRW') ? formatKRW(profit) : formatUSDT(profit);
+            const feesFormatted = (state.currency === 'KRW') ? formatKRW(totalFees) : formatUSDT(totalFees);
+            netProfitBreakdownEl.innerHTML = `(목표 ${profitFormatted} - 수수료 ${feesFormatted})`;
 
             totalFeesPercentEl.textContent = `(왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
             apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
