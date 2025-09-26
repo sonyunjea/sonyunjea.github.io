@@ -92,7 +92,8 @@
                     <div class="card stat-card">
                         <h3 class="stat-title">왕복 총수수료</h3>
                         <p id="totalFees" class="stat-value text-amber-600"></p>
-                        <p id="totalFeesPercent" class="text-sm text-slate-500 mt-1"></p>
+                        <p id="totalFeesEffectivePercent" class="text-sm text-amber-700 font-medium mt-1"></p>
+                        <p id="totalFeesPercent" class="text-xs text-slate-400 mt-1"></p>
                     </div>
                     <div class="card stat-card">
                         <h3 class="stat-title">최종 순손익</h3>
@@ -169,6 +170,7 @@
         const positionSizeEl = document.getElementById('positionSize');
         const totalFeesEl = document.getElementById('totalFees');
         const totalFeesPercentEl = document.getElementById('totalFeesPercent');
+        const totalFeesEffectivePercentEl = document.getElementById('totalFeesEffectivePercent');
         const netProfitEl = document.getElementById('netProfit');
         const netProfitBreakdownEl = document.getElementById('netProfitBreakdown');
         const apparentROIEl = document.getElementById('apparentROI');
@@ -227,12 +229,13 @@
             const feesFormatted = (state.currency === 'KRW') ? formatKRW(totalFees) : formatUSDT(totalFees);
             netProfitBreakdownEl.innerHTML = `(목표 ${profitFormatted} - 수수료 ${feesFormatted})`;
 
-            totalFeesPercentEl.textContent = `(왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
+            const effectiveFeePercent = leverage * feeRate * 2 * 100;
+            totalFeesEffectivePercentEl.textContent = `(원금 대비 실질 ${effectiveFeePercent.toFixed(2)}%)`;
+            totalFeesPercentEl.textContent = `(기본 왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
+
             apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
             realROIEl.textContent = (realROI >= 0 ? '+' : '') + formatPercent(realROI);
-
-            const totalFeePercentOfCapital = leverage * feeRate * 2 * 100;
-            realROIFeeEl.textContent = `(수수료 ${totalFeePercentOfCapital.toFixed(2)}% 차감)`;
+            realROIFeeEl.textContent = `(수수료 ${effectiveFeePercent.toFixed(2)}% 차감)`;
 
             netProfitEl.classList.toggle('text-red-600', netProfit < 0);
             netProfitEl.classList.toggle('text-indigo-600', netProfit >= 0);
