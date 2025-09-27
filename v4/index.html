@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Academia -->
     <!-- Application Structure Plan: A single-page application with a fixed sidebar for navigation and a main content area. The structure guides the user through the concepts logically: 1. Intro to Neural Networks (What is it?), 2. The Learning Problem (Why do we need to learn?), 3. The Solution: Backpropagation, 4. Interactive Deep Dive into Core Principles (Gradient Descent & Chain Rule), 5. Conclusion. This step-by-step thematic structure is chosen over a linear report format to make a complex topic digestible and engaging. Interactive visualizations are placed at points where abstract concepts are introduced, allowing users to learn by doing rather than just reading. -->
-    <!-- Visualization & Content Choices:
+    <!-- Visualization & Content Choices: 
         - Neural Network Diagram: Goal: Organize. Method: HTML/CSS with JS hover interaction. Justification: Provides a clear, non-cluttered visual map of the basic structure.
         - Gradient Descent Chart: Goal: Change/Inform. Method: Chart.js Canvas. Interaction: User-controlled slider for learning rate and step-by-step animation. Justification: Makes the abstract optimization process tangible and demonstrates the impact of hyperparameters like the learning rate.
         - Computation Graph Diagram: Goal: Organize/Inform. Method: HTML/CSS with JS click/animation. Interaction: Buttons for 'Forward Pass' and 'Backward Pass' animate the flow of data and gradients. Justification: Deconstructs the complex chain rule into a clear, step-by-step visual process, revealing how gradients are calculated and propagated.
@@ -57,6 +57,7 @@
         .computation-node {
             transition: all 0.3s ease-in-out;
             cursor: pointer;
+            z-index: 10;
         }
         .computation-node.highlight-forward {
             background-color: #A6C4DD;
@@ -72,6 +73,7 @@
             background-color: #9b9b9b;
             height: 2px;
             transform-origin: left;
+            z-index: 1;
         }
         .arrow::after {
             content: '';
@@ -100,12 +102,12 @@
 
         <!-- Main Content -->
         <main class="flex-1 md:ml-64 p-6 md:p-10 lg:p-12">
-
+            
             <!-- Section 1: What is a Neural Network? -->
             <section id="section1" class="content-section space-y-6">
                 <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">1. 인공 신경망과 학습의 필요성</h2>
                 <p class="text-lg leading-relaxed">인공 신경망(ANN)은 인간 뇌의 정보 처리 방식을 수학적으로 모델링한 계산 구조입니다. 뇌가 경험을 통해 학습하듯, 인공 신경망은 '가중치'라는 매개변수를 조정하며 데이터로부터 패턴을 학습합니다. 아래 다이어그램은 입력, 은닉, 출력의 3개 층으로 구성된 가장 기본적인 신경망 구조를 보여줍니다. 각 노드와 연결선 위에 마우스를 올려보세요.</p>
-
+                
                 <div class="bg-white/80 p-8 rounded-xl shadow-sm w-full max-w-3xl mx-auto mt-8 flex justify-center items-center h-96">
                     <div id="nn-diagram" class="flex items-center space-x-16 relative">
                         <!-- Layers -->
@@ -134,7 +136,7 @@
             <!-- Section 2: The Learning Problem -->
             <section id="section2" class="content-section space-y-6">
                 <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">2. 학습의 문제: 신용 할당 문제</h2>
-                <p class="text-lg leading-relaxed">처음 만들어진 신경망은 가중치가 무작위 값으로 설정되어 있어 거의 쓸모가 없습니다. 올바른 예측을 하려면 '학습'을 통해 예측값과 실제 정답 사이의 '오차(Loss)'를 줄여나가야 합니다. 하지만 수백만 개의 가중치 중 어떤 것을 얼마나 수정해야 최종 오차를 줄일 수 있을까요? 이를 **신용 할당 문제(Credit Assignment Problem)**라고 합니다. 최종 결과에 대한 각 가중치의 '책임'을 어떻게 분배할지가 핵심 난제였습니다.</p>
+                <p class="text-lg leading-relaxed">처음 만들어진 신경망은 가중치가 무작위 값으로 설정되어 있어 거의 쓸모가 없습니다. 올바른 예측을 하려면 '학습'을 통해 예측값과 실제 정답 사이의 '오차(Loss)'를 줄여나가야 합니다. 하지만 수백만 개의 가중치 중 어떤 것을 얼마나 수정해야 최종 오차를 줄일 수 있을까요? 이를 신용 할당 문제(Credit Assignment Problem)라고 합니다. 최종 결과에 대한 각 가중치의 '책임'을 어떻게 분배할지가 핵심 난제였습니다.</p>
                  <div class="grid md:grid-cols-2 gap-8 mt-8 text-center">
                     <div class="bg-red-100/50 p-6 rounded-xl border border-red-200">
                         <h3 class="text-xl font-bold mb-3">초기 신경망 (학습 전)</h3>
@@ -155,7 +157,7 @@
             <!-- Section 3: The Solution: Backpropagation -->
             <section id="section3" class="content-section space-y-6">
                 <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">3. 해결책: 역전파 알고리즘</h2>
-                <p class="text-lg leading-relaxed">1986년 제안된 **역전파(Backpropagation)** 알고리즘은 신용 할당 문제에 대한 우아한 해법을 제시했습니다. 이름 그대로, 순전파와 정반대 방향인 '뒤(Back)'로 오차 정보를 '전파(Propagation)'시키는 방식입니다. 출력층에서 계산된 오차로부터 시작하여, 신경망을 거꾸로 거슬러 올라가며 각 가중치가 최종 오차에 얼마나 기여했는지(책임이 있는지)를 수학적으로 정확하게 계산해냅니다. 이 '책임'의 크기를 바탕으로 모든 가중치를 동시에, 그리고 올바른 방향으로 미세하게 조정하여 점진적으로 신경망의 성능을 개선합니다.</p>
+                <p class="text-lg leading-relaxed">1986년 제안된 역전파(Backpropagation) 알고리즘은 신용 할당 문제에 대한 우아한 해법을 제시했습니다. 이름 그대로, 순전파와 정반대 방향인 '뒤(Back)'로 오차 정보를 '전파(Propagation)'시키는 방식입니다. 출력층에서 계산된 오차로부터 시작하여, 신경망을 거꾸로 거슬러 올라가며 각 가중치가 최종 오차에 얼마나 기여했는지(책임이 있는지)를 수학적으로 정확하게 계산해냅니다. 이 '책임'의 크기를 바탕으로 모든 가중치를 동시에, 그리고 올바른 방향으로 미세하게 조정하여 점진적으로 신경망의 성능을 개선합니다.</p>
                 <div class="bg-white/80 p-8 rounded-xl shadow-sm text-center">
                     <h3 class="text-xl font-bold mb-4">역전파의 흐름</h3>
                     <div class="flex items-center justify-center space-x-4">
@@ -175,24 +177,40 @@
             <!-- Section 4: Core Principles -->
             <section id="section4" class="content-section space-y-8">
                 <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">4. 핵심 원리 탐구</h2>
-                <p class="text-lg leading-relaxed">역전파는 두 가지 핵심 수학 원리, **경사 하강법**과 **연쇄 법칙**에 기반합니다. 역전파는 연쇄 법칙을 이용해 '기울기'를 계산하는 효율적인 방법이며, 경사 하강법은 계산된 기울기를 사용해 가중치를 '업데이트'하는 최적화 알고리즘입니다.</p>
+                <p class="text-lg leading-relaxed">역전파는 두 가지 핵심 수학 원리, 경사 하강법과 연쇄 법칙에 기반합니다. 역전파는 연쇄 법칙을 이용해 '기울기'를 계산하는 효율적인 방법이며, 경사 하강법은 계산된 기울기를 사용해 가중치를 '업데이트'하는 최적화 알고리즘입니다.</p>
 
                 <!-- Gradient Descent -->
                 <div class="bg-white/80 p-8 rounded-xl shadow-sm">
                     <h3 class="text-2xl font-bold mb-2">원리 1: 경사 하강법 (Gradient Descent)</h3>
                     <p class="mb-4">신경망의 목표는 수많은 가중치를 조정하여 손실(오차)을 최소화하는 것입니다. 손실 함수를 '산' 지형에 비유한다면, 경사 하강법은 가장 낮은 계곡(최소 손실 지점)을 찾아 내려가는 방법입니다. 현재 위치에서 가장 경사가 가파른 내리막길 방향(기울기의 반대 방향)으로 한 걸음씩 이동하는 과정을 반복합니다. '학습률' 슬라이더를 조절하며 이 과정을 직접 관찰해보세요.</p>
-
+                    
+                    <div class="mt-6 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-center">
+                        <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-700">🔴 학습률이 너무 클 때</h4>
+                            <p class="mt-1">보폭이 너무 커서 최적점을 지나쳐 버리고 반대편으로 건너뛰는 현상(Overshooting)이 발생하며, 심한 경우 값이 발산할 수 있습니다.</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                            <h4 class="font-bold text-green-700">🟢 적절한 학습률일 때</h4>
+                            <p class="mt-1">가장 효율적인 경로로 최적점을 안정적으로 찾아갑니다. 너무 크지도, 작지도 않은 이상적인 보폭입니다.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                            <h4 class="font-bold text-yellow-700">🟡 학습률이 너무 작을 때</h4>
+                            <p class="mt-1">보폭이 너무 작아 최적점까지 도달하는 데 시간이 매우 오래 걸리거나, 중간의 움푹 파인 곳(지역 최솟값)에 빠져 멈출 수 있습니다.</p>
+                        </div>
+                    </div>
+                    
                     <div class="chart-container">
                         <canvas id="gradientDescentChart"></canvas>
                     </div>
 
-                    <div class="mt-4 flex flex-col md:flex-row items-center justify-center gap-4">
+                    <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
                          <div class="flex items-center gap-2">
                             <label for="learningRate" class="font-medium">학습률 (보폭):</label>
                             <input type="range" id="learningRate" min="0.01" max="1.0" step="0.01" value="0.1" class="w-48">
                             <span id="lrValue" class="font-mono w-12 text-center">0.10</span>
                         </div>
                         <button id="stepButton" class="bg-[#D4A373] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#c8935a] transition-colors">한 걸음 이동</button>
+                        <button id="autoPlayButton" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-600 transition-colors">자동 재생</button>
                         <button id="resetButton" class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">초기화</button>
                     </div>
                 </div>
@@ -201,8 +219,8 @@
                  <div class="bg-white/80 p-8 rounded-xl shadow-sm mt-8">
                     <h3 class="text-2xl font-bold mb-2">원리 2: 연쇄 법칙 (Chain Rule)</h3>
                     <p class="mb-4">신경망은 여러 함수가 중첩된 복잡한 구조입니다. 연쇄 법칙은 이 구조를 거슬러 올라가며 최종 오차에 대한 각 가중치의 영향력(기울기)을 '사슬'처럼 연결하여 계산할 수 있게 해주는 수학적 도구입니다. 아래 계산 그래프를 통해 순전파와 역전파 과정을 단계별로 살펴보세요.</p>
-
-                    <div id="computation-graph" class="w-full max-w-4xl mx-auto p-4 relative">
+                    
+                    <div id="computation-graph" class="w-full max-w-4xl mx-auto p-4 relative min-h-[300px]">
                         <!-- Nodes will be populated by JS -->
                     </div>
 
@@ -299,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         };
-
+        
         createConnections(layer1, layer2);
         createConnections(layer2, layer3);
 
@@ -310,10 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const info = e.target.dataset.info;
                 tooltip.textContent = info;
                 tooltip.style.opacity = '1';
-
+                
                 const targetRect = e.target.getBoundingClientRect();
                 const containerRect = nnDiagram.getBoundingClientRect();
-
+                
                 let top = e.clientY - containerRect.top - tooltip.offsetHeight - 10;
                 let left = e.clientX - containerRect.left - tooltip.offsetWidth / 2;
 
@@ -346,6 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const lrValueSpan = document.getElementById('lrValue');
         const stepButton = document.getElementById('stepButton');
         const resetButton = document.getElementById('resetButton');
+        const autoPlayButton = document.getElementById('autoPlayButton');
+        let isAutoPlaying = false;
 
         function createGradientDescentChart() {
             const labels = Array.from({ length: 111 }, (_, i) => (i - 50) * 0.1);
@@ -408,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
+        
         function updateChart() {
             gradientDescentChart.data.datasets[1].data = [{ x: currentX, y: lossFunction(currentX) }];
             gradientDescentChart.update();
@@ -418,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const learningRate = parseFloat(lrSlider.value);
             const grad = gradient(currentX);
             currentX = currentX - learningRate * grad;
-            if (Math.abs(currentX - 1) < 0.01) {
+            if (Math.abs(currentX - 1) < 0.01 && !isAutoPlaying) {
                 stepButton.disabled = true;
                 stepButton.textContent = '최적점 도달!';
             }
@@ -430,8 +450,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         stepButton.addEventListener('click', takeStep);
+        
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function startAutoPlay() {
+            const learningRates = Array.from({length: 100}, (_, i) => (i + 1) * 0.01);
+
+            for (const lr of learningRates) {
+                if (!isAutoPlaying) break;
+
+                currentX = 4.5;
+                stepButton.disabled = false;
+                stepButton.textContent = '한 걸음 이동';
+                lrSlider.value = lr;
+                lrValueSpan.textContent = lr.toFixed(2);
+                updateChart();
+                await sleep(150); 
+
+                let steps = 0;
+                const maxSteps = 150; 
+
+                while (Math.abs(currentX - 1) > 0.01 && steps < maxSteps && isAutoPlaying) {
+                    takeStep();
+                    steps++;
+                    await sleep(40); 
+                }
+                if (isAutoPlaying) await sleep(400); 
+            }
+
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            }
+        }
+    
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            autoPlayButton.textContent = '자동 재생';
+            autoPlayButton.classList.replace('bg-red-500', 'bg-indigo-500');
+            autoPlayButton.classList.replace('hover:bg-red-600', 'hover:bg-indigo-600');
+            lrSlider.disabled = false;
+            stepButton.disabled = false;
+            resetButton.disabled = false;
+        }
+    
+        autoPlayButton.addEventListener('click', () => {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                isAutoPlaying = true;
+                autoPlayButton.textContent = '정지';
+                autoPlayButton.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
+                autoPlayButton.classList.add('bg-red-500', 'hover:bg-red-600');
+                lrSlider.disabled = true;
+                stepButton.disabled = true;
+                resetButton.disabled = true;
+                startAutoPlay();
+            }
+        });
 
         resetButton.addEventListener('click', () => {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            }
             currentX = 4.5;
             stepButton.disabled = false;
             stepButton.textContent = '한 걸음 이동';
@@ -440,34 +520,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         createGradientDescentChart();
     }
-
+    
     // --- Computation Graph Logic ---
     const graphContainer = document.getElementById('computation-graph');
     if (graphContainer) {
         const forwardButton = document.getElementById('forwardPassButton');
         const backwardButton = document.getElementById('backwardPassButton');
         const explanationDiv = document.getElementById('graph-explanation');
-
+        
         const nodes = [
-            { id: 'x', value: 2, grad: 0, label: 'x', pos: { x: 5, y: 10 } },
-            { id: 'w', value: -3, grad: 0, label: 'w', pos: { x: 5, y: 50 } },
-            { id: 'b', value: -1, grad: 0, label: 'b', pos: { x: 30, y: 70 } },
-            { id: 'mul', value: 0, grad: 0, label: 'w * x', op: '*', inputs: ['x', 'w'], pos: { x: 30, y: 30 } },
-            { id: 'add', value: 0, grad: 0, label: 'wx + b', op: '+', inputs: ['mul', 'b'], pos: { x: 55, y: 50 } },
-            { id: 'relu', value: 0, grad: 0, label: 'ReLU', op: 'relu', inputs: ['add'], pos: { x: 80, y: 50 } }
+            { id: 'x', value: 2, grad: 0, label: 'x', pos: { x: 5, y: 20 }, inputs: [] },
+            { id: 'w', value: -3, grad: 0, label: 'w', pos: { x: 5, y: 70 }, inputs: [] },
+            { id: 'b', value: -1, grad: 0, label: 'b', pos: { x: 55, y: 90 }, inputs: [] },
+            { id: 'mul', value: 0, grad: 0, label: 'w * x', op: '*', inputs: ['x', 'w'], pos: { x: 30, y: 45 } },
+            { id: 'add', value: 0, grad: 0, label: 'wx + b', op: '+', inputs: ['mul', 'b'], pos: { x: 55, y: 60 } },
+            { id: 'relu', value: 0, grad: 0, label: 'ReLU', op: 'relu', inputs: ['add'], pos: { x: 80, y: 60 } }
         ];
 
-        // Create nodes
+        // Create nodes and arrows
         nodes.forEach(node => {
             const div = document.createElement('div');
             div.id = `node-${node.id}`;
             div.className = 'computation-node absolute bg-gray-100 border-2 border-gray-300 rounded-lg p-3 text-center w-28';
-            div.style.left = `${node.pos.x}%`;
-            div.style.top = `${node.pos.y}%`;
+            div.style.left = `calc(${node.pos.x}% - 56px)`;
+            div.style.top = `calc(${node.pos.y}% - 38px)`;
             div.innerHTML = `<div class="font-bold text-sm">${node.label}</div><div class="font-mono text-xs mt-1">val: <span class="val">?</span></div><div class="font-mono text-xs">grad: <span class="grad">?</span></div>`;
             graphContainer.appendChild(div);
         });
 
+        const createArrow = (fromId, toId) => {
+            requestAnimationFrame(() => {
+                const fromNode = document.getElementById(`node-${fromId}`);
+                const toNode = document.getElementById(`node-${toId}`);
+                if (!fromNode || !toNode) return;
+
+                const containerRect = graphContainer.getBoundingClientRect();
+                const fromRect = fromNode.getBoundingClientRect();
+                const toRect = toNode.getBoundingClientRect();
+
+                const x1 = fromRect.left + fromRect.width / 2 - containerRect.left;
+                const y1 = fromRect.top + fromRect.height / 2 - containerRect.top;
+                const x2 = toRect.left + toRect.width / 2 - containerRect.left;
+                const y2 = toRect.top + toRect.height / 2 - containerRect.top;
+                
+                const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                const arrow = document.createElement('div');
+                arrow.className = 'arrow';
+                arrow.style.left = `${x1}px`;
+                arrow.style.top = `${y1}px`;
+                arrow.style.width = `${distance}px`;
+                arrow.style.transform = `rotate(${angle}deg)`;
+                
+                graphContainer.appendChild(arrow);
+            });
+        };
+
+        nodes.forEach(node => {
+            if (node.inputs.length > 0) {
+                node.inputs.forEach(input => {
+                    createArrow(input, node.id);
+                });
+            }
+        });
+        
         const resetGraph = () => {
              nodes.forEach(node => {
                 node.grad = 0;
@@ -486,7 +603,6 @@ document.addEventListener('DOMContentLoaded', () => {
             forwardButton.disabled = true;
             backwardButton.disabled = true;
 
-            // Step 1: mul
             let node = nodes.find(n => n.id === 'mul');
             let x_node = nodes.find(n => n.id === 'x');
             let w_node = nodes.find(n => n.id === 'w');
@@ -496,7 +612,6 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `순전파 1: w * x = (${w_node.value}) * (${x_node.value}) = ${node.value}`;
             await sleep(1500);
 
-            // Step 2: add
             document.getElementById('node-mul').classList.remove('highlight-forward');
             node = nodes.find(n => n.id === 'add');
             let mul_node = nodes.find(n => n.id === 'mul');
@@ -507,7 +622,6 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `순전파 2: (wx) + b = (${mul_node.value}) + (${b_node.value}) = ${node.value}`;
             await sleep(1500);
 
-            // Step 3: relu
             document.getElementById('node-add').classList.remove('highlight-forward');
             node = nodes.find(n => n.id === 'relu');
             let add_node = nodes.find(n => n.id === 'add');
@@ -517,13 +631,12 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `순전파 3: ReLU(${add_node.value}) = ${node.value}. 순전파 완료!`;
             await sleep(1500);
             document.getElementById('node-relu').classList.remove('highlight-forward');
-
+            
             forwardButton.disabled = false;
             backwardButton.disabled = false;
         });
 
         backwardButton.addEventListener('click', async () => {
-            // Ensure forward pass has run
             if(document.querySelector('#node-relu .val').textContent === '?') {
                 explanationDiv.textContent = '먼저 순전파를 실행해주세요.';
                 return;
@@ -531,14 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
             forwardButton.disabled = true;
             backwardButton.disabled = true;
 
-            // Reset grads visually
             nodes.forEach(n => {
                 document.querySelector(`#node-${n.id} .grad`).textContent = '?';
                 document.getElementById(`node-${n.id}`).classList.remove('highlight-backward');
             });
 
-
-            // Start with upstream gradient of 1
             let relu_node = nodes.find(n => n.id === 'relu');
             relu_node.grad = 1.0;
             document.getElementById('node-relu').classList.add('highlight-backward');
@@ -546,7 +656,6 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `역전파 1: 최종 출력의 기울기는 1로 시작합니다.`;
             await sleep(2000);
 
-            // Backprop to add
             document.getElementById('node-relu').classList.remove('highlight-backward');
             let add_node = nodes.find(n => n.id === 'add');
             add_node.grad = (add_node.value > 0 ? 1 : 0) * relu_node.grad;
@@ -555,11 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `역전파 2: ReLU의 로컬 기울기(${add_node.value > 0 ? 1 : 0}) * 업스트림 기울기(${relu_node.grad}) = ${add_node.grad}`;
             await sleep(2000);
 
-            // Backprop to mul and b
             document.getElementById('node-add').classList.remove('highlight-backward');
             let mul_node = nodes.find(n => n.id === 'mul');
             let b_node = nodes.find(n => n.id === 'b');
-            mul_node.grad = 1 * add_node.grad; // Gradient of + is 1
+            mul_node.grad = 1 * add_node.grad;
             b_node.grad = 1 * add_node.grad;
             document.getElementById('node-mul').classList.add('highlight-backward');
             document.getElementById('node-b').classList.add('highlight-backward');
@@ -568,7 +676,6 @@ document.addEventListener('DOMContentLoaded', () => {
             explanationDiv.textContent = `역전파 3: '+' 연산은 기울기를 그대로 전달합니다.`;
             await sleep(2000);
 
-            // Backprop to w and x
             document.getElementById('node-mul').classList.remove('highlight-backward');
             document.getElementById('node-b').classList.remove('highlight-backward');
             let w_node = nodes.find(n => n.id === 'w');
@@ -583,14 +690,15 @@ document.addEventListener('DOMContentLoaded', () => {
              await sleep(2000);
             document.getElementById('node-w').classList.remove('highlight-backward');
             document.getElementById('node-x').classList.remove('highlight-backward');
-
+            
             forwardButton.disabled = false;
             backwardButton.disabled = false;
         });
-
+        
         resetGraph();
     }
 });
 </script>
 </body>
 </html>
+
