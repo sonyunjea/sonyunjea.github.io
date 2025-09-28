@@ -56,10 +56,12 @@
         }
 
         .logo {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--main-color);
             text-decoration: none;
+        }
+
+        .logo img {
+            height: 125px; /* 로고 이미지 높이 조절 (50px -> 125px) */
+            vertical-align: middle;
         }
 
         .nav-links {
@@ -307,7 +309,9 @@
     <!-- ⬆️ 헤더: 로고와 메뉴 -->
     <header>
         <div class="container navbar">
-            <a href="#" class="logo">국제플라워</a>
+            <a href="#" class="logo">
+                <img src="https://i.postimg.cc/76qGBBnw/image.png" alt="국제플라워 로고">
+            </a>
             <ul class="nav-links">
                 <li><a href="#celebration">축하화환</a></li>
                 <li><a href="#condolence">근조화환</a></li>
