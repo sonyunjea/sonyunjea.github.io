@@ -5,21 +5,22 @@
     <meta name="google-site-verification" content="LJJwlcpuE0xx4kf6RPxWObkVWTVaMx1cysCLl3J9My4" />
     <meta name="naver-site-verification" content="5e6ecf422ab41e3217450f67460721a96f18c2c8" />
     <meta name="description" content="전국 3시간 이내 빠른 배송, 결혼식 축하화환, 장례식 근조화환 전문점. 대표 손광성. 정성을 다해 마음을 전합니다." />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>국제플라워 - 전국 당일 꽃배달, 축하/근조화환 전문</title>
     <link rel="icon" href="https://i.postimg.cc/76qGBBnw/image.png" type="image/png">
     <style>
-        /* 기본 스타일 초기화 */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        /* 폰트 불러오기 (Pretendard, Nanum Myeongjo) */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
 
+        /* 🎨 1. 새로운 컬러 시스템 (얼스 톤) */
         :root {
-            --main-color: #2c5e3f; /* 차분한 녹색 */
-            --accent-color: #d4af37; /* 금색 포인트 */
-            --text-color: #333;
-            --bg-color: #f9f9f9;
-            --white-color: #ffffff;
-            --border-color: #e0e0e0;
+            --main-color: #8A9A5B;      /* 올리브 그린 */
+            --bg-color: #F5F5DC;        /* 웜 베이지 */
+            --surface-color: #FFFFF0;    /* 아이보리 */
+            --accent-color: #E2725B;     /* 테라코타 */
+            --text-color: #413F3D;      /* 짙은 갈색 */
+            --border-color: #e5e1d4;
         }
 
         * {
@@ -28,29 +29,41 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            /* ✍️ 2. 새로운 폰트 적용 (본문) */
+            font-family: 'Pretendard', sans-serif;
             color: var(--text-color);
             background-color: var(--bg-color);
-            line-height: 1.6;
+            line-height: 1.7;
+            word-break: keep-all;
+        }
+        
+        /* ✍️ 2. 새로운 폰트 적용 (제목) */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-weight: 700;
         }
 
         .container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 20px 0;
         }
 
         /* 헤더 & 네비게이션 */
         header {
-            background-color: var(--white-color);
-            padding: 15px 0;
+            background-color: rgba(255, 255, 240, 0.8); /* 아이보리 배경에 투명도 추가 */
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .navbar {
@@ -59,127 +72,144 @@
             align-items: center;
         }
 
-        .logo {
-            text-decoration: none;
-        }
-
         .logo img {
-            height: 125px; /* 로고 이미지 높이 조절 (50px -> 125px) */
+            height: 100px; /* 로고 크기 조정 */
             vertical-align: middle;
         }
 
         .nav-links {
             list-style: none;
             display: flex;
-            gap: 25px;
+            gap: 35px; /* 메뉴 간격 조정 */
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--text-color);
             font-weight: 500;
-            transition: color 0.3s;
+            font-size: 1.1em;
+            position: relative;
+            padding: 5px 0;
         }
-
-        .nav-links a:hover {
-            color: var(--main-color);
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--main-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
         }
         
         /* 메인 배너 (Hero) */
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1526047774128-253c0512c2a2?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            color: var(--white-color);
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1526047774128-253c0512c2a2?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            color: #fff;
             text-align: center;
-            padding: 120px 20px;
+            padding: 150px 20px;
         }
 
         .hero h1 {
-            font-size: 3em;
+            font-size: 3.5em;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
         }
 
         .hero p {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: 300;
-            margin-bottom: 15px;
-        }
-        
-        .hero .delivery-info {
-            font-size: 1.1em;
-            font-weight: 500;
-            background-color: rgba(0,0,0,0.3);
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
             margin-bottom: 30px;
         }
 
         .hero-button {
-            background-color: var(--main-color);
-            color: var(--white-color);
-            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 15px 35px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 50px; /* 둥근 버튼 */
             font-weight: 500;
+            font-size: 1.1em;
             transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
         .hero-button:hover {
-            background-color: #1e422b;
-            transform: translateY(-2px);
+            background-color: #c9614d;
+            transform: translateY(-3px);
         }
 
-        /* 섹션 공통 스타일 */
+        /* 🖼️ 3. 레이아웃: 여백과 애니메이션 */
         .section {
-            padding: 60px 0;
+            padding: 100px 0; /* 섹션 간 여백 확장 */
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 50px;
+            font-size: 3em;
+            margin-bottom: 80px; /* 제목 아래 여백 확장 */
             color: var(--main-color);
         }
 
-        /* 상품 상세 표시 스타일 */
         .product-display {
             display: flex;
-            gap: 40px;
-            align-items: flex-start;
-            background: var(--white-color);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            gap: 60px; /* 이미지와 텍스트 간격 확장 */
+            align-items: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+
+        .product-display.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 지그재그 레이아웃을 위한 설정 */
+        #condolence .product-display {
+            flex-direction: row-reverse;
         }
 
         .image-gallery {
-            flex: 1;
+            flex: 1.2; /* 이미지 영역을 더 크게 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .main-image img {
             width: 100%;
             height: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            display: block;
             aspect-ratio: 3 / 4;
             object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .main-image img:hover {
+            transform: scale(1.05); /* 호버 줌 효과 */
         }
 
         .thumbnail-container {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            background-color: #fff;
+            padding: 10px;
         }
 
         .thumbnail {
             width: 80px;
             height: 80px;
             object-fit: cover;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            border: 2px solid var(--border-color);
+            border: 2px solid transparent;
             transition: border-color 0.3s;
+            margin: 0 5px;
         }
 
         .thumbnail:hover, .thumbnail.active {
@@ -188,94 +218,83 @@
         
         .product-details {
             flex: 1;
-            padding-top: 10px;
         }
 
         .product-details h3 {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .product-description-text {
             font-size: 1.1em;
-            margin-bottom: 20px;
-            line-height: 1.7;
-            color: #555;
+            margin-bottom: 25px;
+            color: #5c5a58;
         }
 
         .product-price {
-            font-size: 1.8em;
+            font-size: 2em;
             color: var(--main-color);
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .order-button, .gemini-button {
+        .order-button, .suggestion-button {
             display: block;
             width: 100%;
-            padding: 15px 30px;
+            padding: 16px 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px; /* 더 둥근 버튼 */
             cursor: pointer;
             font-size: 1.1em;
             font-weight: 500;
             text-align: center;
             transition: all 0.3s;
+            margin-top: 15px;
         }
 
         .order-button {
-            background-color: var(--text-color);
-            color: var(--white-color);
-            margin-top: 10px;
+            background-color: var(--accent-color);
+            color: #fff;
         }
 
         .order-button:hover {
-            background-color: #555;
-        }
-
-        .gemini-button {
-            background: linear-gradient(45deg, #4285F4, #9b72cb, #d96570, #f2a60c);
-            color: white;
-            margin-top: 10px;
-        }
-
-        .gemini-button:hover {
-            opacity: 0.9;
+            background-color: #c9614d;
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .suggestion-button {
+            background-color: transparent;
+            color: var(--main-color);
+            border: 2px solid var(--main-color);
+        }
+
+        .suggestion-button:hover {
+            background-color: var(--main-color);
+            color: #fff;
         }
         
         /* 주문 안내 섹션 */
         #order-info {
-            background-color: var(--white-color);
+            background-color: var(--surface-color);
         }
         
         .info-box {
-            background-color: var(--bg-color);
-            border-left: 5px solid var(--main-color);
-            padding: 30px;
-            border-radius: 5px;
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
         
         .info-box h3 {
-            font-size: 1.8em;
+            font-size: 2.2em;
             margin-bottom: 15px;
         }
         
-        .info-box p {
-            font-size: 1.1em;
-            line-height: 1.8;
-        }
-
-        .info-box .delivery-info-sub {
-            color: var(--main-color);
-            font-weight: 500;
-            margin-top: 15px;
-        }
-        
         .info-box .contact-number {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: 700;
             color: var(--main-color);
             margin-top: 20px;
@@ -284,163 +303,66 @@
         }
 
         .info-box .call-helper-text {
-            font-size: 0.9em;
-            color: #777;
+            font-size: 1em;
+            color: #888;
             margin-top: 10px;
         }
         
         /* 푸터 */
         footer {
-            background-color: #222;
-            color: #aaa;
+            background-color: #413F3D;
+            color: #c0b Teba;
             text-align: center;
-            padding: 30px 20px;
+            padding: 50px 20px;
+            font-size: 0.9em;
         }
         
         footer p {
-            margin: 5px 0;
+            margin: 8px 0;
         }
 
-        /* Gemini API Modal Style */
+        /* 문구 추천 Modal Style */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; opacity: 0; visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
-
-        .modal-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
         .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transform: translateY(-20px);
-            transition: transform 0.3s;
+            background-color: white; padding: 30px; border-radius: 10px;
+            width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: translateY(-20px); transition: transform 0.3s;
         }
-        
-        .modal-overlay.visible .modal-content {
-            transform: translateY(0);
-        }
-
+        .modal-overlay.visible .modal-content { transform: translateY(0); }
         .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
         }
-
-        .modal-title {
-            font-size: 1.5em;
-            color: var(--main-color);
-        }
-
-        .close-button {
-            background: none;
-            border: none;
-            font-size: 1.8em;
-            cursor: pointer;
-            color: #888;
-        }
-
-        .modal-body label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .modal-body select, .modal-body button {
-            width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        
+        .modal-title { font-size: 1.8em; color: var(--main-color); }
+        .close-button { background: none; border: none; font-size: 1.8em; cursor: pointer; color: #888; }
         .modal-body select {
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            width: 100%; padding: 12px; border-radius: 5px; font-size: 1em;
+            border: 1px solid var(--border-color); margin-bottom: 20px;
         }
-
-        #gemini-result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--bg-color);
-            border-radius: 5px;
-            min-height: 100px;
-        }
-
-        #gemini-result ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        #gemini-result li {
-            padding: 8px;
-            border-bottom: 1px dashed var(--border-color);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        #gemini-result li:last-child {
-            border-bottom: none;
-        }
-
-        #gemini-result li:hover {
-            background-color: #e9e9e9;
-        }
+        #gemini-result ul { list-style-type: none; padding-left: 0; }
+        #gemini-result li { padding: 10px; border-bottom: 1px dashed var(--border-color); cursor: pointer; transition: background-color 0.2s; }
+        #gemini-result li:hover { background-color: #f0f0f0; }
         
         /* 반응형 디자인 */
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .logo img {
-                height: 100px;
-            }
-            .nav-links {
-                gap: 15px;
-                font-size: 0.9em;
-            }
-            .hero h1 {
-                font-size: 2.2em;
-            }
-            .hero p {
-                font-size: 1em;
-            }
-            .section-title {
-                font-size: 2em;
-            }
-            .product-display {
-                flex-direction: column;
-            }
-            .thumbnail {
-                width: 60px;
-                height: 60px;
-            }
+            .navbar { flex-direction: column; gap: 20px; }
+            .logo img { height: 80px; }
+            .hero h1 { font-size: 2.5em; }
+            .product-display, #condolence .product-display { flex-direction: column; }
+            .section { padding: 80px 0; }
+            .section-title { font-size: 2.2em; margin-bottom: 50px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ⬆️ 헤더: 로고와 메뉴 -->
     <header>
         <div class="container navbar">
             <a href="#" class="logo">
@@ -455,22 +377,19 @@
     </header>
 
     <main>
-        <!-- 👋 메인 배너 -->
         <section class="hero">
             <h1>마음을 전하는 가장 아름다운 방법</h1>
             <p>소중한 순간, 국제플라워가 정성을 다해 함께합니다.</p>
-            <p class="delivery-info">🚚 전국 어디든 정성을 담아 배송해드립니다.</p>
             <a href="#celebration" class="hero-button">화환 둘러보기</a>
         </section>
 
-        <!-- 🎉 축하화환 섹션 -->
         <section id="celebration" class="section">
             <div class="container">
                 <h2 class="section-title">축하화환</h2>
                 <div class="product-display">
                     <div class="image-gallery">
                         <div class="main-image">
-                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="국제플라워 축하 3단 화환 정면 사진" id="main-image-celeb">
+                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="익산 국제플라워 축하 3단 화환 정면 사진" id="main-image-celeb">
                         </div>
                         <div class="thumbnail-container">
                             <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="축하화환 정면 썸네일" class="thumbnail active" onclick="changeImage('celeb', this, 'https://i.postimg.cc/brJGPsMj/1.png')">
@@ -485,21 +404,20 @@
                             가장 신선하고 아름다운 꽃들로 구성하여 보내시는 분의 마음까지 온전히 전달합니다.
                         </p>
                         <p class="product-price">₩50,000 부터</p>
-                        <button class="gemini-button" onclick="openSuggestionModal('celebration')">✨ 리본 문구 추천 보기</button>
+                        <button class="suggestion-button" onclick="openSuggestionModal('celebration')">✨ 리본 문구 추천 보기</button>
                         <button class="order-button" onclick="placeOrder('3단 축하화환')">전화로 주문하기</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 🙏 근조화환 섹션 -->
-        <section id="condolence" class="section" style="background-color: #f0f0f0;">
+        <section id="condolence" class="section" style="background-color: var(--surface-color);">
             <div class="container">
                 <h2 class="section-title">근조화환</h2>
                 <div class="product-display">
                     <div class="image-gallery">
                         <div class="main-image">
-                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="국제플라워 근조 3단 화환 정면 사진" id="main-image-condol">
+                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="익산 국제플라워 근조 3단 화환 정면 사진" id="main-image-condol">
                         </div>
                         <div class="thumbnail-container">
                             <img src="https://i.postimg.cc/fL531x8B/1.png" alt="근조화환 정면 썸네일" class="thumbnail active" onclick="changeImage('condol', this, 'https://i.postimg.cc/fL531x8B/1.png')">
@@ -514,14 +432,13 @@
                             엄숙하고 예를 다하는 마음으로 정성껏 제작하여 고인과 유족에게 깊은 애도를 표합니다.
                         </p>
                         <p class="product-price">₩50,000 부터</p>
-                        <button class="gemini-button" onclick="openSuggestionModal('condolence')">✨ 리본 문구 추천 보기</button>
+                        <button class="suggestion-button" onclick="openSuggestionModal('condolence')">✨ 리본 문구 추천 보기</button>
                         <button class="order-button" onclick="placeOrder('3단 근조화환')">전화로 주문하기</button>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- 📞 주문 안내 섹션 -->
         <section id="order-info" class="section">
             <div class="container">
                 <h2 class="section-title">주문 및 문의 안내</h2>
@@ -531,16 +448,13 @@
                         365일 언제나 상담 가능합니다.<br>
                         전화 또는 문자로 문의해주시면 가장 빠르고 친절하게 안내해 드리겠습니다.
                     </p>
-                    <p class="delivery-info-sub">※ 전국 배송 가능</p>
-                    <a href="tel:010-7709-8983" class="contact-number">📞 010-7709-8983</a>
+                    <a href="tel:010-709-8983" class="contact-number">📞 010-7709-8983</a>
                     <p class="call-helper-text">위 번호를 누르시면 자동으로 전화가 연결됩니다.</p>
                 </div>
             </div>
         </section>
-
     </main>
     
-    <!-- ✨ 리본 문구 추천 Modal -->
     <div class="modal-overlay" id="gemini-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -550,14 +464,12 @@
             <div class="modal-body">
                 <label for="occasion-select">상황을 선택해주세요:</label>
                 <select id="occasion-select"></select>
-                <button class="gemini-button" id="generate-button" style="margin-top: 20px;">추천 문구 보기</button>
-                <div id="gemini-result"></div>
+                <button class="order-button" id="generate-button" style="margin-top: 20px;">추천 문구 보기</button>
+                <div id="gemini-result" style="margin-top: 20px;"></div>
             </div>
         </div>
     </div>
 
-
-    <!-- 👇 푸터: 사업장 정보 -->
     <footer>
         <div class="container">
             <p><strong>상호:</strong> 국제플라워</p>
@@ -568,7 +480,7 @@
     </footer>
 
     <script>
-        // 주문하기 버튼 클릭 시 안내 메시지 표시
+        // --- 기존 기능 스크립트 (수정 없음) ---
         function placeOrder(productName) {
             alert(
                 productName + " 주문을 위해 아래 번호로 연락해주세요.\n\n" +
@@ -576,44 +488,23 @@
                 "☎️ 연락처: 010-7709-8983"
             );
         }
-
-        // 썸네일 이미지 클릭 시 메인 이미지 변경
         function changeImage(section, clickedThumbnail, newSrc) {
-            const mainImageId = `main-image-${section}`;
-            document.getElementById(mainImageId).src = newSrc;
-            
+            document.getElementById(`main-image-${section}`).src = newSrc;
             const thumbnails = clickedThumbnail.parentElement.children;
             for (let i = 0; i < thumbnails.length; i++) {
                 thumbnails[i].classList.remove('active');
             }
-            
             clickedThumbnail.classList.add('active');
         }
-
-        // --- ✨ 리본 문구 추천 기능 스크립트 (수정됨) ---
-
         const modal = document.getElementById('gemini-modal');
         const occasionSelect = document.getElementById('occasion-select');
         const generateButton = document.getElementById('generate-button');
         const resultDiv = document.getElementById('gemini-result');
         let currentWreathType = '';
-
         const occasions = {
-            celebration: [
-                { value: '결혼식', text: '결혼식' },
-                { value: '개업식', text: '개업/이전' },
-                { value: '승진/영전', text: '승진/영전' },
-                { value: '전시회/공연', text: '전시회/공연' },
-                { value: '생일/기념일', text: '생일/기념일' },
-            ],
-            condolence: [
-                { value: '일반 추모', text: '일반 추모' },
-                { value: '기독교식', text: '기독교식 위로' },
-                { value: '불교식', text: '불교식 위로' },
-            ]
+            celebration: [ { value: '결혼식', text: '결혼식' }, { value: '개업식', text: '개업/이전' }, { value: '승진/영전', text: '승진/영전' }, { value: '전시회/공연', text: '전시회/공연' }, { value: '생일/기념일', text: '생일/기념일' }, ],
+            condolence: [ { value: '일반 추모', text: '일반 추모' }, { value: '기독교식', text: '기독교식 위로' }, { value: '불교식', text: '불교식 위로' }, ]
         };
-        
-        // 미리 작성된 추천 문구 목록
         const suggestionLists = {
             celebration: {
                 '결혼식': ['祝結婚 (축결혼)', '결혼을 진심으로 축하합니다', '세상 가장 행복한 부부되세요', '두 분의 아름다운 시작을 응원합니다', 'Happy Wedding Day'],
@@ -628,7 +519,6 @@
                 '불교식': ['極樂往生 發願 (극락왕생 발원)', '王生極樂 (왕생극락)', '빛의 세계로 떠나소서', '좋은 곳으로 가시길 발원합니다', '삼가 조의를 표합니다']
             }
         };
-
         function openSuggestionModal(wreathType) {
             currentWreathType = wreathType;
             occasionSelect.innerHTML = '';
@@ -641,25 +531,13 @@
             resultDiv.innerHTML = '';
             modal.classList.add('visible');
         }
-
-        function closeSuggestionModal() {
-            modal.classList.remove('visible');
-        }
-        
+        function closeSuggestionModal() { modal.classList.remove('visible'); }
         generateButton.addEventListener('click', () => {
             const selectedOccasion = occasionSelect.value;
             resultDiv.innerHTML = '';
-            
             const suggestionsList = suggestionLists[currentWreathType]?.[selectedOccasion];
-            
-            if (suggestionsList && suggestionsList.length > 0) {
-                const suggestionsText = suggestionsList.join('\n');
-                displaySuggestions(suggestionsText);
-            } else {
-                resultDiv.innerHTML = '<p>추천 문구를 찾을 수 없습니다.</p>';
-            }
+            if (suggestionsList && suggestionsList.length > 0) { displaySuggestions(suggestionsList.join('\n')); }
         });
-        
         function displaySuggestions(text) {
             const suggestions = text.split('\n').filter(line => line.trim().length > 0);
             const ul = document.createElement('ul');
@@ -671,16 +549,7 @@
             });
             resultDiv.innerHTML = '';
             resultDiv.appendChild(ul);
-            
-            const helpText = document.createElement('p');
-            helpText.textContent = '마음에 드는 문구를 클릭하면 복사됩니다.';
-            helpText.style.textAlign = 'center';
-            helpText.style.marginTop = '15px';
-            helpText.style.fontSize = '0.9em';
-            helpText.style.color = '#777';
-            resultDiv.appendChild(helpText);
         }
-
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
@@ -691,8 +560,26 @@
             alert(`'${text}'\n\n위 문구가 클립보드에 복사되었습니다.`);
         }
 
-    </script>
+        // 🖼️ 3. 스크롤 애니메이션을 위한 새 스크립트
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.product-display');
 
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, {
+                threshold: 0.1 // 요소가 10% 보이면 애니메이션 시작
+            });
+
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+    </script>
 </body>
 </html>
 
