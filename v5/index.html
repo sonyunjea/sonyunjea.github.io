@@ -3,138 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N-Clone 포털</title>
-    <!-- Chosen Palette: Naver-inspired Green with Neutral Grays -->
-    <!-- Application Structure Plan: A classic portal layout is chosen for user familiarity. The structure is dominated by a central, prominent search bar in the header, establishing its primary function. The main content area uses a two-column grid: a larger column for high-information-density content like the news stand, and a smaller sidebar for glanceable widgets like weather and trending topics. This hierarchy guides the user's attention from search to news, then to secondary information, providing an intuitive and efficient browsing experience. -->
-    <!-- Visualization & Content Choices: Report Info: News articles -> Goal: Organize and display multiple sources -> Viz/Presentation: Grid layout (HTML/CSS). Interaction: None (static). Justification: A grid is the standard and most effective way to present a variety of news headlines. Report Info: Weather -> Goal: Inform glanceable data -> Viz/Presentation: Simple info card (HTML/CSS). Interaction: None (static). Justification: Weather data is concise and best presented in a compact, easy-to-read format. All data is currently mocked within a JS object, pending future API integration. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>1차 회로 대화형 분석기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Harmony (Stone, Muted Blue, Muted Green) -->
+    <!-- Application Structure Plan: The application is designed as an interactive learning dashboard, moving away from the linear structure of the source report. The core is a 'Circuit Simulator' that allows users to actively experiment with circuit parameters and observe real-time results. This hands-on approach is more effective for understanding dynamic concepts like time constants and transient responses. Supporting this are dedicated sections for 'Key Concepts' and a direct 'RC vs. RL Comparison' to reinforce theoretical knowledge. Navigation is handled through a clear top bar, allowing users to freely move between practical simulation and theoretical review, which is a more intuitive flow for learning complex topics than a static document. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation -> Interaction -> Justification. 1. Circuit Response -> Explore Change -> Dynamic Line Chart (Chart.js) -> Sliders for R,L,C,Vs -> Provides immediate visual feedback on how parameters affect the response curve. 2. Time Constant -> Inform/Explain -> Static Line Chart with Tangent -> Static display -> Visually demonstrates the geometric meaning of tau at t=0, as described in the report. 3. Steady State -> Explain Organization -> HTML/CSS Diagrams -> Static side-by-side view -> Clearly illustrates the open/short circuit concept without complex graphics. 4. RC vs. RL -> Compare -> Styled HTML Table -> Static display -> Offers a quick, digestible summary of key differences. This multi-faceted approach combines dynamic simulation with clear, static explanations to cater to different learning styles. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        .nav-btn {
+            @apply px-4 py-2 text-sm font-semibold text-stone-600 rounded-md transition-all duration-300;
+        }
+        .nav-btn.active {
+            @apply bg-blue-600 text-white shadow-md;
+        }
+        .nav-btn:not(.active):hover {
+            @apply bg-stone-200 text-stone-800;
+        }
+        .content-section {
+            @apply hidden;
+        }
+        .content-section.active {
+            @apply block;
+        }
+        .card {
+            @apply bg-white p-6 rounded-xl shadow-md border border-stone-200;
+        }
+        .slider-label {
+            @apply flex justify-between items-center text-sm font-medium text-stone-700;
+        }
+        .slider {
+            @apply w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer;
+        }
+        .latex {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-
-    <div id="app" class="max-w-6xl mx-auto p-4">
-
-        <!-- Header and Search Bar -->
-        <header class="flex flex-col md:flex-row items-center justify-between py-4">
-            <h1 class="text-4xl font-bold text-green-600 mb-4 md:mb-0">N-Clone</h1>
-            <div class="w-full md:w-1/2 flex items-center border-2 border-green-600 rounded-lg">
-                <input type="text" placeholder="검색어를 입력하세요" class="w-full p-3 border-none rounded-l-md focus:outline-none">
-                <button class="bg-green-600 text-white p-3 px-5 rounded-r-md">
-                    <span class="text-2xl">🔍</span>
-                </button>
+<body class="antialiased">
+    <div class="min-h-screen">
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
+                <h1 class="text-2xl font-bold text-blue-700">1차 회로(1st Order Circuit) 분석기</h1>
+                <nav id="main-nav" class="flex space-x-2 mt-2 sm:mt-0">
+                    <button class="nav-btn active" data-target="intro">개요</button>
+                    <button class="nav-btn" data-target="simulator">회로 시뮬레이터</button>
+                    <button class="nav-btn" data-target="concepts">핵심 개념</button>
+                    <button class="nav-btn" data-target="comparison">RC vs RL 비교</button>
+                </nav>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            
-            <!-- News Stand Section -->
-            <div class="lg:col-span-2">
-                <section id="news-stand" class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">📰 뉴스 스탠드</h2>
-                    <div id="news-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <!-- News items will be injected here by JS -->
+        <main class="container mx-auto p-4 md:p-8">
+            <section id="intro" class="content-section active space-y-6">
+                <div class="card">
+                    <h2 class="text-xl font-bold text-stone-800 mb-4">1. 개요: 1차 회로의 정의 및 응답 특성</h2>
+                    <p class="text-stone-600 leading-relaxed">
+                        <b>1차 회로(1st-order circuit)</b>는 단 하나의 에너지 저장 요소(축전기 C 또는 인덕터 L)와 하나 이상의 저항 R로 구성된 회로입니다. 이러한 회로의 거동은 1계 선형 미분방정식으로 표현되며, 그 해는 회로의 <b>과도 응답(transient response)</b>과 <b>정상 상태 응답(steady-state response)</b>의 합으로 나타납니다.
+                    </p>
+                    <div class="mt-4 bg-stone-50 p-4 rounded-lg">
+                        <p class="text-center text-stone-700 font-mono text-lg"><span class="latex">x(t) = x(&infin;) + [x(0) - x(&infin;)] e<sup>-t/&tau;</sup></span></p>
                     </div>
-                </section>
-            </div>
+                    <p class="mt-4 text-stone-600">
+                        위 식에서 <span class="latex">x(0)</span>는 초기값, <span class="latex">x(&infin;)</span>는 최종 정상 상태값, <span class="latex">&tau;</span>는 회로의 고유한 응답 속도를 결정하는 <b>시정수(Time Constant)</b>입니다. 이 애플리케이션은 이러한 1차 회로의 동작을 시각적이고 직관적으로 탐색할 수 있도록 설계되었습니다. '회로 시뮬레이터' 탭으로 이동하여 직접 회로를 구성하고 응답을 확인해보세요.
+                    </p>
+                </div>
+            </section>
 
-            <!-- Sidebar Section -->
-            <div class="space-y-6">
-                <!-- Weather Widget -->
-                <section id="weather-widget" class="bg-white p-6 rounded-lg shadow-sm">
-                    <!-- Weather content will be injected here by JS -->
-                </section>
+            <section id="simulator" class="content-section">
+                <div class="card">
+                    <h2 class="text-xl font-bold text-stone-800 mb-4">대화형 회로 시뮬레이터</h2>
+                    <p class="text-stone-600 mb-6">
+                        아래 컨트롤러를 조작하여 회로의 파라미터를 변경하고, 그에 따른 전압 또는 전류의 응답 곡선을 실시간으로 확인해보세요. 시정수(&tau;)가 응답 곡선의 형태에 어떤 영향을 미치는지 직접 관찰할 수 있습니다.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="md:col-span-1 space-y-6 bg-stone-50 p-4 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-stone-800 mb-2">1. 회로 유형 선택</h3>
+                                <div class="flex space-x-4">
+                                    <label class="flex items-center"><input type="radio" name="circuitType" value="rc" checked class="mr-2"> RC 회로</label>
+                                    <label class="flex items-center"><input type="radio" name="circuitType" value="rl" class="mr-2"> RL 회로</label>
+                                </div>
+                            </div>
+                             <div>
+                                <h3 class="font-semibold text-stone-800 mb-2">2. 응답 유형 선택</h3>
+                                <div class="flex space-x-4">
+                                    <label class="flex items-center"><input type="radio" name="responseType" value="source-free" checked class="mr-2"> 무전원</label>
+                                    <label class="flex items-center"><input type="radio" name="responseType" value="step" class="mr-2"> 전원 인가</label>
+                                </div>
+                            </div>
+                            
+                            <div id="params-r">
+                                <label for="r-slider" class="slider-label"><span>저항 (R)</span><span id="r-value" class="font-bold text-blue-600"></span></label>
+                                <input id="r-slider" type="range" min="1" max="100" value="50" class="slider">
+                            </div>
+                            
+                            <div id="params-c">
+                                <label for="c-slider" class="slider-label"><span>축전기 (C)</span><span id="c-value" class="font-bold text-blue-600"></span></label>
+                                <input id="c-slider" type="range" min="1" max="100" value="50" class="slider">
+                            </div>
+                            
+                             <div id="params-l" class="hidden">
+                                <label for="l-slider" class="slider-label"><span>인덕터 (L)</span><span id="l-value" class="font-bold text-blue-600"></span></label>
+                                <input id="l-slider" type="range" min="1" max="100" value="50" class="slider">
+                            </div>
 
-                <!-- Trending Topics Widget -->
-                <section class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-xl font-bold mb-4">🔥 실시간 검색어</h2>
-                    <ul id="trending-list" class="space-y-2">
-                        <!-- Trending items will be injected here by JS -->
-                    </ul>
-                </section>
-            </div>
+                             <div id="params-vs" class="hidden">
+                                <label for="vs-slider" class="slider-label"><span>전원 (V<sub>s</sub> / I<sub>s</sub>)</span><span id="vs-value" class="font-bold text-blue-600"></span></label>
+                                <input id="vs-slider" type="range" min="1" max="100" value="50" class="slider">
+                            </div>
+
+                            <div id="params-v0">
+                                <label for="v0-slider" class="slider-label"><span>초기값 (V<sub>0</sub> / I<sub>0</sub>)</span><span id="v0-value" class="font-bold text-blue-600"></span></label>
+                                <input id="v0-slider" type="range" min="0" max="100" value="100" class="slider">
+                            </div>
+
+                        </div>
+                        <div class="md:col-span-2">
+                             <div class="chart-container">
+                                <canvas id="responseChart"></canvas>
+                            </div>
+                             <div class="mt-4 bg-stone-50 p-4 rounded-lg text-center">
+                                 <p class="text-lg font-semibold text-stone-800">
+                                     시정수 <span class="latex">&tau;</span> = <span id="tau-value" class="font-bold text-green-600"></span>
+                                 </p>
+                                 <p class="text-sm text-stone-600 mt-1">
+                                     <span id="equation-text" class="font-mono"></span>
+                                 </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="concepts" class="content-section space-y-6">
+                <div class="card">
+                    <h2 class="text-xl font-bold text-stone-800 mb-4">핵심 개념: 시정수(&tau;)와 정상 상태</h2>
+                    <p class="text-stone-600 mb-6">1차 회로의 동작을 이해하는 데 가장 중요한 두 가지 개념은 시정수와 정상 상태입니다. 시정수는 회로의 응답 속도를, 정상 상태는 시간이 충분히 흐른 뒤의 최종 상태를 나타냅니다.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold text-lg text-stone-800 mb-2">시정수(&tau;)의 물리적 의미</h3>
+                            <p class="text-stone-600 text-sm mb-4">시정수는 응답이 초기 상태에서 최종 상태로 변하는 데 걸리는 시간의 척도입니다. <span class="font-bold">무전원 회로</span>에서는 초기값의 약 36.8%까지 감소하는 데 걸리는 시간이며, <span class="font-bold">전원 인가 회로</span>에서는 최종값의 약 63.2%까지 도달하는 데 걸리는 시간입니다. 아래 그래프는 t=0에서의 접선이 0에 도달하는 시간이 정확히 &tau;임을 보여줍니다.</p>
+                             <div class="chart-container" style="height:250px;">
+                                <canvas id="tauChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-stone-800 mb-2">정상 상태(Steady State)</h3>
+                            <p class="text-stone-600 text-sm mb-4">DC 전원이 인가된 회로에서 시간이 충분히 흐르면($t \gg \tau$, 보통 5&tau; 이상), 에너지 저장 소자는 더 이상 상태가 변하지 않는 정상 상태에 도달합니다.</p>
+                             <div class="space-y-4">
+                                <div class="bg-stone-50 p-4 rounded-lg">
+                                    <h4 class="font-bold">축전기(C): 개방 회로</h4>
+                                    <p class="text-xs text-stone-600 mt-1">전압이 일정해져 전류(<span class="latex">i = C dv/dt</span>)가 흐르지 않으므로, 회로에서 끊어진 것처럼 동작합니다.</p>
+                                </div>
+                                <div class="bg-stone-50 p-4 rounded-lg">
+                                    <h4 class="font-bold">인덕터(L): 단락 회로</h4>
+                                    <p class="text-xs text-stone-600 mt-1">전류가 일정해져 전압(<span class="latex">v = L di/dt</span>)이 0이 되므로, 일반 도선처럼 동작합니다.</p>
+                                </div>
+                            </div>
+                             <p class="text-stone-600 text-sm mt-4">이러한 특성은 DC 회로의 정상 상태 해석을 매우 간단하게 만들어 줍니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="comparison" class="content-section">
+                 <div class="card">
+                    <h2 class="text-xl font-bold text-stone-800 mb-4">RC와 RL 회로 비교: 수학적 쌍대성</h2>
+                    <p class="text-stone-600 mb-6">RC 회로와 RL 회로는 서로 다른 소자를 사용하지만, 그 동작을 설명하는 미분방정식의 형태가 동일하여 수학적으로 쌍대 관계에 있습니다. 전압과 전류, C와 L, 개방과 단락이 서로 대응됩니다.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-stone-500">
+                            <thead class="text-xs text-stone-700 uppercase bg-stone-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">구분</th>
+                                    <th scope="col" class="px-6 py-3">RC 회로 (축전기 포함)</th>
+                                    <th scope="col" class="px-6 py-3">RL 회로 (인덕터 포함)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">저장 변수</th>
+                                    <td class="px-6 py-4">전압 (v)</td>
+                                    <td class="px-6 py-4">전류 (i)</td>
+                                </tr>
+                                <tr class="bg-stone-50 border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">시정수 (&tau;)</th>
+                                    <td class="px-6 py-4 font-mono">&tau;<sub>RC</sub> = R<sub>eq</sub>C</td>
+                                    <td class="px-6 py-4 font-mono">&tau;<sub>RL</sub> = L/R<sub>eq</sub></td>
+                                </tr>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">DC 정상 상태 동작</th>
+                                    <td class="px-6 py-4">개방 회로 (Open Circuit)</td>
+                                    <td class="px-6 py-4">단락 회로 (Short Circuit)</td>
+                                </tr>
+                                <tr class="bg-stone-50 border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">물리적 현상</th>
+                                    <td class="px-6 py-4">전하/전기장 에너지 저장</td>
+                                    <td class="px-6 py-4">전류/자기장 에너지 저장</td>
+                                </tr>
+                                 <tr class="bg-white">
+                                    <th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">무전원 응답식</th>
+                                    <td class="px-6 py-4 font-mono">v(t) = V<sub>0</sub> e<sup>-t/&tau;</sup></td>
+                                    <td class="px-6 py-4 font-mono">i(t) = I<sub>0</sub> e<sup>-t/&tau;</sup></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
-
     </div>
 
     <script>
-        const mockData = {
-            news: [
-                { source: "언론사 1", title: "차세대 AI 모델, 새로운 기능 발표", img: "https://placehold.co/150x100/a7f3d0/14532d?text=News1" },
-                { source: "언론사 2", title: "글로벌 경제 동향 및 전망 분석", img: "https://placehold.co/150x100/bae6fd/0c4a6e?text=News2" },
-                { source: "언론사 3", title: "우주 탐사, 새로운 행성 발견 소식", img: "https://placehold.co/150x100/e9d5ff/3b0764?text=News3" },
-                { source: "언론사 4", title: "친환경 에너지 기술, 상용화 임박", img: "https://placehold.co/150x100/fef08a/422006?text=News4" },
-                { source: "언론사 5", title: "도시재생 프로젝트, 구도심 활기", img: "https://placehold.co/150x100/fecaca/7f1d1d?text=News5" },
-                { source: "언론사 6", title: "최신 IT 기기 리뷰 및 사용 후기", img: "https://placehold.co/150x100/d1d5db/1f2937?text=News6" },
-                { source: "언론사 7", title: "주말 문화 행사 및 추천 공연", img: "https://placehold.co/150x100/fdba74/7c2d12?text=News7" },
-                { source: "언론사 8", title: "건강 관리, 새로운 슈퍼푸드 주목", img: "https://placehold.co/150x100/bbf7d0/14532d?text=News8" },
-            ],
-            weather: {
-                location: "광주광역시",
-                temp: 24,
-                condition: "맑음",
-                icon: "☀️",
-                minTemp: 18,
-                maxTemp: 26,
-                dust: "좋음"
-            },
-            trending: [
-                "포털 클론 코딩", "프론트엔드 개발자", "Tailwind CSS 사용법", "Next.js 프로젝트", "리액트 상태관리",
-                "TypeScript 기초", "JavaScript 비동기 처리", "인터랙티브 웹 만들기", "API 연동 방법", "Vercel 배포하기"
-            ]
-        };
+        document.addEventListener('DOMContentLoaded', function () {
+            const nav = document.getElementById('main-nav');
+            const sections = document.querySelectorAll('.content-section');
 
-        function renderNews() {
-            const grid = document.getElementById('news-grid');
-            grid.innerHTML = mockData.news.map(item => `
-                <div class="text-center group cursor-pointer">
-                    <img src="${item.img}" alt="${item.title}" class="w-full h-auto rounded-md mb-2 object-cover transition-transform duration-300 group-hover:scale-105">
-                    <p class="text-sm font-semibold text-gray-700">${item.source}</p>
-                    <p class="text-xs text-gray-500 truncate">${item.title}</p>
-                </div>
-            `).join('');
-        }
+            nav.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const targetId = e.target.dataset.target;
+                    
+                    nav.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
 
-        function renderWeather() {
-            const widget = document.getElementById('weather-widget');
-            const { location, temp, condition, icon, minTemp, maxTemp, dust } = mockData.weather;
-            widget.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500">${location}</p>
-                        <p class="text-5xl font-bold">${temp}°</p>
-                    </div>
-                    <div class="text-6xl">${icon}</div>
-                </div>
-                <div class="text-sm text-gray-600 mt-4 space-y-1">
-                    <p>${condition} (최저 ${minTemp}° / 최고 ${maxTemp}°)</p>
-                    <p>미세먼지: ${dust}</p>
-                </div>
-            `;
-        }
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                }
+            });
 
-        function renderTrends() {
-            const list = document.getElementById('trending-list');
-            list.innerHTML = mockData.trending.map((item, index) => `
-                <li class="flex items-center text-gray-800 hover:bg-gray-100 p-1 rounded-md">
-                    <span class="font-bold text-green-600 mr-3 w-5">${index + 1}</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
-        }
+            const rSlider = document.getElementById('r-slider');
+            const cSlider = document.getElementById('c-slider');
+            const lSlider = document.getElementById('l-slider');
+            const vsSlider = document.getElementById('vs-slider');
+            const v0Slider = document.getElementById('v0-slider');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderNews();
-            renderWeather();
-            renderTrends();
+            const rValue = document.getElementById('r-value');
+            const cValue = document.getElementById('c-value');
+            const lValue = document.getElementById('l-value');
+            const vsValue = document.getElementById('vs-value');
+            const v0Value = document.getElementById('v0-value');
+            
+            const tauValue = document.getElementById('tau-value');
+            const equationText = document.getElementById('equation-text');
+
+            const circuitTypeRadios = document.querySelectorAll('input[name="circuitType"]');
+            const responseTypeRadios = document.querySelectorAll('input[name="responseType"]');
+
+            const paramsC = document.getElementById('params-c');
+            const paramsL = document.getElementById('params-l');
+            const paramsVs = document.getElementById('params-vs');
+            
+            let responseChart;
+
+            function updateUI() {
+                const circuitType = document.querySelector('input[name="circuitType"]:checked').value;
+                const responseType = document.querySelector('input[name="responseType"]:checked').value;
+
+                paramsC.style.display = circuitType === 'rc' ? 'block' : 'none';
+                paramsL.style.display = circuitType === 'rl' ? 'block' : 'none';
+                paramsVs.style.display = responseType === 'step' ? 'block' : 'none';
+
+                const r = parseFloat(rSlider.value);
+                const c = parseFloat(cSlider.value) * 1e-3; // mF
+                const l = parseFloat(lSlider.value) * 1e-3; // mH
+                const vs = parseFloat(vsSlider.value);
+                const v0 = parseFloat(v0Slider.value);
+                
+                rValue.textContent = `${r.toFixed(0)} \u03A9`;
+                cValue.textContent = `${(c * 1000).toFixed(0)} mF`;
+                lValue.textContent = `${(l * 1000).toFixed(0)} mH`;
+                vsValue.textContent = `${vs.toFixed(0)}`;
+                v0Value.textContent = `${v0.toFixed(0)}`;
+
+                let tau, finalVal, initialVal, yLabel, eqVar;
+                
+                initialVal = v0;
+
+                if (circuitType === 'rc') {
+                    tau = r * c;
+                    yLabel = 'Voltage v(t) [V]';
+                    eqVar = 'v(t)';
+                    if(responseType === 'step') {
+                        finalVal = vs;
+                    } else {
+                        finalVal = 0;
+                    }
+                } else { // rl
+                    tau = l / r;
+                    yLabel = 'Current i(t) [A]';
+                    eqVar = 'i(t)';
+                     if(responseType === 'step') {
+                        finalVal = vs / r;
+                    } else {
+                        finalVal = 0;
+                    }
+                }
+
+                tauValue.textContent = `${tau.toFixed(3)} s`;
+                equationText.textContent = `${eqVar} = ${finalVal.toFixed(2)} + [${initialVal.toFixed(2)} - ${finalVal.toFixed(2)}] * exp(-t/${tau.toFixed(3)})`;
+
+                const labels = [];
+                const data = [];
+                const maxTime = 5 * tau > 0.1 ? 5*tau : 0.1;
+                const steps = 100;
+
+                for (let i = 0; i <= steps; i++) {
+                    const t = (i / steps) * maxTime;
+                    labels.push(t.toFixed(3));
+                    const value = finalVal + (initialVal - finalVal) * Math.exp(-t / tau);
+                    data.push(value);
+                }
+
+                responseChart.data.labels = labels;
+                responseChart.data.datasets[0].data = data;
+                responseChart.data.datasets[0].label = yLabel;
+                responseChart.options.scales.y.title.text = yLabel;
+                responseChart.update();
+            }
+
+            function createResponseChart() {
+                const ctx = document.getElementById('responseChart').getContext('2d');
+                responseChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Response',
+                            data: [],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time (s)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Response'
+                                },
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function createTauChart() {
+                const ctx = document.getElementById('tauChart').getContext('2d');
+                const tau = 1;
+                const v0 = 100;
+                const labels = [];
+                const data = [];
+                const maxTime = 5 * tau;
+                const steps = 100;
+
+                for (let i = 0; i <= steps; i++) {
+                    const t = (i / steps) * maxTime;
+                    labels.push(t.toFixed(2));
+                    data.push(v0 * Math.exp(-t / tau));
+                }
+                
+                const tangentData = [v0, 0];
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Exponential Decay v(t)',
+                            data: data,
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        }, {
+                            label: 'Tangent at t=0',
+                            data: [{x: 0, y: v0}, {x: tau, y: 0}],
+                            borderColor: 'rgb(239, 68, 68)',
+                            borderWidth: 1.5,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false,
+                            stepped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom',
+                                title: { display: true, text: 'Time (normalized to \u03C4)' },
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value, index, values) {
+                                        return value + '\u03C4';
+                                    }
+                                }
+                            },
+                            y: { title: { display: true, text: 'v(t) / V\u2080' }, min: 0, max: v0 * 1.1 }
+                        }
+                    }
+                });
+            }
+
+            rSlider.addEventListener('input', updateUI);
+            cSlider.addEventListener('input', updateUI);
+            lSlider.addEventListener('input', updateUI);
+            vsSlider.addEventListener('input', updateUI);
+            v0Slider.addEventListener('input', updateUI);
+            circuitTypeRadios.forEach(radio => radio.addEventListener('change', updateUI));
+            responseTypeRadios.forEach(radio => radio.addEventListener('change', updateUI));
+
+            createResponseChart();
+            createTauChart();
+            updateUI();
         });
     </script>
-
 </body>
 </html>
