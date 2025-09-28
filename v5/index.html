@@ -152,6 +152,38 @@
                             </div>
                         </div>
                     </div>
+                     <!-- 예제 섹션 추가 시작 -->
+                    <div class="mt-8 pt-6 border-t border-stone-200">
+                         <h3 class="font-bold text-lg text-blue-700 mb-4">💡 예제 분석 및 시뮬레이션 가이드</h3>
+                         <p class="text-stone-600 text-sm mb-4">아래 예제를 참고하여 슬라이더를 설정하고 결과를 비교해보세요. $\tau$ 값이 응답 속도를 어떻게 변화시키는지 확인해볼 수 있습니다.</p>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                             <!-- 예제 1: RC 무전원, 빠른 응답 -->
+                             <div class="bg-blue-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 cursor-pointer" data-example='{"type": "rc", "response": "source-free", "R": 20, "C": 10, "V0": 100, "Vs": 0}'>
+                                 <p class="font-bold text-blue-800">예제 1: RC 무전원 (빠른 $\tau$)</p>
+                                 <p class="text-xs text-stone-700 mt-1">R=20&Omega;, C=10mF, V<sub>0</sub>=100V</p>
+                                 <p class="text-xs text-stone-700">예상 &tau;: 0.2s</p>
+                             </div>
+                             <!-- 예제 2: RC 전원 인가, 느린 응답 -->
+                             <div class="bg-green-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 cursor-pointer" data-example='{"type": "rc", "response": "step", "R": 80, "C": 80, "V0": 0, "Vs": 80}'>
+                                 <p class="font-bold text-green-800">예제 2: RC 전원 (느린 $\tau$)</p>
+                                 <p class="text-xs text-stone-700 mt-1">R=80&Omega;, C=80mF, V<sub>s</sub>=80V</p>
+                                 <p class="text-xs text-stone-700">예상 &tau;: 6.4s</p>
+                             </div>
+                             <!-- 예제 3: RL 무전원, 빠른 응답 -->
+                             <div class="bg-red-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 cursor-pointer" data-example='{"type": "rl", "response": "source-free", "R": 90, "L": 10, "V0": 50, "Vs": 0}'>
+                                 <p class="font-bold text-red-800">예제 3: RL 무전원 (빠른 $\tau$)</p>
+                                 <p class="text-xs text-stone-700 mt-1">R=90&Omega;, L=10mH, I<sub>0</sub>=50A</p>
+                                 <p class="text-xs text-stone-700">예상 &tau;: 0.111s</p>
+                             </div>
+                             <!-- 예제 4: RL 전원 인가, 느린 응답 -->
+                             <div class="bg-yellow-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 cursor-pointer" data-example='{"type": "rl", "response": "step", "R": 10, "L": 80, "V0": 0, "Vs": 60}'>
+                                 <p class="font-bold text-yellow-800">예제 4: RL 전원 (느린 $\tau$)</p>
+                                 <p class="text-xs text-stone-700 mt-1">R=10&Omega;, L=80mH, V<sub>s</sub>=60V</p>
+                                 <p class="text-xs text-stone-700">예상 &tau;: 8.0s</p>
+                             </div>
+                         </div>
+                    </div>
+                     <!-- 예제 섹션 추가 끝 -->
                 </div>
             </section>
             
@@ -272,6 +304,7 @@
 
             const circuitTypeRadios = document.querySelectorAll('input[name="circuitType"]');
             const responseTypeRadios = document.querySelectorAll('input[name="responseType"]');
+            const exampleCards = document.querySelectorAll('[data-example]');
 
             const paramsC = document.getElementById('params-c');
             const paramsL = document.getElementById('params-l');
@@ -449,6 +482,36 @@
                     }
                 });
             }
+            
+            function setExample(data) {
+                // 1. 회로 유형 라디오 버튼 설정
+                document.querySelector(`input[name="circuitType"][value="${data.type}"]`).checked = true;
+                document.querySelector(`input[name="responseType"][value="${data.response}"]`).checked = true;
+
+                // 2. 슬라이더 값 설정 (C, L은 mF/mH이므로 * 1000)
+                rSlider.value = data.R;
+                cSlider.value = data.C;
+                lSlider.value = data.L;
+                vsSlider.value = data.Vs;
+                v0Slider.value = data.V0;
+                
+                // 3. UI 업데이트 및 차트 재생성
+                updateUI();
+                
+                 // 4. 시뮬레이터 탭으로 자동 이동
+                document.getElementById('simulator').classList.add('active');
+                document.getElementById('intro').classList.remove('active');
+                
+                document.querySelector('[data-target="intro"]').classList.remove('active');
+                document.querySelector('[data-target="simulator"]').classList.add('active');
+            }
+            
+            exampleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const data = JSON.parse(card.dataset.example);
+                    setExample(data);
+                });
+            });
 
             rSlider.addEventListener('input', updateUI);
             cSlider.addEventListener('input', updateUI);
