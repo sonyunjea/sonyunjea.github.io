@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국제플라워 - 마음을 전하는 가장 아름다운 방법</title>
+    <link rel="icon" href="https://i.postimg.cc/zXrwsjDy/image.png" type="image/png">
+    <style>
+        /* 기본 스타일 초기화 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        :root {
+            --main-color: #2c5e3f; /* 차분한 녹색 */
+            --accent-color: #d4af37; /* 금색 포인트 */
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --white-color: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* 헤더 & 네비게이션 */
+        header {
+            background-color: var(--white-color);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--main-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--main-color);
+        }
+        
+        /* 메인 배너 (Hero) */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1526047774128-253c0512c2a2?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            color: var(--white-color);
+            text-align: center;
+            padding: 120px 20px;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+        
+        .hero .delivery-info {
+            font-size: 1.1em;
+            font-weight: 500;
+            background-color: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero-button {
+            background-color: var(--main-color);
+            color: var(--white-color);
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .hero-button:hover {
+            background-color: #1e422b;
+            transform: translateY(-2px);
+        }
+
+        /* 섹션 공통 스타일 */
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: var(--main-color);
+        }
+
+        /* 상품 목록 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: var(--white-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: 350px; /* 이미지 높이를 늘려 잘리지 않게 조정 */
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.4em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.2em;
+            color: var(--main-color);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .order-button {
+            background-color: var(--text-color);
+            color: var(--white-color);
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .order-button:hover {
+            background-color: #555;
+        }
+        
+        /* 주문 안내 섹션 */
+        #order-info {
+            background-color: var(--white-color);
+        }
+        
+        .info-box {
+            background-color: var(--bg-color);
+            border-left: 5px solid var(--main-color);
+            padding: 30px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .info-box h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .info-box p {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .info-box .delivery-info-sub {
+            color: var(--main-color);
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        
+        .info-box .contact-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--main-color);
+            margin-top: 20px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        /* 푸터 */
+        footer {
+            background-color: #222;
+            color: #aaa;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        footer p {
+            margin: 5px 0;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-links {
+                gap: 15px;
+                font-size: 0.9em;
+            }
+            .hero h1 {
+                font-size: 2.2em;
+            }
+            .hero p {
+                font-size: 1em;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ⬆️ 헤더: 로고와 메뉴 -->
+    <header>
+        <div class="container navbar">
+            <a href="#" class="logo">국제플라워</a>
+            <ul class="nav-links">
+                <li><a href="#celebration">축하화환</a></li>
+                <li><a href="#condolence">근조화환</a></li>
+                <li><a href="#order-info">주문안내</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- 👋 메인 배너 -->
+        <section class="hero">
+            <h1>마음을 전하는 가장 아름다운 방법</h1>
+            <p>소중한 순간, 국제플라워가 정성을 다해 함께합니다.</p>
+            <p class="delivery-info">🚚 전국 어디든 정성을 담아 배송해드립니다.</p>
+            <a href="#celebration" class="hero-button">화환 둘러보기</a>
+        </section>
+
+        <!-- 🎉 축하화환 섹션 -->
+        <section id="celebration" class="section">
+            <div class="container">
+                <h2 class="section-title">축하화환</h2>
+                <div class="product-grid">
+                    <!-- 상품 카드 1 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (기본형)">
+                        <div class="product-info">
+                            <h3 class="product-name">축하 3단 화환 (기본형)</h3>
+                            <p class="product-price">₩50,000</p>
+                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (기본형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                    <!-- 상품 카드 2 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (고급형)">
+                        <div class="product-info">
+                            <h3 class="product-name">축하 3단 화환 (고급형)</h3>
+                            <p class="product-price">₩60,000</p>
+                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (고급형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                    <!-- 상품 카드 3 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (특대형)">
+                        <div class="product-info">
+                            <h3 class="product-name">축하 3단 화환 (특대형)</h3>
+                            <p class="product-price">₩70,000</p>
+                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (특대형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🙏 근조화환 섹션 -->
+        <section id="condolence" class="section" style="background-color: #f0f0f0;">
+            <div class="container">
+                <h2 class="section-title">근조화환</h2>
+                <div class="product-grid">
+                    <!-- 상품 카드 4 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (기본형)">
+                        <div class="product-info">
+                            <h3 class="product-name">근조 3단 화환 (기본형)</h3>
+                            <p class="product-price">₩50,000</p>
+                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (기본형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                    <!-- 상품 카드 5 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (고급형)">
+                        <div class="product-info">
+                            <h3 class="product-name">근조 3단 화환 (고급형)</h3>
+                            <p class="product-price">₩60,000</p>
+                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (고급형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                    <!-- 상품 카드 6 -->
+                    <div class="product-card">
+                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (특대형)">
+                        <div class="product-info">
+                            <h3 class="product-name">근조 3단 화환 (특대형)</h3>
+                            <p class="product-price">₩70,000</p>
+                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (특대형)')">전화로 주문하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 📞 주문 안내 섹션 -->
+        <section id="order-info" class="section">
+            <div class="container">
+                <h2 class="section-title">주문 및 문의 안내</h2>
+                <div class="info-box">
+                    <h3>대표: 손광성</h3>
+                    <p>
+                        365일 언제나 상담 가능합니다.<br>
+                        전화 또는 문자로 문의해주시면 가장 빠르고 친절하게 안내해 드리겠습니다.
+                    </p>
+                    <p class="delivery-info-sub">※ 전국 배송 가능</p>
+                    <a href="tel:010-7709-8 numeracy" class="contact-number">📞 010-7709-8983</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 👇 푸터: 사업장 정보 -->
+    <footer>
+        <div class="container">
+            <p><strong>상호:</strong> 국제플라워</p>
+            <p><strong>대표:</strong> 손광성</p>
+            <p><strong>연락처:</strong> 010-7709-8983</p>
+            <p>&copy; 2025 국제플라워. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 주문하기 버튼 클릭 시 안내 메시지 표시
+        function placeOrder(productName) {
+            alert(
+                productName + " 주문을 위해 아래 번호로 연락해주세요.\n\n" +
+                "👨‍💼 대표: 손광성\n" +
+                "☎️ 연락처: 010-7709-8983"
+            );
+        }
+    </script>
+
+</body>
+</html>
+
