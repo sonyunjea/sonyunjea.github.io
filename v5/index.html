@@ -132,63 +132,88 @@
         .section-title {
             text-align: center;
             font-size: 2.5em;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             color: var(--main-color);
         }
 
-        /* 상품 목록 */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .product-card {
-            background-color: var(--white-color);
-            border: 1px solid var(--border-color);
+        /* 상품 상세 표시 스타일 */
+        .product-display {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            background: var(--white-color);
+            padding: 30px;
             border-radius: 10px;
-            overflow: hidden;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        .image-gallery {
+            flex: 1;
         }
-        
-        .product-card img {
+
+        .main-image img {
             width: 100%;
-            height: 350px; /* 이미지 높이를 늘려 잘리지 않게 조정 */
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 3 / 4;
             object-fit: cover;
         }
 
-        .product-info {
-            padding: 20px;
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        .product-name {
-            font-size: 1.4em;
-            font-weight: 500;
-            margin-bottom: 10px;
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: border-color 0.3s;
+        }
+
+        .thumbnail:hover, .thumbnail.active {
+            border-color: var(--main-color);
+        }
+        
+        .product-details {
+            flex: 1;
+            padding-top: 10px;
+        }
+
+        .product-details h3 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .product-description-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: #555;
         }
 
         .product-price {
-            font-size: 1.2em;
+            font-size: 1.8em;
             color: var(--main-color);
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .order-button {
             background-color: var(--text-color);
             color: var(--white-color);
-            padding: 10px 25px;
+            padding: 15px 30px;
+            width: 100%;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 500;
             transition: background-color 0.3s;
         }
@@ -266,6 +291,13 @@
             .section-title {
                 font-size: 2em;
             }
+            .product-display {
+                flex-direction: column;
+            }
+            .thumbnail {
+                width: 60px;
+                height: 60px;
+            }
         }
 
     </style>
@@ -297,33 +329,25 @@
         <section id="celebration" class="section">
             <div class="container">
                 <h2 class="section-title">축하화환</h2>
-                <div class="product-grid">
-                    <!-- 상품 카드 1 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (기본형)">
-                        <div class="product-info">
-                            <h3 class="product-name">축하 3단 화환 (기본형)</h3>
-                            <p class="product-price">₩50,000</p>
-                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (기본형)')">전화로 주문하기</button>
+                <div class="product-display">
+                    <div class="image-gallery">
+                        <div class="main-image">
+                            <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하화환 정면" id="main-image-celeb">
+                        </div>
+                        <div class="thumbnail-container">
+                            <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하화환 정면 썸네일" class="thumbnail active" onclick="changeImage('celeb', this, 'https://i.postimg.cc/52Wyt7QX/1.png')">
+                            <img src="https://i.postimg.cc/2SNy5cL3/1.png" alt="축하화환 측면 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/2SNy5cL3/1.png')">
+                            <img src="https://i.postimg.cc/y8CxNQ33/1.png" alt="축하화환 확대 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/y8CxNQ33/1.png')">
                         </div>
                     </div>
-                    <!-- 상품 카드 2 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (고급형)">
-                        <div class="product-info">
-                            <h3 class="product-name">축하 3단 화환 (고급형)</h3>
-                            <p class="product-price">₩60,000</p>
-                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (고급형)')">전화로 주문하기</button>
-                        </div>
-                    </div>
-                    <!-- 상품 카드 3 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/52Wyt7QX/1.png" alt="축하 3단 화환 (특대형)">
-                        <div class="product-info">
-                            <h3 class="product-name">축하 3단 화환 (특대형)</h3>
-                            <p class="product-price">₩70,000</p>
-                            <button class="order-button" onclick="placeOrder('축하 3단 화환 (특대형)')">전화로 주문하기</button>
-                        </div>
+                    <div class="product-details">
+                        <h3>3단 축하화환</h3>
+                        <p class="product-description-text">
+                            결혼식, 개업식, 전시회 등 모든 기쁜 날을 더욱 빛내줄 정성 가득한 3단 축하화환입니다.
+                            가장 신선하고 아름다운 꽃들로 구성하여 보내시는 분의 마음까지 온전히 전달합니다.
+                        </p>
+                        <p class="product-price">₩50,000 부터</p>
+                        <button class="order-button" onclick="placeOrder('3단 축하화환')">전화로 주문하기</button>
                     </div>
                 </div>
             </div>
@@ -333,33 +357,25 @@
         <section id="condolence" class="section" style="background-color: #f0f0f0;">
             <div class="container">
                 <h2 class="section-title">근조화환</h2>
-                <div class="product-grid">
-                    <!-- 상품 카드 4 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (기본형)">
-                        <div class="product-info">
-                            <h3 class="product-name">근조 3단 화환 (기본형)</h3>
-                            <p class="product-price">₩50,000</p>
-                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (기본형)')">전화로 주문하기</button>
+                <div class="product-display">
+                    <div class="image-gallery">
+                        <div class="main-image">
+                            <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조화환 정면" id="main-image-condol">
+                        </div>
+                        <div class="thumbnail-container">
+                            <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조화환 정면 썸네일" class="thumbnail active" onclick="changeImage('condol', this, 'https://i.postimg.cc/T3v1P752/1.png')">
+                            <img src="https://i.postimg.cc/RZxh0sJM/1.png" alt="근조화환 측면 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/RZxh0sJM/1.png')">
+                            <img src="https://i.postimg.cc/9QH0f8wF/1.png" alt="근조화환 확대 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/9QH0f8wF/1.png')">
                         </div>
                     </div>
-                    <!-- 상품 카드 5 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (고급형)">
-                        <div class="product-info">
-                            <h3 class="product-name">근조 3단 화환 (고급형)</h3>
-                            <p class="product-price">₩60,000</p>
-                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (고급형)')">전화로 주문하기</button>
-                        </div>
-                    </div>
-                    <!-- 상품 카드 6 -->
-                    <div class="product-card">
-                        <img src="https://i.postimg.cc/T3v1P752/1.png" alt="근조 3단 화환 (특대형)">
-                        <div class="product-info">
-                            <h3 class="product-name">근조 3단 화환 (특대형)</h3>
-                            <p class="product-price">₩70,000</p>
-                            <button class="order-button" onclick="placeOrder('근조 3단 화환 (특대형)')">전화로 주문하기</button>
-                        </div>
+                     <div class="product-details">
+                        <h3>3단 근조화환</h3>
+                        <p class="product-description-text">
+                            슬픈 마음을 위로하고 고인의 마지막 가시는 길을 추모하는 3단 근조화환입니다.
+                            엄숙하고 예를 다하는 마음으로 정성껏 제작하여 고인과 유족에게 깊은 애도를 표합니다.
+                        </p>
+                        <p class="product-price">₩50,000 부터</p>
+                        <button class="order-button" onclick="placeOrder('3단 근조화환')">전화로 주문하기</button>
                     </div>
                 </div>
             </div>
@@ -401,6 +417,22 @@
                 "👨‍💼 대표: 손광성\n" +
                 "☎️ 연락처: 010-7709-8983"
             );
+        }
+
+        // 썸네일 이미지 클릭 시 메인 이미지 변경
+        function changeImage(section, clickedThumbnail, newSrc) {
+            // 메인 이미지 변경
+            const mainImageId = `main-image-${section}`;
+            document.getElementById(mainImageId).src = newSrc;
+            
+            // 모든 썸네일에서 active 클래스 제거
+            const thumbnails = clickedThumbnail.parentElement.children;
+            for (let i = 0; i < thumbnails.length; i++) {
+                thumbnails[i].classList.remove('active');
+            }
+            
+            // 클릭된 썸네일에만 active 클래스 추가
+            clickedThumbnail.classList.add('active');
         }
     </script>
 
