@@ -3,299 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance Futures UI Clone</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <title>N-Clone 포털 프로젝트 대시보드</title>
+    <!-- Chosen Palette: Warm Neutral (Stone) with Blue Accent -->
+    <!-- Application Structure Plan: A single-page dashboard design is chosen to provide a comprehensive overview of the project plan at a glance. The core interactive element is a 6-week timeline navigator. Clicking a week dynamically updates the main content panel to display that week's specific goals and tasks. This task-oriented structure transforms a static document into an engaging, explorable roadmap, making it easier for a developer to understand the project flow and weekly objectives. -->
+    <!-- Visualization & Content Choices: Report Info: 6-week development schedule -> Goal: Show progress and change over time -> Viz/Presentation: Interactive timeline navigator (HTML/CSS/JS) and a dynamic content area. Interaction: User clicks a week to filter content shown. Justification: This is the most intuitive way to explore a time-based plan. Report Info: Overall project progress -> Goal: Inform at a glance -> Viz/Presentation: Doughnut Chart (Chart.js/Canvas). Interaction: Chart updates based on the selected week. Justification: Provides immediate visual feedback on progress through the plan. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & Babel CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Custom Styles -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
         }
-        /* 스크롤바 커스텀 */
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            aspect-ratio: 1 / 1;
         }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-        /* 커스텀 텍스트 색상 */
-        .text-green { color: #2EBD85; }
-        .text-red { color: #F6465D; }
-        /* 호가창 배경 그라데이션 */
-        .bg-depth-green { background: linear-gradient(to left, rgba(16, 185, 129, 0.2), transparent); }
-        .bg-depth-red { background: linear-gradient(to left, rgba(246, 70, 93, 0.2), transparent); }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-300">
+<body class="bg-stone-50 text-stone-800">
 
-    <div id="root"></div>
+    <div id="app" class="p-4 md:p-8 max-w-7xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-900">N-Clone Portal Project</h1>
+            <p class="text-stone-600 mt-2 text-lg">인터랙티브 개발 계획서 대시보드</p>
+        </header>
 
-    <script type="text/babel">
-        // --- 아이콘 컴포넌트 ---
-        const Icon = ({ name, size = 16, className = '' }) => {
-            React.useEffect(() => {
-                lucide.createIcons();
-            }, []);
-            return <i data-lucide={name} width={size} height={size} className={className}></i>;
-        };
-        
-        // --- 헤더 컴포넌트 ---
-        const Header = () => {
-            const navItems = ["Futures", "Options", "Trading Bots", "Copy Trading", "Data"];
-            return (
-                <header className="bg-slate-800/50 border-b border-slate-700 px-4 flex items-center h-14 col-span-3">
-                    <div className="flex items-center gap-4">
-                        <img src="https://public.bnbstatic.com/20190405/eb2349c3-b228-4a26-8278-8d5c464c125a.svg" alt="Logo" className="h-6" />
-                        <h1 className="text-xl font-bold text-yellow-400 hidden md:block">Futures</h1>
-                    </div>
-                    <nav className="hidden md:flex items-center gap-6 ml-8 text-sm font-medium">
-                        {navItems.map(item => <a href="#" key={item} className="hover:text-white transition-colors">{item}</a>)}
-                        <a href="#" className="hover:text-white transition-colors flex items-center gap-1">More <Icon name="chevron-down" size={14} /></a>
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Timeline Navigator -->
+                <section id="timeline-section" class="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 class="text-2xl font-bold mb-1">개발 로드맵</h2>
+                    <p class="text-stone-600 mb-4">아래의 주차별 탭을 클릭하여 해당 주의 상세 개발 목표와 세부 과제를 확인하세요.</p>
+                    <nav id="timeline-nav" class="flex flex-wrap gap-2">
                     </nav>
-                    <div className="flex-grow"></div>
-                    <div className="flex items-center gap-4 text-sm">
-                        <button className="hover:text-white"><Icon name="settings-2" size={18} /></button>
-                        <button className="px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-md font-semibold hover:bg-yellow-500 transition-colors">Log In</button>
-                        <button className="px-4 py-1.5 bg-slate-700 rounded-md font-semibold hover:bg-slate-600 transition-colors">Register</button>
+                </section>
+                
+                <!-- Dynamic Content Area -->
+                <section id="details-section" class="bg-white p-6 rounded-xl shadow-sm min-h-[400px]">
+                    <div id="details-content">
                     </div>
-                </header>
-            );
+                </section>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Project Progress -->
+                <section class="bg-white p-6 rounded-xl shadow-sm text-center">
+                    <h2 class="text-2xl font-bold mb-4">프로젝트 진행률</h2>
+                    <div class="chart-container">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Tech Stack -->
+                <section class="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 class="text-2xl font-bold mb-4">기술 스택 🛠️</h2>
+                    <div id="tech-stack" class="space-y-4"></div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const projectData = {
+            weeks: [
+                {
+                    week: 1,
+                    title: "프로젝트 설계 및 기본 UI 구성",
+                    goal: "개발 환경을 구축하고 포털의 전체적인 레이아웃을 시각적으로 완성합니다. 데이터는 없지만, 완성된 것처럼 보이는 '껍데기'를 만듭니다.",
+                    tasks: [
+                        "`npx create-next-app@latest --typescript` 명령어로 프로젝트 생성 및 기본 설정",
+                        "ESLint, Prettier 설정을 통해 일관된 코드 스타일 유지",
+                        "GitHub 저장소 생성 및 프로젝트 연동",
+                        "Figma나 Excalidraw 같은 툴로 메인 페이지 와이어프레임 상세 설계",
+                        "공통 컴포넌트(버튼, 인풋 등)와 레이아웃 컴포넌트(Header, Footer, Sidebar)의 기본 구조 생성",
+                        "각 영역(검색창, 뉴스, 날씨)에 해당하는 정적 UI 컴포넌트 파일 생성 및 가짜 데이터로 화면 채우기"
+                    ]
+                },
+                {
+                    week: 2,
+                    title: "백엔드 서버 구축 및 검색 기능 연동",
+                    goal: "백엔드 프록시 서버를 만들고, 포털의 심장인 검색 기능을 실제로 동작하게 만듭니다.",
+                    tasks: [
+                        "Next.js API Routes 또는 별도의 Express 프로젝트로 백엔드 서버 구축",
+                        "`.env` 파일을 사용하여 외부 API 키를 안전하게 환경 변수로 관리",
+                        "`/api/search` 엔드포인트를 만들어, 프론트로부터 검색어를 받아 Google API로 전달하고 결과를 반환하는 로직 구현",
+                        "메인 페이지(`pages/index.tsx`)의 검색창과 검색 결과 페이지(`pages/search.tsx`) 생성",
+                        "검색 실행 시 `next/router`를 사용해 검색 결과 페이지로 이동하며 검색어를 쿼리 파라미터로 전달 (`/search?query=리액트`)"
+                    ]
+                },
+                {
+                    week: 3,
+                    title: "뉴스 스탠드 구현",
+                    goal: "실시간 뉴스 헤드라인을 가져와 동적으로 화면에 표시하고, 사용자 인터랙션을 추가합니다.",
+                    tasks: [
+                        "`/api/news` 엔드포인트를 만들어, 카테고리별로 NewsAPI를 호출하는 로직 구현",
+                        "`useQuery` Hook을 사용해 프론트엔드에서 뉴스 데이터를 비동기적으로 요청",
+                        "데이터 로딩 중에는 스켈레톤 UI를 보여주어 사용자 경험 향상",
+                        "받아온 뉴스 데이터를 반응형 그리드 레이아웃으로 렌더링",
+                        "'정치', '경제', '스포츠' 등 카테고리 탭 UI를 만들고, 클릭 시 해당 카테고리의 뉴스를 다시 불러오는 기능 구현"
+                    ]
+                },
+                {
+                    week: 4,
+                    title: "날씨 위젯 및 실시간 검색어",
+                    goal: "사용자의 편의를 돕는 위젯 기능을 추가하여 포털을 더욱 풍성하게 만듭니다.",
+                    tasks: [
+                        "`/api/weather` 엔드포인트를 만들어, 위도/경도를 받아 날씨 정보를 반환하는 로직 구현",
+                        "`useEffect` 안에서 `navigator.geolocation.getCurrentPosition`을 호출하여 사용자 위치 정보 획득",
+                        "날씨 아이콘과 현재 온도, 체감 온도 등을 표시하는 날씨 위젯 UI 완성",
+                        "실시간 검색어 순위를 위한 목업 데이터 배열 생성",
+                        "`setInterval`과 `useState`를 조합하여 일정 시간마다 순위가 바뀌는 것처럼 보이도록 시뮬레이션 구현"
+                    ]
+                },
+                {
+                    week: 5,
+                    title: "로그인 및 개인화 (심화)",
+                    goal: "사용자 인증 기능을 추가하여 포털의 완성도를 높이고, 개인화 기능의 기반을 마련합니다.",
+                    tasks: [
+                        "`next-auth` 라이브러리 설치 및 기본 설정",
+                        "Google, Kakao 등 원하는 소셜 로그인 Provider 설정 (`pages/api/auth/[...nextauth].ts`)",
+                        "`useSession` Hook을 사용하여 클라이언트 컴포넌트에서 로그인 상태 확인",
+                        "로그인 상태에 따라 헤더의 UI를 '로그인' 버튼에서 '내 정보/로그아웃' 메뉴로 동적 변경",
+                        "(선택) 로그인한 사용자가 날씨 위젯의 기본 지역을 설정하고, 이를 DB에 저장/조회하는 기능 구현"
+                    ]
+                },
+                {
+                    week: 6,
+                    title: "최종 다듬기 및 배포",
+                    goal: "모바일 반응형 디자인을 최종 점검하고, 실제 서비스처럼 웹에 배포하여 프로젝트를 마무리합니다.",
+                    tasks: [
+                        "다양한 화면 크기(모바일, 태블릿, 데스크톱)에서 UI가 깨지지 않는지 최종 확인 및 수정",
+                        "모든 비동기 요청에 대해 로딩 및 에러 상태 처리 UI가 잘 동작하는지 검토",
+                        "Vercel, Render에 Git 저장소를 연결하고 배포",
+                        "배포 후 환경 변수(`DATABASE_URL`, `NEWS_API_KEY` 등)를 배포 플랫폼에 설정",
+                        "프로젝트의 목적, 사용된 기술, 실행 방법, 구현된 기능 스크린샷 등을 포함한 상세한 `README.md` 파일 작성"
+                    ]
+                }
+            ],
+            techStack: [
+                {
+                    category: "프론트엔드 (Frontend)",
+                    items: ["React (Next.js)", "TypeScript", "Tailwind CSS", "React Query"]
+                },
+                {
+                    category: "백엔드 (Backend)",
+                    items: ["Node.js + Express", "Next.js API Routes"]
+                },
+                {
+                    category: "데이터베이스 (선택)",
+                    items: ["PostgreSQL", "MongoDB"]
+                },
+                {
+                    category: "외부 APIs",
+                    items: ["NewsAPI", "OpenWeatherMap", "Google Custom Search"]
+                },
+                {
+                    category: "배포 (Deployment)",
+                    items: ["Vercel", "Render", "Heroku"]
+                }
+            ]
         };
 
-        // --- 시장 정보 컴포넌트 ---
-        const MarketInfo = () => {
-            return (
-                <div className="bg-slate-800/50 border-b border-slate-700 px-4 py-3 flex items-center gap-6 col-span-3">
-                    <div className="flex items-center gap-3">
-                        <img src="https://static.crypto.com/token/icons/btc/color_icon.png" alt="BTC" className="w-8 h-8"/>
-                        <h2 className="text-xl font-semibold text-white">BTCUSDT</h2>
-                        <span className="text-sm bg-slate-700 px-2 py-0.5 rounded">Perpetual</span>
-                    </div>
-                    <div className="flex gap-6 text-sm">
-                        <div>
-                            <div className="text-slate-400">Mark Price</div>
-                            <div className="text-green font-semibold">68,420.50</div>
-                        </div>
-                        <div>
-                            <div className="text-slate-400">24h Change</div>
-                            <div className="text-green font-semibold">+1,234.56 (+1.84%)</div>
-                        </div>
-                        <div>
-                            <div className="text-slate-400">24h High</div>
-                            <div className="font-medium">69,123.45</div>
-                        </div>
-                        <div>
-                            <div className="text-slate-400">24h Low</div>
-                            <div className="font-medium">67,012.34</div>
-                        </div>
-                        <div>
-                            <div className="text-slate-400">24h Volume(BTC)</div>
-                            <div className="font-medium">105,678.90</div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-        
-        // --- 차트 컴포넌트 ---
-        const TradingChart = () => {
-            return (
-                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col">
-                    <div className="flex items-center gap-4 text-sm border-b border-slate-700 pb-2 mb-2">
-                        {['Time', '15m', '1H', '4H', '1D', 'More'].map(t => <button key={t} className="px-2 py-1 hover:bg-slate-700 rounded">{t}</button>)}
-                        <div className="flex-grow"></div>
-                        <button className="px-2 py-1 hover:bg-slate-700 rounded flex items-center gap-1"><Icon name="candlestick-chart" size={14}/> Indicators</button>
-                    </div>
-                    <div className="flex-grow bg-slate-900 rounded flex items-center justify-center">
-                        <p className="text-slate-500">TradingView Chart will be here</p>
-                    </div>
-                </div>
-            );
-        };
-        
-        // --- 호가창 컴포넌트 ---
-        const OrderBook = () => {
-            const mockAsks = [
-                { price: '68422.50', amount: '0.543', total: '37152.4' },
-                { price: '68421.10', amount: '1.201', total: '82158.7' },
-                { price: '68420.90', amount: '0.887', total: '60689.5' },
-            ];
-            const mockBids = [
-                { price: '68419.80', amount: '0.765', total: '52342.1' },
-                { price: '68418.20', amount: '2.113', total: '144558.3' },
-                { price: '68417.60', amount: '0.950', total: '64996.7' },
-            ];
-            const Row = ({ price, amount, total, type, depth }) => (
-                <div className="relative flex justify-between text-xs p-1 leading-tight">
-                    <div className={`absolute top-0 right-0 h-full ${type === 'bid' ? 'bg-depth-green' : 'bg-depth-red'}`} style={{ width: `${depth}%` }}></div>
-                    <span className={`z-10 ${type === 'ask' ? 'text-red' : 'text-green'}`}>{parseFloat(price).toLocaleString()}</span>
-                    <span className="z-10 text-white">{amount}</span>
-                    <span className="z-10 text-slate-400">{parseFloat(total).toLocaleString()}</span>
-                </div>
-            );
+        let currentWeek = 1;
+        let progressChart;
 
-            return (
-                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col text-sm">
-                    <h3 className="font-semibold text-white mb-2">Order Book</h3>
-                    <div className="grid grid-cols-3 text-xs text-slate-400 px-1 mb-1">
-                        <span>Price(USDT)</span>
-                        <span className="text-right">Amount(BTC)</span>
-                        <span className="text-right">Total</span>
-                    </div>
-                    <div className="flex flex-col-reverse">
-                        {mockBids.map((bid, i) => <Row key={i} {...bid} type="bid" depth={20 + i * 25} />)}
-                    </div>
-                    <div className="py-2 text-center text-xl font-bold text-green">
-                        68,420.50 <Icon name="arrow-up" size={18} className="inline-block text-green" />
-                    </div>
-                    <div>
-                        {mockAsks.map((ask, i) => <Row key={i} {...ask} type="ask" depth={65 - i * 20} />)}
-                    </div>
-                </div>
-            );
-        };
-        
-        // --- 최근 체결 컴포넌트 ---
-        const RecentTrades = () => {
-             const mockTrades = [
-                { price: '68420.50', amount: '0.012', time: '14:35:12', type: 'buy' },
-                { price: '68421.10', amount: '0.005', time: '14:35:10', type: 'sell' },
-                { price: '68420.90', amount: '0.021', time: '14:35:09', type: 'buy' },
-            ];
-            return (
-                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col text-sm">
-                    <h3 className="font-semibold text-white mb-2">Recent Trades</h3>
-                    <div className="grid grid-cols-3 text-xs text-slate-400 px-1 mb-1">
-                        <span>Price(USDT)</span>
-                        <span className="text-right">Amount(BTC)</span>
-                        <span className="text-right">Time</span>
-                    </div>
-                    <div className="flex-grow overflow-y-auto">
-                        {mockTrades.map((trade, i) => (
-                             <div key={i} className="grid grid-cols-3 text-xs p-1">
-                                <span className={trade.type === 'buy' ? 'text-green' : 'text-red'}>{parseFloat(trade.price).toLocaleString()}</span>
-                                <span className="text-right text-white">{trade.amount}</span>
-                                <span className="text-right text-slate-400">{trade.time}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        };
-
-        // --- 주문서 컴포넌트 ---
-        const OrderForm = () => {
-            return (
-                <div className="bg-slate-800/50 rounded-lg p-4 flex flex-col text-sm">
-                    <div className="flex border-b border-slate-700">
-                        <button className="px-4 py-2 text-white border-b-2 border-yellow-400 font-semibold">Limit</button>
-                        <button className="px-4 py-2 text-slate-400 hover:text-white">Market</button>
-                        <button className="px-4 py-2 text-slate-400 hover:text-white">Stop Limit</button>
-                    </div>
-                    <div className="space-y-4 mt-4">
-                         <div>
-                            <label className="text-xs text-slate-400">Price (USDT)</label>
-                            <input type="text" className="w-full bg-slate-800 p-2 rounded mt-1 border border-slate-700 focus:outline-none focus:border-yellow-400" defaultValue="68420.50" />
-                        </div>
-                        <div>
-                            <label className="text-xs text-slate-400">Amount (BTC)</label>
-                            <input type="text" className="w-full bg-slate-800 p-2 rounded mt-1 border border-slate-700 focus:outline-none focus:border-yellow-400" placeholder="0.000" />
-                        </div>
-                        <div className="flex justify-between">
-                            {[25, 50, 75, 100].map(p => <button key={p} className="w-1/4 py-1 mx-1 bg-slate-700 hover:bg-slate-600 text-xs rounded">{p}%</button>)}
-                        </div>
-                        <div className="flex justify-between text-xs">
-                            <span className="text-slate-400">Cost</span>
-                            <span>-- USDT</span>
-                        </div>
-                        <button className="w-full py-3 bg-green/80 hover:bg-green rounded font-semibold text-white bg-emerald-600 hover:bg-emerald-500">Buy/Long</button>
-                        <button className="w-full py-3 bg-red/80 hover:bg-red rounded font-semibold text-white bg-red-600 hover:bg-red-500">Sell/Short</button>
-                    </div>
-                </div>
-            );
-        };
-
-        // --- 포지션 및 주문내역 컴포넌트 ---
-        const PositionsPanel = () => {
-             return (
-                <div className="bg-slate-800/50 rounded-lg p-4 flex flex-col col-span-3">
-                    <div className="flex border-b border-slate-700 text-sm">
-                        {["Positions", "Open Orders", "Order History", "Trade History"].map(tab => (
-                            <button key={tab} className={`px-4 py-2 ${tab === 'Positions' ? 'text-white' : 'text-slate-400'} hover:text-white`}>{tab}</button>
-                        ))}
-                    </div>
-                    <div className="flex-grow flex items-center justify-center text-slate-500 py-10">
-                        <Icon name="file-question" className="mr-2" />
-                        No open positions.
-                    </div>
-                </div>
-             )
+        function renderTimelineNav() {
+            const navContainer = document.getElementById('timeline-nav');
+            navContainer.innerHTML = '';
+            projectData.weeks.forEach(weekData => {
+                const button = document.createElement('button');
+                button.textContent = `${weekData.week}️⃣ 주차`;
+                button.dataset.week = weekData.week;
+                button.className = `px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
+                    weekData.week === currentWeek 
+                    ? 'bg-blue-600 text-white shadow' 
+                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`;
+                button.onclick = () => {
+                    currentWeek = weekData.week;
+                    renderAll();
+                };
+                navContainer.appendChild(button);
+            });
         }
 
-        // --- 메인 앱 컴포넌트 ---
-        const App = () => {
-            return (
-                <div className="h-screen w-screen p-2 flex flex-col gap-2">
-                    {/* 메인 그리드 레이아웃 */}
-                    <div className="flex-grow grid grid-cols-1 md:grid-cols-[1fr_320px] lg:grid-cols-[280px_1fr_320px] gap-2">
-                        {/* 1열: 호가창/체결내역 (lg에서만) */}
-                        <div className="hidden lg:flex flex-col gap-2">
-                             <OrderBook />
-                             <RecentTrades />
-                        </div>
+        function renderDetails() {
+            const contentContainer = document.getElementById('details-content');
+            const weekData = projectData.weeks.find(w => w.week === currentWeek);
+            if (!weekData) return;
 
-                        {/* 2열: 차트/주문서 */}
-                        <div className="flex flex-col gap-2">
-                           <Header />
-                           <MarketInfo />
-                           <TradingChart />
-                        </div>
-
-                        {/* 3열: 주문서/호가창/체결내역 */}
-                        <div className="flex flex-col gap-2">
-                            <div className="lg:hidden">
-                                 <OrderBook />
-                            </div>
-                            <OrderForm />
-                            <div className="lg:hidden">
-                                 <RecentTrades />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 하단 패널 */}
-                    <div className="h-[250px]">
-                        <PositionsPanel />
+            contentContainer.innerHTML = `
+                <h3 class="text-3xl font-bold text-blue-600 mb-2">${weekData.week}주차: ${weekData.title}</h3>
+                <p class="text-stone-600 mb-6 pb-4 border-b border-stone-200">${weekData.goal}</p>
+                <h4 class="text-xl font-bold mb-4">세부 과제 ✔️</h4>
+                <ul class="space-y-3 list-inside">
+                    ${weekData.tasks.map(task => `
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-3 mt-1">▪</span>
+                            <span class="flex-1 text-stone-700">${task.replace(/`([^`]+)`/g, '<code class="bg-stone-100 text-red-600 font-mono text-sm px-1.5 py-0.5 rounded">$1</code>')}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+        
+        function renderTechStack() {
+            const techContainer = document.getElementById('tech-stack');
+            techContainer.innerHTML = projectData.techStack.map(category => `
+                <div>
+                    <h3 class="text-lg font-bold text-stone-700 mb-2">${category.category}</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${category.items.map(item => `<span class="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">${item}</span>`).join('')}
                     </div>
                 </div>
-            );
-        };
+            `).join('');
+        }
         
-        // --- React 앱 렌더링 ---
-        const container = document.getElementById('root');
-        const root = ReactDOM.createRoot(container);
-        root.render(<App />);
+        function initializeChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const progress = (currentWeek / projectData.weeks.length) * 100;
+            
+            progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['완료', '예정'],
+                    datasets: [{
+                        data: [currentWeek, projectData.weeks.length - currentWeek],
+                        backgroundColor: ['#2563eb', '#e5e7eb'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+            updateChartText(progress);
+        }
 
+        function updateChart() {
+            if (!progressChart) return;
+            const progress = (currentWeek / projectData.weeks.length) * 100;
+            progressChart.data.datasets[0].data = [currentWeek, projectData.weeks.length - currentWeek];
+            progressChart.update();
+            updateChartText(progress);
+        }
+
+        function updateChartText(progress) {
+             const chartContainer = document.querySelector('.chart-container');
+             let textElement = chartContainer.querySelector('.chart-text');
+             if (!textElement) {
+                 textElement = document.createElement('div');
+                 textElement.className = 'chart-text absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center';
+                 chartContainer.appendChild(textElement);
+             }
+             textElement.innerHTML = `
+                <div class="text-4xl font-bold text-blue-600">${Math.round(progress)}%</div>
+                <div class="text-sm text-stone-500">진행됨</div>
+             `;
+        }
+
+        function renderAll() {
+            renderTimelineNav();
+            renderDetails();
+            updateChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTimelineNav();
+            renderDetails();
+            renderTechStack();
+            initializeChart();
+        });
     </script>
 
 </body>
