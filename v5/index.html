@@ -2,595 +2,139 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="LJJwlcpuE0xx4kf6RPxWObkVWTVaMx1cysCLl3J9My4" />
-    <meta name="naver-site-verification" content="5e6ecf422ab41e3217450f67460721a96f18c2c8" />
-    <meta name="description" content="전국 3시간 이내 빠른 배송, 결혼식 축하화환, 장례식 근조화환 전문점. 대표 손광성. 정성을 다해 마음을 전합니다." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17608266544"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'AW-17608266544');
-    </script>
-
-    <title>국제플라워 - 전국 당일 꽃배달, 축하/근조화환 전문</title>
-    <link rel="icon" href="https://i.postimg.cc/76qGBBnw/image.png" type="image/png">
+    <title>N-Clone 포털</title>
+    <!-- Chosen Palette: Naver-inspired Green with Neutral Grays -->
+    <!-- Application Structure Plan: A classic portal layout is chosen for user familiarity. The structure is dominated by a central, prominent search bar in the header, establishing its primary function. The main content area uses a two-column grid: a larger column for high-information-density content like the news stand, and a smaller sidebar for glanceable widgets like weather and trending topics. This hierarchy guides the user's attention from search to news, then to secondary information, providing an intuitive and efficient browsing experience. -->
+    <!-- Visualization & Content Choices: Report Info: News articles -> Goal: Organize and display multiple sources -> Viz/Presentation: Grid layout (HTML/CSS). Interaction: None (static). Justification: A grid is the standard and most effective way to present a variety of news headlines. Report Info: Weather -> Goal: Inform glanceable data -> Viz/Presentation: Simple info card (HTML/CSS). Interaction: None (static). Justification: Weather data is concise and best presented in a compact, easy-to-read format. All data is currently mocked within a JS object, pending future API integration. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 폰트 불러오기 (Pretendard, Nanum Myeongjo) */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
-
-        /* 🎨 1. 새로운 컬러 시스템 (얼스 톤) */
-        :root {
-            --main-color: #8A9A5B;      /* 올리브 그린 */
-            --bg-color: #F5F5DC;        /* 웜 베이지 */
-            --surface-color: #FFFFF0;    /* 아이보리 */
-            --accent-color: #E2725B;     /* 테라코타 */
-            --text-color: #413F3D;      /* 짙은 갈색 */
-            --border-color: #e5e1d4;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            /* ✍️ 2. 새로운 폰트 적용 (본문) */
-            font-family: 'Pretendard', sans-serif;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            line-height: 1.7;
-            word-break: keep-all;
-        }
-        
-        /* ✍️ 2. 새로운 폰트 적용 (제목) */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Nanum Myeongjo', serif;
-            font-weight: 700;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-
-        /* 헤더 & 네비게이션 */
-        header {
-            background-color: rgba(255, 255, 240, 0.8); /* 아이보리 배경에 투명도 추가 */
-            backdrop-filter: blur(10px);
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 100px; /* 로고 크기 조정 */
-            vertical-align: middle;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 35px; /* 메뉴 간격 조정 */
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            font-size: 1.1em;
-            position: relative;
-            padding: 5px 0;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--main-color);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        /* 메인 배너 (Hero) */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1526047774128-253c0512c2a2?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            color: #fff;
-            text-align: center;
-            padding: 150px 20px;
-        }
-
-        .hero h1 {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-        }
-
-        .hero p {
-            font-size: 1.3em;
-            font-weight: 300;
-            margin-bottom: 30px;
-        }
-
-        .hero-button {
-            background-color: var(--accent-color);
-            color: #fff;
-            padding: 15px 35px;
-            text-decoration: none;
-            border-radius: 50px; /* 둥근 버튼 */
-            font-weight: 500;
-            font-size: 1.1em;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .hero-button:hover {
-            background-color: #c9614d;
-            transform: translateY(-3px);
-        }
-
-        /* 🖼️ 3. 레이아웃: 여백과 애니메이션 */
-        .section {
-            padding: 100px 0; /* 섹션 간 여백 확장 */
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 3em;
-            margin-bottom: 80px; /* 제목 아래 여백 확장 */
-            color: var(--main-color);
-        }
-
-        .product-display {
-            display: flex;
-            gap: 60px; /* 이미지와 텍스트 간격 확장 */
-            align-items: center;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-        }
-
-        .product-display.in-view {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 지그재그 레이아웃을 위한 설정 */
-        #condolence .product-display {
-            flex-direction: row-reverse;
-        }
-
-        .image-gallery {
-            flex: 1.2; /* 이미지 영역을 더 크게 */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .main-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            aspect-ratio: 3 / 4;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .main-image img:hover {
-            transform: scale(1.05); /* 호버 줌 효과 */
-        }
-
-        .thumbnail-container {
-            display: flex;
-            background-color: #fff;
-            padding: 10px;
-        }
-
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
-            margin: 0 5px;
-        }
-
-        .thumbnail:hover, .thumbnail.active {
-            border-color: var(--main-color);
-        }
-        
-        .product-details {
-            flex: 1;
-        }
-
-        .product-details h3 {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-        
-        .product-description-text {
-            font-size: 1.1em;
-            margin-bottom: 25px;
-            color: #5c5a58;
-        }
-
-        .product-price {
-            font-size: 2em;
-            color: var(--main-color);
-            font-weight: 700;
-            margin-bottom: 30px;
-        }
-
-        .order-button, .suggestion-button {
-            display: block;
-            width: 100%;
-            padding: 16px 30px;
-            border: none;
-            border-radius: 8px; /* 더 둥근 버튼 */
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 500;
-            text-align: center;
-            transition: all 0.3s;
-            margin-top: 15px;
-        }
-
-        .order-button {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
-
-        .order-button:hover {
-            background-color: #c9614d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        .suggestion-button {
-            background-color: transparent;
-            color: var(--main-color);
-            border: 2px solid var(--main-color);
-        }
-
-        .suggestion-button:hover {
-            background-color: var(--main-color);
-            color: #fff;
-        }
-        
-        /* 주문 안내 섹션 */
-        #order-info {
-            background-color: var(--surface-color);
-        }
-        
-        .info-box {
-            background-color: #fff;
-            padding: 50px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        
-        .info-box h3 {
-            font-size: 2.2em;
-            margin-bottom: 15px;
-        }
-        
-        .info-box .contact-number {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--main-color);
-            margin-top: 20px;
-            display: block;
-            text-decoration: none;
-        }
-
-        .info-box .call-helper-text {
-            font-size: 1em;
-            color: #888;
-            margin-top: 10px;
-        }
-        
-        /* 푸터 */
-        footer {
-            background-color: #413F3D;
-            color: #f5f5f5; /* 밝은 회색 (거의 흰색)으로 변경 */
-            text-align: center;
-            padding: 50px 20px;
-            font-size: 0.9em;
-        }
-        
-        footer p {
-            margin: 8px 0;
-        }
-
-        /* 문구 추천 Modal Style */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 2000; opacity: 0; visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        .modal-overlay.visible { opacity: 1; visibility: visible; }
-        .modal-content {
-            background-color: white; padding: 30px; border-radius: 10px;
-            width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transform: translateY(-20px); transition: transform 0.3s;
-        }
-        .modal-overlay.visible .modal-content { transform: translateY(0); }
-        .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        .modal-title { font-size: 1.8em; color: var(--main-color); }
-        .close-button { background: none; border: none; font-size: 1.8em; cursor: pointer; color: #888; }
-        .modal-body select {
-            width: 100%; padding: 12px; border-radius: 5px; font-size: 1em;
-            border: 1px solid var(--border-color); margin-bottom: 20px;
-        }
-        #gemini-result ul { list-style-type: none; padding-left: 0; }
-        #gemini-result li { padding: 10px; border-bottom: 1px dashed var(--border-color); cursor: pointer; transition: background-color 0.2s; }
-        #gemini-result li:hover { background-color: #f0f0f0; }
-        
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .navbar { flex-direction: column; gap: 20px; }
-            .logo img { height: 80px; }
-            .hero h1 { font-size: 2.5em; }
-            .product-display, #condolence .product-display { flex-direction: column; }
-            .section { padding: 80px 0; }
-            .section-title { font-size: 2.2em; margin-bottom: 50px; }
+            font-family: 'Noto Sans KR', sans-serif;
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="container navbar">
-            <a href="#" class="logo">
-                <img src="https://i.postimg.cc/Z5jf6kfm/v2.png" alt="국제플라워 로고">
-            </a>
-            <ul class="nav-links">
-                <li><a href="#celebration">축하화환</a></li>
-                <li><a href="#condolence">근조화환</a></li>
-                <li><a href="#order-info">주문안내</a></li>
-            </ul>
-        </div>
-    </header>
+<body class="bg-gray-50">
 
-    <main>
-        <section class="hero">
-            <h1>마음을 전하는 가장 아름다운 방법</h1>
-            <p>소중한 순간, 국제플라워가 정성을 다해 함께합니다.</p>
-            <a href="#celebration" class="hero-button">화환 둘러보기</a>
-        </section>
+    <div id="app" class="max-w-6xl mx-auto p-4">
 
-        <section id="celebration" class="section">
-            <div class="container">
-                <h2 class="section-title">축하화환</h2>
-                <div class="product-display">
-                    <div class="image-gallery">
-                        <div class="main-image">
-                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="익산 국제플라워 축하 3단 화환 정면 사진" id="main-image-celeb">
-                        </div>
-                        <div class="thumbnail-container">
-                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="축하화환 정면 썸네일" class="thumbnail active" onclick="changeImage('celeb', this, 'https://i.postimg.cc/brJGPsMj/1.png')">
-                            <img src="https://i.postimg.cc/KzQKCn0q/1.png" alt="축하화환 측면 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/KzQKCn0q/1.png')">
-                            <img src="https://i.postimg.cc/90M42rkL/1.png" alt="축하화환 확대 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/90M42rkL/1.png')">
-                        </div>
-                    </div>
-                    <div class="product-details">
-                        <h3>3단 축하화환</h3>
-                        <p class="product-description-text">
-                            결혼식, 개업식, 전시회 등 모든 기쁜 날을 더욱 빛내줄 정성 가득한 3단 축하화환입니다.
-                            가장 신선하고 아름다운 꽃들로 구성하여 보내시는 분의 마음까지 온전히 전달합니다.
-                        </p>
-                        <p class="product-price">₩50,000 부터</p>
-                        <button class="suggestion-button" onclick="openSuggestionModal('celebration')">✨ 리본 문구 추천 보기</button>
-                        <button class="order-button" onclick="placeOrder('3단 축하화환')">전화로 주문하기</button>
-                    </div>
-                </div>
+        <!-- Header and Search Bar -->
+        <header class="flex flex-col md:flex-row items-center justify-between py-4">
+            <h1 class="text-4xl font-bold text-green-600 mb-4 md:mb-0">N-Clone</h1>
+            <div class="w-full md:w-1/2 flex items-center border-2 border-green-600 rounded-lg">
+                <input type="text" placeholder="검색어를 입력하세요" class="w-full p-3 border-none rounded-l-md focus:outline-none">
+                <button class="bg-green-600 text-white p-3 px-5 rounded-r-md">
+                    <span class="text-2xl">🔍</span>
+                </button>
             </div>
-        </section>
+        </header>
 
-        <section id="condolence" class="section" style="background-color: var(--surface-color);">
-            <div class="container">
-                <h2 class="section-title">근조화환</h2>
-                <div class="product-display">
-                    <div class="image-gallery">
-                        <div class="main-image">
-                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="익산 국제플라워 근조 3단 화환 정면 사진" id="main-image-condol">
-                        </div>
-                        <div class="thumbnail-container">
-                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="근조화환 정면 썸네일" class="thumbnail active" onclick="changeImage('condol', this, 'https://i.postimg.cc/fL531x8B/1.png')">
-                            <img src="https://i.postimg.cc/k4wVLxTy/1.png" alt="근조화환 측면 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/k4wVLxTy/1.png')">
-                            <img src="https://i.postimg.cc/wvFtnhww/1.png" alt="근조화환 확대 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/wvFtnhww/1.png')">
-                        </div>
+        <!-- Main Content -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            
+            <!-- News Stand Section -->
+            <div class="lg:col-span-2">
+                <section id="news-stand" class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">📰 뉴스 스탠드</h2>
+                    <div id="news-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- News items will be injected here by JS -->
                     </div>
-                     <div class="product-details">
-                        <h3>3단 근조화환</h3>
-                        <p class="product-description-text">
-                            슬픈 마음을 위로하고 고인의 마지막 가시는 길을 추모하는 3단 근조화환입니다.
-                            엄숙하고 예를 다하는 마음으로 정성껏 제작하여 고인과 유족에게 깊은 애도를 표합니다.
-                        </p>
-                        <p class="product-price">₩50,000 부터</p>
-                        <button class="suggestion-button" onclick="openSuggestionModal('condolence')">✨ 리본 문구 추천 보기</button>
-                        <button class="order-button" onclick="placeOrder('3단 근조화환')">전화로 주문하기</button>
-                    </div>
-                </div>
+                </section>
             </div>
-        </section>
-        
-        <section id="order-info" class="section">
-            <div class="container">
-                <h2 class="section-title">주문 및 문의 안내</h2>
-                <div class="info-box">
-                    <h3>대표: 손광성</h3>
-                    <p>
-                        365일 언제나 상담 가능합니다.<br>
-                        전화 또는 문자로 문의해주시면 가장 빠르고 친절하게 안내해 드리겠습니다.
-                    </p>
-                    <a href="tel:010-7709-8983" class="contact-number">📞 010-7709-8983</a>
-                    <p class="call-helper-text">위 번호를 누르시면 자동으로 전화가 연결됩니다.</p>
-                </div>
+
+            <!-- Sidebar Section -->
+            <div class="space-y-6">
+                <!-- Weather Widget -->
+                <section id="weather-widget" class="bg-white p-6 rounded-lg shadow-sm">
+                    <!-- Weather content will be injected here by JS -->
+                </section>
+
+                <!-- Trending Topics Widget -->
+                <section class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-bold mb-4">🔥 실시간 검색어</h2>
+                    <ul id="trending-list" class="space-y-2">
+                        <!-- Trending items will be injected here by JS -->
+                    </ul>
+                </section>
             </div>
-        </section>
-    </main>
-    
-    <div class="modal-overlay" id="gemini-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">✨ 리본 문구 추천</h2>
-                <button class="close-button" onclick="closeSuggestionModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <label for="occasion-select">상황을 선택해주세요:</label>
-                <select id="occasion-select"></select>
-                <button class="order-button" id="generate-button" style="margin-top: 20px;">추천 문구 보기</button>
-                <div id="gemini-result" style="margin-top: 20px;"></div>
-            </div>
-        </div>
+        </main>
+
     </div>
 
-    <footer>
-        <div class="container">
-            <p><strong>상호:</strong> 국제플라워</p>
-            <p><strong>대표:</strong> 손광성</p>
-            <p><strong>연락처:</strong> 010-7709-8983</p>
-            <p>&copy; 2025 국제플라워. All Rights Reserved.</p>
-        </div>
-    </footer>
-
     <script>
-        // --- 기존 기능 스크립트 (수정 없음) ---
-        function placeOrder(productName) {
-            alert(
-                productName + " 주문을 위해 아래 번호로 연락해주세요.\n\n" +
-                "👨‍💼 대표: 손광성\n" +
-                "☎️ 연락처: 010-7709-8983"
-            );
-        }
-        function changeImage(section, clickedThumbnail, newSrc) {
-            document.getElementById(`main-image-${section}`).src = newSrc;
-            const thumbnails = clickedThumbnail.parentElement.children;
-            for (let i = 0; i < thumbnails.length; i++) {
-                thumbnails[i].classList.remove('active');
-            }
-            clickedThumbnail.classList.add('active');
-        }
-        const modal = document.getElementById('gemini-modal');
-        const occasionSelect = document.getElementById('occasion-select');
-        const generateButton = document.getElementById('generate-button');
-        const resultDiv = document.getElementById('gemini-result');
-        let currentWreathType = '';
-        const occasions = {
-            celebration: [ { value: '결혼식', text: '결혼식' }, { value: '개업식', text: '개업/이전' }, { value: '승진/영전', text: '승진/영전' }, { value: '전시회/공연', text: '전시회/공연' }, { value: '생일/기념일', text: '생일/기념일' }, ],
-            condolence: [ { value: '일반 추모', text: '일반 추모' }, { value: '기독교식', text: '기독교식 위로' }, { value: '불교식', text: '불교식 위로' }, ]
-        };
-        const suggestionLists = {
-            celebration: {
-                '결혼식': ['祝結婚 (축결혼)', '결혼을 진심으로 축하합니다', '세상 가장 행복한 부부되세요', '두 분의 아름다운 시작을 응원합니다', 'Happy Wedding Day'],
-                '개업식': ['祝發展 (축발전)', '無窮한 發展을 祈願합니다', '대박나세요!', '돈세다 잠드소서', '번창을 기원합니다'],
-                '승진/영전': ['祝昇進 (축승진)', '祝榮轉 (축영전)', '승진을 축하드립니다', '더 높은 곳을 향한 비상을 응원합니다', '꽃길만 걸으세요'],
-                '전시회/공연': ['祝展示會 (축전시회)', '成功적인 開催를 祈願합니다', '당신의 열정을 응원합니다', '멋진 공연을 축하합니다', '문화예술의 발전을 위하여'],
-                '생일/기념일': ['祝生日 (축생일)', '생일 축하합니다', '오늘을 진심으로 축하해요', '기념일을 축하합니다', 'Happy Birthday']
+        const mockData = {
+            news: [
+                { source: "언론사 1", title: "차세대 AI 모델, 새로운 기능 발표", img: "https://placehold.co/150x100/a7f3d0/14532d?text=News1" },
+                { source: "언론사 2", title: "글로벌 경제 동향 및 전망 분석", img: "https://placehold.co/150x100/bae6fd/0c4a6e?text=News2" },
+                { source: "언론사 3", title: "우주 탐사, 새로운 행성 발견 소식", img: "https://placehold.co/150x100/e9d5ff/3b0764?text=News3" },
+                { source: "언론사 4", title: "친환경 에너지 기술, 상용화 임박", img: "https://placehold.co/150x100/fef08a/422006?text=News4" },
+                { source: "언론사 5", title: "도시재생 프로젝트, 구도심 활기", img: "https://placehold.co/150x100/fecaca/7f1d1d?text=News5" },
+                { source: "언론사 6", title: "최신 IT 기기 리뷰 및 사용 후기", img: "https://placehold.co/150x100/d1d5db/1f2937?text=News6" },
+                { source: "언론사 7", title: "주말 문화 행사 및 추천 공연", img: "https://placehold.co/150x100/fdba74/7c2d12?text=News7" },
+                { source: "언론사 8", title: "건강 관리, 새로운 슈퍼푸드 주목", img: "https://placehold.co/150x100/bbf7d0/14532d?text=News8" },
+            ],
+            weather: {
+                location: "광주광역시",
+                temp: 24,
+                condition: "맑음",
+                icon: "☀️",
+                minTemp: 18,
+                maxTemp: 26,
+                dust: "좋음"
             },
-            condolence: {
-                '일반 추모': ['삼가 故人의 冥福을 빕니다', '謹弔 (근조)', '깊은 애도를 표합니다', '좋은 곳으로 가시길 기도합니다', '마음을 위로합니다'],
-                '기독교식': ['하나님의 위로가 함께하시길', '召天을 애도합니다', '주님 품 안에서 편히 잠드소서', '위로의 주님이 함께 하시기를', '부활의 소망을 나눕니다'],
-                '불교식': ['極樂往生 發願 (극락왕생 발원)', '王生極樂 (왕생극락)', '빛의 세계로 떠나소서', '좋은 곳으로 가시길 발원합니다', '삼가 조의를 표합니다']
-            }
+            trending: [
+                "포털 클론 코딩", "프론트엔드 개발자", "Tailwind CSS 사용법", "Next.js 프로젝트", "리액트 상태관리",
+                "TypeScript 기초", "JavaScript 비동기 처리", "인터랙티브 웹 만들기", "API 연동 방법", "Vercel 배포하기"
+            ]
         };
-        function openSuggestionModal(wreathType) {
-            currentWreathType = wreathType;
-            occasionSelect.innerHTML = '';
-            occasions[wreathType].forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.value;
-                opt.textContent = option.text;
-                occasionSelect.appendChild(opt);
-            });
-            resultDiv.innerHTML = '';
-            modal.classList.add('visible');
-        }
-        function closeSuggestionModal() { modal.classList.remove('visible'); }
-        generateButton.addEventListener('click', () => {
-            const selectedOccasion = occasionSelect.value;
-            resultDiv.innerHTML = '';
-            const suggestionsList = suggestionLists[currentWreathType]?.[selectedOccasion];
-            if (suggestionsList && suggestionsList.length > 0) { displaySuggestions(suggestionsList.join('\n')); }
-        });
-        function displaySuggestions(text) {
-            const suggestions = text.split('\n').filter(line => line.trim().length > 0);
-            const ul = document.createElement('ul');
-            suggestions.forEach(suggestionText => {
-                const li = document.createElement('li');
-                li.textContent = suggestionText.replace(/^\d+\.\s*/, '');
-                li.onclick = () => copyToClipboard(li.textContent);
-                ul.appendChild(li);
-            });
-            resultDiv.innerHTML = '';
-            resultDiv.appendChild(ul);
-        }
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            alert(`'${text}'\n\n위 문구가 클립보드에 복사되었습니다.`);
+
+        function renderNews() {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = mockData.news.map(item => `
+                <div class="text-center group cursor-pointer">
+                    <img src="${item.img}" alt="${item.title}" class="w-full h-auto rounded-md mb-2 object-cover transition-transform duration-300 group-hover:scale-105">
+                    <p class="text-sm font-semibold text-gray-700">${item.source}</p>
+                    <p class="text-xs text-gray-500 truncate">${item.title}</p>
+                </div>
+            `).join('');
         }
 
-        // 🖼️ 3. 스크롤 애니메이션을 위한 새 스크립트
+        function renderWeather() {
+            const widget = document.getElementById('weather-widget');
+            const { location, temp, condition, icon, minTemp, maxTemp, dust } = mockData.weather;
+            widget.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">${location}</p>
+                        <p class="text-5xl font-bold">${temp}°</p>
+                    </div>
+                    <div class="text-6xl">${icon}</div>
+                </div>
+                <div class="text-sm text-gray-600 mt-4 space-y-1">
+                    <p>${condition} (최저 ${minTemp}° / 최고 ${maxTemp}°)</p>
+                    <p>미세먼지: ${dust}</p>
+                </div>
+            `;
+        }
+
+        function renderTrends() {
+            const list = document.getElementById('trending-list');
+            list.innerHTML = mockData.trending.map((item, index) => `
+                <li class="flex items-center text-gray-800 hover:bg-gray-100 p-1 rounded-md">
+                    <span class="font-bold text-green-600 mr-3 w-5">${index + 1}</span>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            const animatedElements = document.querySelectorAll('.product-display');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('in-view');
-                    }
-                });
-            }, {
-                threshold: 0.1 // 요소가 10% 보이면 애니메이션 시작
-            });
-
-            animatedElements.forEach(el => {
-                observer.observe(el);
-            });
+            renderNews();
+            renderWeather();
+            renderTrends();
         });
-
     </script>
+
 </body>
 </html>
-
