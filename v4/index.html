@@ -3,702 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인터랙티브 역전파 알고리즘 학습기</title>
+    <title>Binance Futures UI Clone</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Academia -->
-    <!-- Application Structure Plan: A single-page application with a fixed sidebar for navigation and a main content area. The structure guides the user through the concepts logically: 1. Intro to Neural Networks (What is it?), 2. The Learning Problem (Why do we need to learn?), 3. The Solution: Backpropagation, 4. Interactive Deep Dive into Core Principles (Gradient Descent & Chain Rule), 5. Conclusion. This step-by-step thematic structure is chosen over a linear report format to make a complex topic digestible and engaging. Interactive visualizations are placed at points where abstract concepts are introduced, allowing users to learn by doing rather than just reading. -->
-    <!-- Visualization & Content Choices: 
-        - Neural Network Diagram: Goal: Organize. Method: HTML/CSS with JS hover interaction. Justification: Provides a clear, non-cluttered visual map of the basic structure.
-        - Gradient Descent Chart: Goal: Change/Inform. Method: Chart.js Canvas. Interaction: User-controlled slider for learning rate and step-by-step animation. Justification: Makes the abstract optimization process tangible and demonstrates the impact of hyperparameters like the learning rate.
-        - Computation Graph Diagram: Goal: Organize/Inform. Method: HTML/CSS with JS click/animation. Interaction: Buttons for 'Forward Pass' and 'Backward Pass' animate the flow of data and gradients. Justification: Deconstructs the complex chain rule into a clear, step-by-step visual process, revealing how gradients are calculated and propagated.
-        - All text is adapted from the source report to provide context for each visualization.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
+    <!-- React & Babel CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Custom Styles -->
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #FDFBF7;
-            color: #3D352F;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-            border-left: 3px solid transparent;
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
         }
-        .nav-link.active, .nav-link:hover {
-            background-color: #F5F0E8;
-            border-left-color: #D4A373;
-            color: #3D352F;
-            transform: translateX(4px);
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
         }
-        .content-section {
-            display: none;
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 2px;
         }
-        .content-section.active {
-            display: block;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
-        }
-        .computation-node {
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .computation-node.highlight-forward {
-            background-color: #A6C4DD;
-            transform: scale(1.05);
-        }
-        .computation-node.highlight-backward {
-            background-color: #D4A373;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 163, 115, 0.7);
-        }
-        .arrow {
-            position: absolute;
-            background-color: #9b9b9b;
-            height: 2px;
-            transform-origin: left;
-            z-index: 1;
-        }
-        .arrow::after {
-            content: '';
-            position: absolute;
-            right: -1px;
-            top: -4px;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 8px solid #9b9b9b;
-        }
+        /* 커스텀 텍스트 색상 */
+        .text-green { color: #2EBD85; }
+        .text-red { color: #F6465D; }
+        /* 호가창 배경 그라데이션 */
+        .bg-depth-green { background: linear-gradient(to left, rgba(16, 185, 129, 0.2), transparent); }
+        .bg-depth-red { background: linear-gradient(to left, rgba(246, 70, 93, 0.2), transparent); }
     </style>
 </head>
-<body class="antialiased">
-    <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Sidebar Navigation -->
-        <nav class="w-full md:w-64 bg-[#F5F0E8] p-4 md:p-6 md:fixed md:h-full shrink-0">
-            <h1 class="text-2xl font-bold text-[#3D352F] mb-8">역전파 학습기</h1>
-            <ul class="space-y-3">
-                <li><a href="#section1" class="nav-link block p-3 rounded-lg font-medium">1. 신경망이란?</a></li>
-                <li><a href="#section2" class="nav-link block p-3 rounded-lg font-medium">2. 학습의 문제</a></li>
-                <li><a href="#section3" class="nav-link block p-3 rounded-lg font-medium">3. 해결책: 역전파</a></li>
-                <li><a href="#section4" class="nav-link block p-3 rounded-lg font-medium">4. 핵심 원리 탐구</a></li>
-                <li><a href="#section5" class="nav-link block p-3 rounded-lg font-medium">5. 결론</a></li>
-            </ul>
-        </nav>
+<body class="bg-slate-900 text-slate-300">
 
-        <!-- Main Content -->
-        <main class="flex-1 md:ml-64 p-6 md:p-10 lg:p-12">
-            
-            <!-- Section 1: What is a Neural Network? -->
-            <section id="section1" class="content-section space-y-6">
-                <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">1. 인공 신경망과 학습의 필요성</h2>
-                <p class="text-lg leading-relaxed">인공 신경망(ANN)은 인간 뇌의 정보 처리 방식을 수학적으로 모델링한 계산 구조입니다. 뇌가 경험을 통해 학습하듯, 인공 신경망은 '가중치'라는 매개변수를 조정하며 데이터로부터 패턴을 학습합니다. 아래 다이어그램은 입력, 은닉, 출력의 3개 층으로 구성된 가장 기본적인 신경망 구조를 보여줍니다. 각 노드와 연결선 위에 마우스를 올려보세요.</p>
-                
-                <div class="bg-white/80 p-8 rounded-xl shadow-sm w-full max-w-3xl mx-auto mt-8 flex justify-center items-center h-96">
-                    <div id="nn-diagram" class="flex items-center space-x-16 relative">
-                        <!-- Layers -->
-                        <div class="flex flex-col space-y-6" data-layer="input">
-                            <div class="nn-node w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-mono" data-info="입력층: 외부 데이터(예: 이미지 픽셀)를 받아들입니다.">X1</div>
-                            <div class="nn-node w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-mono" data-info="입력층: 외부 데이터(예: 이미지 픽셀)를 받아들입니다.">X2</div>
-                        </div>
-                        <div class="flex flex-col space-y-4" data-layer="hidden">
-                            <div class="nn-node w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-mono" data-info="은닉층: 입력된 특징을 조합하여 더 복잡하고 추상적인 특징을 학습합니다.">H1</div>
-                            <div class="nn-node w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-mono" data-info="은닉층: 입력된 특징을 조합하여 더 복잡하고 추상적인 특징을 학습합니다.">H2</div>
-                             <div class="nn-node w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-mono" data-info="은닉층: 입력된 특징을 조합하여 더 복잡하고 추상적인 특징을 학습합니다.">H3</div>
-                        </div>
-                        <div class="flex flex-col space-y-6" data-layer="output">
-                            <div class="nn-node w-12 h-12 bg-green-200 rounded-full flex items-center justify-center font-mono" data-info="출력층: 최종 예측 결과를 내보냅니다. (예: '고양이'일 확률)">Y</div>
-                        </div>
-                        <!-- Connections -->
-                        <svg id="nn-connections" class="absolute top-0 left-0 w-full h-full" style="z-index: -1;">
-                        </svg>
-                        <!-- Tooltip -->
-                        <div id="nn-tooltip" class="absolute bg-black text-white text-sm rounded py-1 px-2 pointer-events-none opacity-0 transition-opacity"></div>
-                    </div>
-                </div>
-                 <p class="text-lg leading-relaxed mt-6">데이터는 입력층에서 출력층으로 '순전파'되며, 각 연결선을 지날 때 가중치와 곱해집니다. 각 노드는 입력된 값들을 합산하여 '활성화 함수'라는 비선형 함수를 통과시킨 결과를 다음 층으로 전달합니다. 이 비선형성 덕분에 신경망은 단순한 직선으로 나눌 수 없는 복잡한 패턴도 학습할 수 있게 됩니다.</p>
-            </section>
+    <div id="root"></div>
 
-            <!-- Section 2: The Learning Problem -->
-            <section id="section2" class="content-section space-y-6">
-                <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">2. 학습의 문제: 신용 할당 문제</h2>
-                <p class="text-lg leading-relaxed">처음 만들어진 신경망은 가중치가 무작위 값으로 설정되어 있어 거의 쓸모가 없습니다. 올바른 예측을 하려면 '학습'을 통해 예측값과 실제 정답 사이의 '오차(Loss)'를 줄여나가야 합니다. 하지만 수백만 개의 가중치 중 어떤 것을 얼마나 수정해야 최종 오차를 줄일 수 있을까요? 이를 신용 할당 문제(Credit Assignment Problem)라고 합니다. 최종 결과에 대한 각 가중치의 '책임'을 어떻게 분배할지가 핵심 난제였습니다.</p>
-                 <div class="grid md:grid-cols-2 gap-8 mt-8 text-center">
-                    <div class="bg-red-100/50 p-6 rounded-xl border border-red-200">
-                        <h3 class="text-xl font-bold mb-3">초기 신경망 (학습 전)</h3>
-                        <p>최종 오차가 발생했지만, 수많은 은닉층의 가중치들 중 무엇이 원인인지 알 수 없습니다.</p>
-                        <div class="text-6xl mt-4">❓</div>
-                        <p class="mt-2 font-semibold text-red-700">오차의 원인 불명</p>
-                    </div>
-                    <div class="bg-green-100/50 p-6 rounded-xl border border-green-200">
-                        <h3 class="text-xl font-bold mb-3">학습된 신경망 (학습 후)</h3>
-                        <p>각 가중치가 오차에 미치는 영향을 계산하여 체계적으로 가중치를 수정합니다.</p>
-                        <div class="text-6xl mt-4">💡</div>
-                        <p class="mt-2 font-semibold text-green-700">오차 원인 분석 및 수정</p>
-                    </div>
-                </div>
-                <p class="text-lg leading-relaxed mt-6">초기 퍼셉트론 모델은 은닉층이 없어 이 문제를 해결할 수 없었고, 이는 인공지능 연구의 첫 침체기를 가져왔습니다. 다층 구조의 신경망을 효과적으로 학습시킬 방법이 절실히 필요했습니다.</p>
-            </section>
-
-            <!-- Section 3: The Solution: Backpropagation -->
-            <section id="section3" class="content-section space-y-6">
-                <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">3. 해결책: 역전파 알고리즘</h2>
-                <p class="text-lg leading-relaxed">1986년 제안된 역전파(Backpropagation) 알고리즘은 신용 할당 문제에 대한 우아한 해법을 제시했습니다. 이름 그대로, 순전파와 정반대 방향인 '뒤(Back)'로 오차 정보를 '전파(Propagation)'시키는 방식입니다. 출력층에서 계산된 오차로부터 시작하여, 신경망을 거꾸로 거슬러 올라가며 각 가중치가 최종 오차에 얼마나 기여했는지(책임이 있는지)를 수학적으로 정확하게 계산해냅니다. 이 '책임'의 크기를 바탕으로 모든 가중치를 동시에, 그리고 올바른 방향으로 미세하게 조정하여 점진적으로 신경망의 성능을 개선합니다.</p>
-                <div class="bg-white/80 p-8 rounded-xl shadow-sm text-center">
-                    <h3 class="text-xl font-bold mb-4">역전파의 흐름</h3>
-                    <div class="flex items-center justify-center space-x-4">
-                        <div class="text-lg font-semibold">순전파 (예측)</div>
-                        <div class="text-4xl">➡️</div>
-                        <div class="p-4 bg-blue-100 rounded-lg">
-                            <div class="text-lg font-bold">출력 & 오차 계산</div>
-                            <div class="text-sm">예측값 vs 정답</div>
-                        </div>
-                        <div class="text-4xl text-orange-500">⬅️</div>
-                        <div class="text-lg font-semibold text-orange-600">역전파 (학습)</div>
-                    </div>
-                    <p class="mt-4 text-gray-600">출력층에서 계산된 오차 정보를 입력층 방향으로 전파하며 각 가중치의 책임을 계산합니다.</p>
-                </div>
-            </section>
-
-            <!-- Section 4: Core Principles -->
-            <section id="section4" class="content-section space-y-8">
-                <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">4. 핵심 원리 탐구</h2>
-                <p class="text-lg leading-relaxed">역전파는 두 가지 핵심 수학 원리, 경사 하강법과 연쇄 법칙에 기반합니다. 역전파는 연쇄 법칙을 이용해 '기울기'를 계산하는 효율적인 방법이며, 경사 하강법은 계산된 기울기를 사용해 가중치를 '업데이트'하는 최적화 알고리즘입니다.</p>
-
-                <!-- Gradient Descent -->
-                <div class="bg-white/80 p-8 rounded-xl shadow-sm">
-                    <h3 class="text-2xl font-bold mb-2">원리 1: 경사 하강법 (Gradient Descent)</h3>
-                    <p class="mb-4">신경망의 목표는 수많은 가중치를 조정하여 손실(오차)을 최소화하는 것입니다. 손실 함수를 '산' 지형에 비유한다면, 경사 하강법은 가장 낮은 계곡(최소 손실 지점)을 찾아 내려가는 방법입니다. 현재 위치에서 가장 경사가 가파른 내리막길 방향(기울기의 반대 방향)으로 한 걸음씩 이동하는 과정을 반복합니다. '학습률' 슬라이더를 조절하며 이 과정을 직접 관찰해보세요.</p>
-                    
-                    <div class="mt-6 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-center">
-                        <div class="bg-red-50 p-3 rounded-lg border border-red-200">
-                            <h4 class="font-bold text-red-700">🔴 학습률이 너무 클 때</h4>
-                            <p class="mt-1">보폭이 너무 커서 최적점을 지나쳐 버리고 반대편으로 건너뛰는 현상(Overshooting)이 발생하며, 심한 경우 값이 발산할 수 있습니다.</p>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-lg border border-green-200">
-                            <h4 class="font-bold text-green-700">🟢 적절한 학습률일 때</h4>
-                            <p class="mt-1">가장 효율적인 경로로 최적점을 안정적으로 찾아갑니다. 너무 크지도, 작지도 않은 이상적인 보폭입니다.</p>
-                        </div>
-                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                            <h4 class="font-bold text-yellow-700">🟡 학습률이 너무 작을 때</h4>
-                            <p class="mt-1">보폭이 너무 작아 최적점까지 도달하는 데 시간이 매우 오래 걸리거나, 중간의 움푹 파인 곳(지역 최솟값)에 빠져 멈출 수 있습니다.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="gradientDescentChart"></canvas>
-                    </div>
-
-                    <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
-                         <div class="flex items-center gap-2">
-                            <label for="learningRate" class="font-medium">학습률 (보폭):</label>
-                            <input type="range" id="learningRate" min="0.01" max="1.0" step="0.01" value="0.1" class="w-48">
-                            <span id="lrValue" class="font-mono w-12 text-center">0.10</span>
-                        </div>
-                        <button id="stepButton" class="bg-[#D4A373] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#c8935a] transition-colors">한 걸음 이동</button>
-                        <button id="autoPlayButton" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-600 transition-colors">자동 재생</button>
-                        <button id="resetButton" class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">초기화</button>
-                    </div>
-                </div>
-
-                <!-- Chain Rule -->
-                 <div class="bg-white/80 p-8 rounded-xl shadow-sm mt-8">
-                    <h3 class="text-2xl font-bold mb-2">원리 2: 연쇄 법칙 (Chain Rule)</h3>
-                    <p class="mb-4">신경망은 여러 함수가 중첩된 복잡한 구조입니다. 연쇄 법칙은 이 구조를 거슬러 올라가며 최종 오차에 대한 각 가중치의 영향력(기울기)을 '사슬'처럼 연결하여 계산할 수 있게 해주는 수학적 도구입니다. 아래 계산 그래프를 통해 순전파와 역전파 과정을 단계별로 살펴보세요.</p>
-                    
-                    <div id="computation-graph" class="w-full max-w-4xl mx-auto p-4 relative min-h-[300px]">
-                        <!-- Nodes will be populated by JS -->
-                    </div>
-
-                    <div class="mt-4 flex items-center justify-center gap-4">
-                        <button id="forwardPassButton" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">순전파 실행</button>
-                        <button id="backwardPassButton" class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors">역전파 실행</button>
-                    </div>
-                    <div id="graph-explanation" class="mt-4 text-center text-gray-700 h-10"></div>
-                </div>
-            </section>
-
-            <!-- Section 5: Conclusion -->
-            <section id="section5" class="content-section space-y-6">
-                <h2 class="text-3xl font-bold border-b-2 border-[#D4A373] pb-2">5. 결론: 딥러닝의 엔진</h2>
-                <p class="text-lg leading-relaxed">역전파 알고리즘은 출력층에서 계산된 오차를 연쇄 법칙을 이용해 각 계층으로 역으로 전파하며, 이를 통해 계산된 각 가중치별 기울기를 바탕으로 경사 하강법을 적용하여 오차를 최소화하는 방향으로 모든 가중치를 동시에 업데이트하는 방식입니다.</p>
-                <p class="text-lg leading-relaxed">이 알고리즘의 등장은 비로소 깊은 신경망(Deep Neural Network)의 효율적인 학습을 가능하게 했으며, 오늘날 음성 비서, 자율 주행차, 의료 영상 분석 등 인공지능 기술 혁명을 이끈 딥러닝 발전의 핵심적인 엔진이자 토대가 되었습니다. 물론 '기울기 소실'과 같은 한계점도 존재하지만, 이는 ReLU 활성화 함수, 배치 정규화 등 후속 연구들을 통해 지속적으로 개선되고 있습니다.</p>
-                 <div class="bg-green-100/50 p-6 rounded-xl border border-green-200 text-center">
-                    <h3 class="text-xl font-bold">역전파의 의의</h3>
-                    <p class="mt-2 text-lg">복잡하고 깊은 신경망의 학습을 현실로 만든, 딥러닝 시대의 문을 연 핵심 알고리즘</p>
-                </div>
-            </section>
-        </main>
-    </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Navigation Logic ---
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.content-section');
-
-    function updateActiveNav(targetId) {
-        navLinks.forEach(link => {
-            if (link.getAttribute('href') === `#${targetId}`) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        });
-        sections.forEach(section => {
-            if (section.id === targetId) {
-                section.classList.add('active');
-            } else {
-                section.classList.remove('active');
-            }
-        });
-    }
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = e.currentTarget.getAttribute('href').substring(1);
-            updateActiveNav(targetId);
-        });
-    });
-
-    // Initial state
-    if (window.location.hash) {
-        updateActiveNav(window.location.hash.substring(1));
-    } else {
-        updateActiveNav('section1');
-    }
-
-    // --- NN Diagram Logic ---
-    const nnDiagram = document.getElementById('nn-diagram');
-    if (nnDiagram) {
-        const nodes = nnDiagram.querySelectorAll('.nn-node');
-        const tooltip = document.getElementById('nn-tooltip');
-        const connectionsSvg = document.getElementById('nn-connections');
-        const layer1 = Array.from(nnDiagram.querySelector('[data-layer="input"]').children);
-        const layer2 = Array.from(nnDiagram.querySelector('[data-layer="hidden"]').children);
-        const layer3 = Array.from(nnDiagram.querySelector('[data-layer="output"]').children);
-
-        const createConnections = (fromLayer, toLayer) => {
-            fromLayer.forEach(node1 => {
-                toLayer.forEach(node2 => {
-                    const rect1 = node1.getBoundingClientRect();
-                    const rect2 = node2.getBoundingClientRect();
-                    const containerRect = connectionsSvg.getBoundingClientRect();
-
-                    const x1 = rect1.left + rect1.width / 2 - containerRect.left;
-                    const y1 = rect1.top + rect1.height / 2 - containerRect.top;
-                    const x2 = rect2.left + rect2.width / 2 - containerRect.left;
-                    const y2 = rect2.top + rect2.height / 2 - containerRect.top;
-
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', x1);
-                    line.setAttribute('y1', y1);
-                    line.setAttribute('x2', x2);
-                    line.setAttribute('y2', y2);
-                    line.setAttribute('stroke', '#cccccc');
-                    line.setAttribute('stroke-width', '2');
-                    line.dataset.info = '가중치(Weight): 연결의 강도를 나타냅니다. 학습을 통해 이 값이 조정됩니다.';
-                    connectionsSvg.appendChild(line);
-                });
-            });
+    <script type="text/babel">
+        // --- 아이콘 컴포넌트 ---
+        const Icon = ({ name, size = 16, className = '' }) => {
+            React.useEffect(() => {
+                lucide.createIcons();
+            }, []);
+            return <i data-lucide={name} width={size} height={size} className={className}></i>;
         };
         
-        createConnections(layer1, layer2);
-        createConnections(layer2, layer3);
-
-        const allElements = nnDiagram.querySelectorAll('.nn-node, line');
-
-        allElements.forEach(el => {
-            el.addEventListener('mouseover', (e) => {
-                const info = e.target.dataset.info;
-                tooltip.textContent = info;
-                tooltip.style.opacity = '1';
-                
-                const targetRect = e.target.getBoundingClientRect();
-                const containerRect = nnDiagram.getBoundingClientRect();
-                
-                let top = e.clientY - containerRect.top - tooltip.offsetHeight - 10;
-                let left = e.clientX - containerRect.left - tooltip.offsetWidth / 2;
-
-                if (e.target.tagName.toLowerCase() === 'line') {
-                    left = (parseFloat(e.target.getAttribute('x1')) + parseFloat(e.target.getAttribute('x2'))) / 2 - tooltip.offsetWidth / 2;
-                    top = (parseFloat(e.target.getAttribute('y1')) + parseFloat(e.target.getAttribute('y2'))) / 2 - tooltip.offsetHeight - 10;
-                } else {
-                    left = targetRect.left - containerRect.left + (targetRect.width / 2) - (tooltip.offsetWidth / 2);
-                    top = targetRect.top - containerRect.top - tooltip.offsetHeight - 10;
-                }
-
-                tooltip.style.top = `${top}px`;
-                tooltip.style.left = `${left}px`;
-            });
-            el.addEventListener('mouseout', () => {
-                tooltip.style.opacity = '0';
-            });
-        });
-    }
-
-    // --- Gradient Descent Logic ---
-    const gdCtx = document.getElementById('gradientDescentChart');
-    if (gdCtx) {
-        let gradientDescentChart;
-        let currentX = 4.5;
-        const lossFunction = x => Math.pow(x - 1, 2);
-        const gradient = x => 2 * (x - 1);
-
-        const lrSlider = document.getElementById('learningRate');
-        const lrValueSpan = document.getElementById('lrValue');
-        const stepButton = document.getElementById('stepButton');
-        const resetButton = document.getElementById('resetButton');
-        const autoPlayButton = document.getElementById('autoPlayButton');
-        let isAutoPlaying = false;
-
-        function createGradientDescentChart() {
-            const labels = Array.from({ length: 111 }, (_, i) => (i - 50) * 0.1);
-            const data = labels.map(lossFunction);
-
-            if (gradientDescentChart) {
-                gradientDescentChart.destroy();
-            }
-
-            gradientDescentChart = new Chart(gdCtx, {
-                type: 'line',
-                data: {
-                    labels: labels.map(x => x.toFixed(1)),
-                    datasets: [{
-                        label: '손실 함수 (Loss Function)',
-                        data: data,
-                        borderColor: '#A6C4DD',
-                        borderWidth: 3,
-                        pointRadius: 0,
-                        tension: 0.1
-                    }, {
-                        label: '현재 위치',
-                        data: [{ x: currentX, y: lossFunction(currentX) }],
-                        borderColor: '#D4A373',
-                        backgroundColor: '#D4A373',
-                        pointRadius: 8,
-                        pointHoverRadius: 10,
-                        type: 'scatter',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            min: -5,
-                            max: 5,
-                            ticks: { display: false }
-                        },
-                        y: {
-                            min: 0,
-                            max: Math.max(...data) * 1.1
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.datasetIndex === 1) {
-                                        return ` 현재 x: ${context.parsed.x.toFixed(2)}, 손실: ${context.parsed.y.toFixed(2)}`;
-                                    }
-                                    return null;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateChart() {
-            gradientDescentChart.data.datasets[1].data = [{ x: currentX, y: lossFunction(currentX) }];
-            gradientDescentChart.update();
-        }
-
-        function takeStep() {
-            const learningRate = parseFloat(lrSlider.value);
-            const grad = gradient(currentX);
-            currentX = currentX - learningRate * grad;
-            if (Math.abs(currentX - 1) < 0.01 && !isAutoPlaying) {
-                stepButton.disabled = true;
-                stepButton.textContent = '최적점 도달!';
-            }
-            updateChart();
-        }
-
-        lrSlider.addEventListener('input', (e) => {
-            lrValueSpan.textContent = parseFloat(e.target.value).toFixed(2);
-        });
-
-        stepButton.addEventListener('click', takeStep);
-        
-        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-        async function startAutoPlay() {
-            const learningRates = Array.from({length: 100}, (_, i) => (i + 1) * 0.01);
-
-            for (const lr of learningRates) {
-                if (!isAutoPlaying) break;
-
-                currentX = 4.5;
-                stepButton.disabled = false;
-                stepButton.textContent = '한 걸음 이동';
-                lrSlider.value = lr;
-                lrValueSpan.textContent = lr.toFixed(2);
-                updateChart();
-                await sleep(150); 
-
-                let steps = 0;
-                const maxSteps = 150; 
-
-                while (Math.abs(currentX - 1) > 0.01 && steps < maxSteps && isAutoPlaying) {
-                    takeStep();
-                    steps++;
-                    await sleep(40); 
-                }
-                if (isAutoPlaying) await sleep(400); 
-            }
-
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            }
-        }
-    
-        function stopAutoPlay() {
-            isAutoPlaying = false;
-            autoPlayButton.textContent = '자동 재생';
-            autoPlayButton.classList.replace('bg-red-500', 'bg-indigo-500');
-            autoPlayButton.classList.replace('hover:bg-red-600', 'hover:bg-indigo-600');
-            lrSlider.disabled = false;
-            stepButton.disabled = false;
-            resetButton.disabled = false;
-        }
-    
-        autoPlayButton.addEventListener('click', () => {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                isAutoPlaying = true;
-                autoPlayButton.textContent = '정지';
-                autoPlayButton.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
-                autoPlayButton.classList.add('bg-red-500', 'hover:bg-red-600');
-                lrSlider.disabled = true;
-                stepButton.disabled = true;
-                resetButton.disabled = true;
-                startAutoPlay();
-            }
-        });
-
-        resetButton.addEventListener('click', () => {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            }
-            currentX = 4.5;
-            stepButton.disabled = false;
-            stepButton.textContent = '한 걸음 이동';
-            updateChart();
-        });
-
-        createGradientDescentChart();
-    }
-    
-    // --- Computation Graph Logic ---
-    const graphContainer = document.getElementById('computation-graph');
-    if (graphContainer) {
-        const forwardButton = document.getElementById('forwardPassButton');
-        const backwardButton = document.getElementById('backwardPassButton');
-        const explanationDiv = document.getElementById('graph-explanation');
-        
-        const nodes = [
-            { id: 'x', value: 2, grad: 0, label: 'x', pos: { x: 5, y: 20 }, inputs: [] },
-            { id: 'w', value: -3, grad: 0, label: 'w', pos: { x: 5, y: 70 }, inputs: [] },
-            { id: 'b', value: -1, grad: 0, label: 'b', pos: { x: 55, y: 90 }, inputs: [] },
-            { id: 'mul', value: 0, grad: 0, label: 'w * x', op: '*', inputs: ['x', 'w'], pos: { x: 30, y: 45 } },
-            { id: 'add', value: 0, grad: 0, label: 'wx + b', op: '+', inputs: ['mul', 'b'], pos: { x: 55, y: 60 } },
-            { id: 'relu', value: 0, grad: 0, label: 'ReLU', op: 'relu', inputs: ['add'], pos: { x: 80, y: 60 } }
-        ];
-
-        // Create nodes and arrows
-        nodes.forEach(node => {
-            const div = document.createElement('div');
-            div.id = `node-${node.id}`;
-            div.className = 'computation-node absolute bg-gray-100 border-2 border-gray-300 rounded-lg p-3 text-center w-28';
-            div.style.left = `calc(${node.pos.x}% - 56px)`;
-            div.style.top = `calc(${node.pos.y}% - 38px)`;
-            div.innerHTML = `<div class="font-bold text-sm">${node.label}</div><div class="font-mono text-xs mt-1">val: <span class="val">?</span></div><div class="font-mono text-xs">grad: <span class="grad">?</span></div>`;
-            graphContainer.appendChild(div);
-        });
-
-        const createArrow = (fromId, toId) => {
-            requestAnimationFrame(() => {
-                const fromNode = document.getElementById(`node-${fromId}`);
-                const toNode = document.getElementById(`node-${toId}`);
-                if (!fromNode || !toNode) return;
-
-                const containerRect = graphContainer.getBoundingClientRect();
-                const fromRect = fromNode.getBoundingClientRect();
-                const toRect = toNode.getBoundingClientRect();
-
-                const x1 = fromRect.left + fromRect.width / 2 - containerRect.left;
-                const y1 = fromRect.top + fromRect.height / 2 - containerRect.top;
-                const x2 = toRect.left + toRect.width / 2 - containerRect.left;
-                const y2 = toRect.top + toRect.height / 2 - containerRect.top;
-                
-                const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-
-                const arrow = document.createElement('div');
-                arrow.className = 'arrow';
-                arrow.style.left = `${x1}px`;
-                arrow.style.top = `${y1}px`;
-                arrow.style.width = `${distance}px`;
-                arrow.style.transform = `rotate(${angle}deg)`;
-                
-                graphContainer.appendChild(arrow);
-            });
+        // --- 헤더 컴포넌트 ---
+        const Header = () => {
+            const navItems = ["Futures", "Options", "Trading Bots", "Copy Trading", "Data"];
+            return (
+                <header className="bg-slate-800/50 border-b border-slate-700 px-4 flex items-center h-14 col-span-3">
+                    <div className="flex items-center gap-4">
+                        <img src="https://public.bnbstatic.com/20190405/eb2349c3-b228-4a26-8278-8d5c464c125a.svg" alt="Logo" className="h-6" />
+                        <h1 className="text-xl font-bold text-yellow-400 hidden md:block">Futures</h1>
+                    </div>
+                    <nav className="hidden md:flex items-center gap-6 ml-8 text-sm font-medium">
+                        {navItems.map(item => <a href="#" key={item} className="hover:text-white transition-colors">{item}</a>)}
+                        <a href="#" className="hover:text-white transition-colors flex items-center gap-1">More <Icon name="chevron-down" size={14} /></a>
+                    </nav>
+                    <div className="flex-grow"></div>
+                    <div className="flex items-center gap-4 text-sm">
+                        <button className="hover:text-white"><Icon name="settings-2" size={18} /></button>
+                        <button className="px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-md font-semibold hover:bg-yellow-500 transition-colors">Log In</button>
+                        <button className="px-4 py-1.5 bg-slate-700 rounded-md font-semibold hover:bg-slate-600 transition-colors">Register</button>
+                    </div>
+                </header>
+            );
         };
 
-        nodes.forEach(node => {
-            if (node.inputs.length > 0) {
-                node.inputs.forEach(input => {
-                    createArrow(input, node.id);
-                });
-            }
-        });
+        // --- 시장 정보 컴포넌트 ---
+        const MarketInfo = () => {
+            return (
+                <div className="bg-slate-800/50 border-b border-slate-700 px-4 py-3 flex items-center gap-6 col-span-3">
+                    <div className="flex items-center gap-3">
+                        <img src="https://static.crypto.com/token/icons/btc/color_icon.png" alt="BTC" className="w-8 h-8"/>
+                        <h2 className="text-xl font-semibold text-white">BTCUSDT</h2>
+                        <span className="text-sm bg-slate-700 px-2 py-0.5 rounded">Perpetual</span>
+                    </div>
+                    <div className="flex gap-6 text-sm">
+                        <div>
+                            <div className="text-slate-400">Mark Price</div>
+                            <div className="text-green font-semibold">68,420.50</div>
+                        </div>
+                        <div>
+                            <div className="text-slate-400">24h Change</div>
+                            <div className="text-green font-semibold">+1,234.56 (+1.84%)</div>
+                        </div>
+                        <div>
+                            <div className="text-slate-400">24h High</div>
+                            <div className="font-medium">69,123.45</div>
+                        </div>
+                        <div>
+                            <div className="text-slate-400">24h Low</div>
+                            <div className="font-medium">67,012.34</div>
+                        </div>
+                        <div>
+                            <div className="text-slate-400">24h Volume(BTC)</div>
+                            <div className="font-medium">105,678.90</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
         
-        const resetGraph = () => {
-             nodes.forEach(node => {
-                node.grad = 0;
-                const div = document.getElementById(`node-${node.id}`);
-                div.querySelector('.val').textContent = (['x', 'w', 'b'].includes(node.id)) ? node.value : '?';
-                div.querySelector('.grad').textContent = '?';
-                div.classList.remove('highlight-forward', 'highlight-backward');
-            });
-            explanationDiv.textContent = '';
+        // --- 차트 컴포넌트 ---
+        const TradingChart = () => {
+            return (
+                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col">
+                    <div className="flex items-center gap-4 text-sm border-b border-slate-700 pb-2 mb-2">
+                        {['Time', '15m', '1H', '4H', '1D', 'More'].map(t => <button key={t} className="px-2 py-1 hover:bg-slate-700 rounded">{t}</button>)}
+                        <div className="flex-grow"></div>
+                        <button className="px-2 py-1 hover:bg-slate-700 rounded flex items-center gap-1"><Icon name="candlestick-chart" size={14}/> Indicators</button>
+                    </div>
+                    <div className="flex-grow bg-slate-900 rounded flex items-center justify-center">
+                        <p className="text-slate-500">TradingView Chart will be here</p>
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- 호가창 컴포넌트 ---
+        const OrderBook = () => {
+            const mockAsks = [
+                { price: '68422.50', amount: '0.543', total: '37152.4' },
+                { price: '68421.10', amount: '1.201', total: '82158.7' },
+                { price: '68420.90', amount: '0.887', total: '60689.5' },
+            ];
+            const mockBids = [
+                { price: '68419.80', amount: '0.765', total: '52342.1' },
+                { price: '68418.20', amount: '2.113', total: '144558.3' },
+                { price: '68417.60', amount: '0.950', total: '64996.7' },
+            ];
+            const Row = ({ price, amount, total, type, depth }) => (
+                <div className="relative flex justify-between text-xs p-1 leading-tight">
+                    <div className={`absolute top-0 right-0 h-full ${type === 'bid' ? 'bg-depth-green' : 'bg-depth-red'}`} style={{ width: `${depth}%` }}></div>
+                    <span className={`z-10 ${type === 'ask' ? 'text-red' : 'text-green'}`}>{parseFloat(price).toLocaleString()}</span>
+                    <span className="z-10 text-white">{amount}</span>
+                    <span className="z-10 text-slate-400">{parseFloat(total).toLocaleString()}</span>
+                </div>
+            );
+
+            return (
+                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col text-sm">
+                    <h3 className="font-semibold text-white mb-2">Order Book</h3>
+                    <div className="grid grid-cols-3 text-xs text-slate-400 px-1 mb-1">
+                        <span>Price(USDT)</span>
+                        <span className="text-right">Amount(BTC)</span>
+                        <span className="text-right">Total</span>
+                    </div>
+                    <div className="flex flex-col-reverse">
+                        {mockBids.map((bid, i) => <Row key={i} {...bid} type="bid" depth={20 + i * 25} />)}
+                    </div>
+                    <div className="py-2 text-center text-xl font-bold text-green">
+                        68,420.50 <Icon name="arrow-up" size={18} className="inline-block text-green" />
+                    </div>
+                    <div>
+                        {mockAsks.map((ask, i) => <Row key={i} {...ask} type="ask" depth={65 - i * 20} />)}
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- 최근 체결 컴포넌트 ---
+        const RecentTrades = () => {
+             const mockTrades = [
+                { price: '68420.50', amount: '0.012', time: '14:35:12', type: 'buy' },
+                { price: '68421.10', amount: '0.005', time: '14:35:10', type: 'sell' },
+                { price: '68420.90', amount: '0.021', time: '14:35:09', type: 'buy' },
+            ];
+            return (
+                <div className="bg-slate-800/50 rounded-lg p-2 flex flex-col text-sm">
+                    <h3 className="font-semibold text-white mb-2">Recent Trades</h3>
+                    <div className="grid grid-cols-3 text-xs text-slate-400 px-1 mb-1">
+                        <span>Price(USDT)</span>
+                        <span className="text-right">Amount(BTC)</span>
+                        <span className="text-right">Time</span>
+                    </div>
+                    <div className="flex-grow overflow-y-auto">
+                        {mockTrades.map((trade, i) => (
+                             <div key={i} className="grid grid-cols-3 text-xs p-1">
+                                <span className={trade.type === 'buy' ? 'text-green' : 'text-red'}>{parseFloat(trade.price).toLocaleString()}</span>
+                                <span className="text-right text-white">{trade.amount}</span>
+                                <span className="text-right text-slate-400">{trade.time}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
         };
 
-        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        // --- 주문서 컴포넌트 ---
+        const OrderForm = () => {
+            return (
+                <div className="bg-slate-800/50 rounded-lg p-4 flex flex-col text-sm">
+                    <div className="flex border-b border-slate-700">
+                        <button className="px-4 py-2 text-white border-b-2 border-yellow-400 font-semibold">Limit</button>
+                        <button className="px-4 py-2 text-slate-400 hover:text-white">Market</button>
+                        <button className="px-4 py-2 text-slate-400 hover:text-white">Stop Limit</button>
+                    </div>
+                    <div className="space-y-4 mt-4">
+                         <div>
+                            <label className="text-xs text-slate-400">Price (USDT)</label>
+                            <input type="text" className="w-full bg-slate-800 p-2 rounded mt-1 border border-slate-700 focus:outline-none focus:border-yellow-400" defaultValue="68420.50" />
+                        </div>
+                        <div>
+                            <label className="text-xs text-slate-400">Amount (BTC)</label>
+                            <input type="text" className="w-full bg-slate-800 p-2 rounded mt-1 border border-slate-700 focus:outline-none focus:border-yellow-400" placeholder="0.000" />
+                        </div>
+                        <div className="flex justify-between">
+                            {[25, 50, 75, 100].map(p => <button key={p} className="w-1/4 py-1 mx-1 bg-slate-700 hover:bg-slate-600 text-xs rounded">{p}%</button>)}
+                        </div>
+                        <div className="flex justify-between text-xs">
+                            <span className="text-slate-400">Cost</span>
+                            <span>-- USDT</span>
+                        </div>
+                        <button className="w-full py-3 bg-green/80 hover:bg-green rounded font-semibold text-white bg-emerald-600 hover:bg-emerald-500">Buy/Long</button>
+                        <button className="w-full py-3 bg-red/80 hover:bg-red rounded font-semibold text-white bg-red-600 hover:bg-red-500">Sell/Short</button>
+                    </div>
+                </div>
+            );
+        };
 
-        forwardButton.addEventListener('click', async () => {
-            resetGraph();
-            forwardButton.disabled = true;
-            backwardButton.disabled = true;
+        // --- 포지션 및 주문내역 컴포넌트 ---
+        const PositionsPanel = () => {
+             return (
+                <div className="bg-slate-800/50 rounded-lg p-4 flex flex-col col-span-3">
+                    <div className="flex border-b border-slate-700 text-sm">
+                        {["Positions", "Open Orders", "Order History", "Trade History"].map(tab => (
+                            <button key={tab} className={`px-4 py-2 ${tab === 'Positions' ? 'text-white' : 'text-slate-400'} hover:text-white`}>{tab}</button>
+                        ))}
+                    </div>
+                    <div className="flex-grow flex items-center justify-center text-slate-500 py-10">
+                        <Icon name="file-question" className="mr-2" />
+                        No open positions.
+                    </div>
+                </div>
+             )
+        }
 
-            let node = nodes.find(n => n.id === 'mul');
-            let x_node = nodes.find(n => n.id === 'x');
-            let w_node = nodes.find(n => n.id === 'w');
-            node.value = x_node.value * w_node.value;
-            document.getElementById('node-mul').classList.add('highlight-forward');
-            document.querySelector('#node-mul .val').textContent = node.value;
-            explanationDiv.textContent = `순전파 1: w * x = (${w_node.value}) * (${x_node.value}) = ${node.value}`;
-            await sleep(1500);
+        // --- 메인 앱 컴포넌트 ---
+        const App = () => {
+            return (
+                <div className="h-screen w-screen p-2 flex flex-col gap-2">
+                    {/* 메인 그리드 레이아웃 */}
+                    <div className="flex-grow grid grid-cols-1 md:grid-cols-[1fr_320px] lg:grid-cols-[280px_1fr_320px] gap-2">
+                        {/* 1열: 호가창/체결내역 (lg에서만) */}
+                        <div className="hidden lg:flex flex-col gap-2">
+                             <OrderBook />
+                             <RecentTrades />
+                        </div>
 
-            document.getElementById('node-mul').classList.remove('highlight-forward');
-            node = nodes.find(n => n.id === 'add');
-            let mul_node = nodes.find(n => n.id === 'mul');
-            let b_node = nodes.find(n => n.id === 'b');
-            node.value = mul_node.value + b_node.value;
-            document.getElementById('node-add').classList.add('highlight-forward');
-            document.querySelector('#node-add .val').textContent = node.value;
-            explanationDiv.textContent = `순전파 2: (wx) + b = (${mul_node.value}) + (${b_node.value}) = ${node.value}`;
-            await sleep(1500);
+                        {/* 2열: 차트/주문서 */}
+                        <div className="flex flex-col gap-2">
+                           <Header />
+                           <MarketInfo />
+                           <TradingChart />
+                        </div>
 
-            document.getElementById('node-add').classList.remove('highlight-forward');
-            node = nodes.find(n => n.id === 'relu');
-            let add_node = nodes.find(n => n.id === 'add');
-            node.value = Math.max(0, add_node.value);
-            document.getElementById('node-relu').classList.add('highlight-forward');
-            document.querySelector('#node-relu .val').textContent = node.value;
-            explanationDiv.textContent = `순전파 3: ReLU(${add_node.value}) = ${node.value}. 순전파 완료!`;
-            await sleep(1500);
-            document.getElementById('node-relu').classList.remove('highlight-forward');
-            
-            forwardButton.disabled = false;
-            backwardButton.disabled = false;
-        });
+                        {/* 3열: 주문서/호가창/체결내역 */}
+                        <div className="flex flex-col gap-2">
+                            <div className="lg:hidden">
+                                 <OrderBook />
+                            </div>
+                            <OrderForm />
+                            <div className="lg:hidden">
+                                 <RecentTrades />
+                            </div>
+                        </div>
+                    </div>
 
-        backwardButton.addEventListener('click', async () => {
-            if(document.querySelector('#node-relu .val').textContent === '?') {
-                explanationDiv.textContent = '먼저 순전파를 실행해주세요.';
-                return;
-            }
-            forwardButton.disabled = true;
-            backwardButton.disabled = true;
-
-            nodes.forEach(n => {
-                document.querySelector(`#node-${n.id} .grad`).textContent = '?';
-                document.getElementById(`node-${n.id}`).classList.remove('highlight-backward');
-            });
-
-            let relu_node = nodes.find(n => n.id === 'relu');
-            relu_node.grad = 1.0;
-            document.getElementById('node-relu').classList.add('highlight-backward');
-            document.querySelector('#node-relu .grad').textContent = relu_node.grad;
-            explanationDiv.textContent = `역전파 1: 최종 출력의 기울기는 1로 시작합니다.`;
-            await sleep(2000);
-
-            document.getElementById('node-relu').classList.remove('highlight-backward');
-            let add_node = nodes.find(n => n.id === 'add');
-            add_node.grad = (add_node.value > 0 ? 1 : 0) * relu_node.grad;
-            document.getElementById('node-add').classList.add('highlight-backward');
-            document.querySelector('#node-add .grad').textContent = add_node.grad;
-            explanationDiv.textContent = `역전파 2: ReLU의 로컬 기울기(${add_node.value > 0 ? 1 : 0}) * 업스트림 기울기(${relu_node.grad}) = ${add_node.grad}`;
-            await sleep(2000);
-
-            document.getElementById('node-add').classList.remove('highlight-backward');
-            let mul_node = nodes.find(n => n.id === 'mul');
-            let b_node = nodes.find(n => n.id === 'b');
-            mul_node.grad = 1 * add_node.grad;
-            b_node.grad = 1 * add_node.grad;
-            document.getElementById('node-mul').classList.add('highlight-backward');
-            document.getElementById('node-b').classList.add('highlight-backward');
-            document.querySelector('#node-mul .grad').textContent = mul_node.grad;
-            document.querySelector('#node-b .grad').textContent = b_node.grad;
-            explanationDiv.textContent = `역전파 3: '+' 연산은 기울기를 그대로 전달합니다.`;
-            await sleep(2000);
-
-            document.getElementById('node-mul').classList.remove('highlight-backward');
-            document.getElementById('node-b').classList.remove('highlight-backward');
-            let w_node = nodes.find(n => n.id === 'w');
-            let x_node = nodes.find(n => n.id === 'x');
-            w_node.grad = x_node.value * mul_node.grad;
-            x_node.grad = w_node.value * mul_node.grad;
-            document.getElementById('node-w').classList.add('highlight-backward');
-            document.getElementById('node-x').classList.add('highlight-backward');
-            document.querySelector('#node-w .grad').textContent = w_node.grad;
-            document.querySelector('#node-x .grad').textContent = x_node.grad;
-            explanationDiv.textContent = `역전파 4: '×' 연산은 반대편 입력값을 곱해 기울기를 전달합니다. 역전파 완료!`;
-             await sleep(2000);
-            document.getElementById('node-w').classList.remove('highlight-backward');
-            document.getElementById('node-x').classList.remove('highlight-backward');
-            
-            forwardButton.disabled = false;
-            backwardButton.disabled = false;
-        });
+                    {/* 하단 패널 */}
+                    <div className="h-[250px]">
+                        <PositionsPanel />
+                    </div>
+                </div>
+            );
+        };
         
-        resetGraph();
-    }
-});
-</script>
+        // --- React 앱 렌더링 ---
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+
+    </script>
+
 </body>
 </html>
-
