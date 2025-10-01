@@ -1,295 +1,266 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N-Clone 포털 프로젝트 대시보드</title>
-    <!-- Chosen Palette: Warm Neutral (Stone) with Blue Accent -->
-    <!-- Application Structure Plan: A single-page dashboard design is chosen to provide a comprehensive overview of the project plan at a glance. The core interactive element is a 6-week timeline navigator. Clicking a week dynamically updates the main content panel to display that week's specific goals and tasks. This task-oriented structure transforms a static document into an engaging, explorable roadmap, making it easier for a developer to understand the project flow and weekly objectives. -->
-    <!-- Visualization & Content Choices: Report Info: 6-week development schedule -> Goal: Show progress and change over time -> Viz/Presentation: Interactive timeline navigator (HTML/CSS/JS) and a dynamic content area. Interaction: User clicks a week to filter content shown. Justification: This is the most intuitive way to explore a time-based plan. Report Info: Overall project progress -> Goal: Inform at a glance -> Viz/Presentation: Doughnut Chart (Chart.js/Canvas). Interaction: Chart updates based on the selected week. Justification: Provides immediate visual feedback on progress through the plan. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>공룡 점프 게임</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+            font-family: 'VT323', monospace;
+            background-color: #202124; /* 어두운 배경색 */
+            color: #d7dadc; /* 밝은 텍스트 색 */
+            touch-action: manipulation; /* 모바일에서 더블 탭 확대 방지 */
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-            height: auto;
-            aspect-ratio: 1 / 1;
+        canvas {
+            background-color: #202124;
+            display: block;
+        }
+        .game-container {
+            border-bottom: 2px solid #d7dadc;
         }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div id="app" class="p-4 md:p-8 max-w-7xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-stone-900">N-Clone Portal Project</h1>
-            <p class="text-stone-600 mt-2 text-lg">인터랙티브 개발 계획서 대시보드</p>
-        </header>
-
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Timeline Navigator -->
-                <section id="timeline-section" class="bg-white p-6 rounded-xl shadow-sm">
-                    <h2 class="text-2xl font-bold mb-1">개발 로드맵</h2>
-                    <p class="text-stone-600 mb-4">아래의 주차별 탭을 클릭하여 해당 주의 상세 개발 목표와 세부 과제를 확인하세요.</p>
-                    <nav id="timeline-nav" class="flex flex-wrap gap-2">
-                    </nav>
-                </section>
-                
-                <!-- Dynamic Content Area -->
-                <section id="details-section" class="bg-white p-6 rounded-xl shadow-sm min-h-[400px]">
-                    <div id="details-content">
-                    </div>
-                </section>
+    <div class="w-full max-w-2xl mx-auto text-center">
+        <div id="ui" class="flex justify-between items-center mb-4 text-2xl">
+            <div id="score-container">SCORE: <span id="score">0</span></div>
+            <div id="highscore-container">HI: <span id="highscore">0</span></div>
+        </div>
+        
+        <div class="game-container w-full aspect-[4/1] relative">
+             <canvas id="gameCanvas"></canvas>
+             <div id="startMessage" class="absolute inset-0 flex flex-col items-center justify-center text-3xl">
+                <p>JUMP TO START</p>
+                <p class="text-xl mt-2">(SPACE or TAP)</p>
             </div>
-            
-            <div class="space-y-6">
-                <!-- Project Progress -->
-                <section class="bg-white p-6 rounded-xl shadow-sm text-center">
-                    <h2 class="text-2xl font-bold mb-4">프로젝트 진행률</h2>
-                    <div class="chart-container">
-                        <canvas id="progressChart"></canvas>
-                    </div>
-                </section>
-
-                <!-- Tech Stack -->
-                <section class="bg-white p-6 rounded-xl shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">기술 스택 🛠️</h2>
-                    <div id="tech-stack" class="space-y-4"></div>
-                </section>
+            <div id="gameOverMessage" class="absolute inset-0 flex-col items-center justify-center text-4xl hidden">
+                <p>GAME OVER</p>
+                <p class="text-xl mt-4">JUMP TO RESTART</p>
             </div>
-
-        </main>
+        </div>
+        <p class="mt-4 text-lg">스페이스바 또는 화면을 탭하여 점프하세요!</p>
     </div>
 
     <script>
-        const projectData = {
-            weeks: [
-                {
-                    week: 1,
-                    title: "프로젝트 설계 및 기본 UI 구성",
-                    goal: "개발 환경을 구축하고 포털의 전체적인 레이아웃을 시각적으로 완성합니다. 데이터는 없지만, 완성된 것처럼 보이는 '껍데기'를 만듭니다.",
-                    tasks: [
-                        "`npx create-next-app@latest --typescript` 명령어로 프로젝트 생성 및 기본 설정",
-                        "ESLint, Prettier 설정을 통해 일관된 코드 스타일 유지",
-                        "GitHub 저장소 생성 및 프로젝트 연동",
-                        "Figma나 Excalidraw 같은 툴로 메인 페이지 와이어프레임 상세 설계",
-                        "공통 컴포넌트(버튼, 인풋 등)와 레이아웃 컴포넌트(Header, Footer, Sidebar)의 기본 구조 생성",
-                        "각 영역(검색창, 뉴스, 날씨)에 해당하는 정적 UI 컴포넌트 파일 생성 및 가짜 데이터로 화면 채우기"
-                    ]
-                },
-                {
-                    week: 2,
-                    title: "백엔드 서버 구축 및 검색 기능 연동",
-                    goal: "백엔드 프록시 서버를 만들고, 포털의 심장인 검색 기능을 실제로 동작하게 만듭니다.",
-                    tasks: [
-                        "Next.js API Routes 또는 별도의 Express 프로젝트로 백엔드 서버 구축",
-                        "`.env` 파일을 사용하여 외부 API 키를 안전하게 환경 변수로 관리",
-                        "`/api/search` 엔드포인트를 만들어, 프론트로부터 검색어를 받아 Google API로 전달하고 결과를 반환하는 로직 구현",
-                        "메인 페이지(`pages/index.tsx`)의 검색창과 검색 결과 페이지(`pages/search.tsx`) 생성",
-                        "검색 실행 시 `next/router`를 사용해 검색 결과 페이지로 이동하며 검색어를 쿼리 파라미터로 전달 (`/search?query=리액트`)"
-                    ]
-                },
-                {
-                    week: 3,
-                    title: "뉴스 스탠드 구현",
-                    goal: "실시간 뉴스 헤드라인을 가져와 동적으로 화면에 표시하고, 사용자 인터랙션을 추가합니다.",
-                    tasks: [
-                        "`/api/news` 엔드포인트를 만들어, 카테고리별로 NewsAPI를 호출하는 로직 구현",
-                        "`useQuery` Hook을 사용해 프론트엔드에서 뉴스 데이터를 비동기적으로 요청",
-                        "데이터 로딩 중에는 스켈레톤 UI를 보여주어 사용자 경험 향상",
-                        "받아온 뉴스 데이터를 반응형 그리드 레이아웃으로 렌더링",
-                        "'정치', '경제', '스포츠' 등 카테고리 탭 UI를 만들고, 클릭 시 해당 카테고리의 뉴스를 다시 불러오는 기능 구현"
-                    ]
-                },
-                {
-                    week: 4,
-                    title: "날씨 위젯 및 실시간 검색어",
-                    goal: "사용자의 편의를 돕는 위젯 기능을 추가하여 포털을 더욱 풍성하게 만듭니다.",
-                    tasks: [
-                        "`/api/weather` 엔드포인트를 만들어, 위도/경도를 받아 날씨 정보를 반환하는 로직 구현",
-                        "`useEffect` 안에서 `navigator.geolocation.getCurrentPosition`을 호출하여 사용자 위치 정보 획득",
-                        "날씨 아이콘과 현재 온도, 체감 온도 등을 표시하는 날씨 위젯 UI 완성",
-                        "실시간 검색어 순위를 위한 목업 데이터 배열 생성",
-                        "`setInterval`과 `useState`를 조합하여 일정 시간마다 순위가 바뀌는 것처럼 보이도록 시뮬레이션 구현"
-                    ]
-                },
-                {
-                    week: 5,
-                    title: "로그인 및 개인화 (심화)",
-                    goal: "사용자 인증 기능을 추가하여 포털의 완성도를 높이고, 개인화 기능의 기반을 마련합니다.",
-                    tasks: [
-                        "`next-auth` 라이브러리 설치 및 기본 설정",
-                        "Google, Kakao 등 원하는 소셜 로그인 Provider 설정 (`pages/api/auth/[...nextauth].ts`)",
-                        "`useSession` Hook을 사용하여 클라이언트 컴포넌트에서 로그인 상태 확인",
-                        "로그인 상태에 따라 헤더의 UI를 '로그인' 버튼에서 '내 정보/로그아웃' 메뉴로 동적 변경",
-                        "(선택) 로그인한 사용자가 날씨 위젯의 기본 지역을 설정하고, 이를 DB에 저장/조회하는 기능 구현"
-                    ]
-                },
-                {
-                    week: 6,
-                    title: "최종 다듬기 및 배포",
-                    goal: "모바일 반응형 디자인을 최종 점검하고, 실제 서비스처럼 웹에 배포하여 프로젝트를 마무리합니다.",
-                    tasks: [
-                        "다양한 화면 크기(모바일, 태블릿, 데스크톱)에서 UI가 깨지지 않는지 최종 확인 및 수정",
-                        "모든 비동기 요청에 대해 로딩 및 에러 상태 처리 UI가 잘 동작하는지 검토",
-                        "Vercel, Render에 Git 저장소를 연결하고 배포",
-                        "배포 후 환경 변수(`DATABASE_URL`, `NEWS_API_KEY` 등)를 배포 플랫폼에 설정",
-                        "프로젝트의 목적, 사용된 기술, 실행 방법, 구현된 기능 스크린샷 등을 포함한 상세한 `README.md` 파일 작성"
-                    ]
-                }
-            ],
-            techStack: [
-                {
-                    category: "프론트엔드 (Frontend)",
-                    items: ["React (Next.js)", "TypeScript", "Tailwind CSS", "React Query"]
-                },
-                {
-                    category: "백엔드 (Backend)",
-                    items: ["Node.js + Express", "Next.js API Routes"]
-                },
-                {
-                    category: "데이터베이스 (선택)",
-                    items: ["PostgreSQL", "MongoDB"]
-                },
-                {
-                    category: "외부 APIs",
-                    items: ["NewsAPI", "OpenWeatherMap", "Google Custom Search"]
-                },
-                {
-                    category: "배포 (Deployment)",
-                    items: ["Vercel", "Render", "Heroku"]
-                }
-            ]
-        };
-
-        let currentWeek = 1;
-        let progressChart;
-
-        function renderTimelineNav() {
-            const navContainer = document.getElementById('timeline-nav');
-            navContainer.innerHTML = '';
-            projectData.weeks.forEach(weekData => {
-                const button = document.createElement('button');
-                button.textContent = `${weekData.week}️⃣ 주차`;
-                button.dataset.week = weekData.week;
-                button.className = `px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
-                    weekData.week === currentWeek 
-                    ? 'bg-blue-600 text-white shadow' 
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`;
-                button.onclick = () => {
-                    currentWeek = weekData.week;
-                    renderAll();
-                };
-                navContainer.appendChild(button);
-            });
-        }
-
-        function renderDetails() {
-            const contentContainer = document.getElementById('details-content');
-            const weekData = projectData.weeks.find(w => w.week === currentWeek);
-            if (!weekData) return;
-
-            contentContainer.innerHTML = `
-                <h3 class="text-3xl font-bold text-blue-600 mb-2">${weekData.week}주차: ${weekData.title}</h3>
-                <p class="text-stone-600 mb-6 pb-4 border-b border-stone-200">${weekData.goal}</p>
-                <h4 class="text-xl font-bold mb-4">세부 과제 ✔️</h4>
-                <ul class="space-y-3 list-inside">
-                    ${weekData.tasks.map(task => `
-                        <li class="flex items-start">
-                            <span class="text-blue-500 mr-3 mt-1">▪</span>
-                            <span class="flex-1 text-stone-700">${task.replace(/`([^`]+)`/g, '<code class="bg-stone-100 text-red-600 font-mono text-sm px-1.5 py-0.5 rounded">$1</code>')}</span>
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-        }
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameContainer = document.querySelector('.game-container');
         
-        function renderTechStack() {
-            const techContainer = document.getElementById('tech-stack');
-            techContainer.innerHTML = projectData.techStack.map(category => `
-                <div>
-                    <h3 class="text-lg font-bold text-stone-700 mb-2">${category.category}</h3>
-                    <div class="flex flex-wrap gap-2">
-                        ${category.items.map(item => `<span class="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">${item}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('');
+        const scoreEl = document.getElementById('score');
+        const highscoreEl = document.getElementById('highscore');
+        const startMessageEl = document.getElementById('startMessage');
+        const gameOverMessageEl = document.getElementById('gameOverMessage');
+
+        let dino;
+        let obstacles = [];
+        let score = 0;
+        let highscore = 0;
+        let gameSpeed = 5;
+        let gameSpeedIncrement = 0.001;
+        let lastTime = 0;
+        let obstacleTimer = 0;
+        let randomObstacleInterval = 1000;
+        let isGameOver = true;
+        let isGameStarted = false;
+
+        const DINO_COLOR = '#d7dadc';
+        const OBSTACLE_COLOR = '#d7dadc';
+
+        // 캔버스 크기 조절 함수
+        function resizeCanvas() {
+            canvas.width = gameContainer.clientWidth;
+            canvas.height = gameContainer.clientHeight;
         }
-        
-        function initializeChart() {
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            const progress = (currentWeek / projectData.weeks.length) * 100;
-            
-            progressChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['완료', '예정'],
-                    datasets: [{
-                        data: [currentWeek, projectData.weeks.length - currentWeek],
-                        backgroundColor: ['#2563eb', '#e5e7eb'],
-                        borderColor: '#ffffff',
-                        borderWidth: 4,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
+
+        class Dino {
+            constructor() {
+                this.width = canvas.width * 0.05; // 캔버스 너비에 비례
+                this.height = canvas.height * 0.25; // 캔버스 높이에 비례
+                this.x = this.width;
+                this.y = canvas.height - this.height;
+                this.yVelocity = 0;
+                this.gravity = 0.8;
+                this.jumpForce = 18;
+                this.groundY = canvas.height - this.height;
+                this.isJumping = false;
+            }
+
+            draw() {
+                ctx.fillStyle = DINO_COLOR;
+                // 간단한 공룡 모양 그리기
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                // 눈
+                ctx.fillStyle = '#202124';
+                ctx.fillRect(this.x + this.width * 0.6, this.y + this.height * 0.2, this.width * 0.2, this.height * 0.2);
+            }
+
+            update() {
+                if (this.isJumping) {
+                    this.y -= this.yVelocity;
+                    this.yVelocity -= this.gravity;
+                    if (this.y >= this.groundY) {
+                        this.y = this.groundY;
+                        this.isJumping = false;
+                        this.yVelocity = 0;
                     }
                 }
+                this.draw();
+            }
+
+            jump() {
+                if (!this.isJumping && !isGameOver) {
+                    this.isJumping = true;
+                    this.yVelocity = this.jumpForce;
+                }
+            }
+        }
+
+        class Obstacle {
+            constructor() {
+                const sizeType = Math.random();
+                if (sizeType < 0.33) { // 작은 선인장
+                    this.width = canvas.width * 0.03;
+                    this.height = canvas.height * 0.2;
+                } else if (sizeType < 0.66) { // 중간 선인장
+                    this.width = canvas.width * 0.05;
+                    this.height = canvas.height * 0.25;
+                } else { // 큰 선인장
+                    this.width = canvas.width * 0.08;
+                    this.height = canvas.height * 0.25;
+                }
+                this.x = canvas.width;
+                this.y = canvas.height - this.height;
+            }
+
+            draw() {
+                ctx.fillStyle = OBSTACLE_COLOR;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+
+            update() {
+                this.x -= gameSpeed;
+                this.draw();
+            }
+        }
+
+        function handleObstacles(deltaTime) {
+            if (obstacleTimer > randomObstacleInterval) {
+                obstacles.push(new Obstacle());
+                randomObstacleInterval = Math.random() * (2000 - 1000) + 1000 - (gameSpeed * 50);
+                obstacleTimer = 0;
+            } else {
+                obstacleTimer += deltaTime;
+            }
+
+            obstacles.forEach((obstacle, index) => {
+                obstacle.update();
+
+                // 화면 밖으로 나간 장애물 제거
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(index, 1);
+                }
+
+                // 충돌 감지
+                if (
+                    dino.x < obstacle.x + obstacle.width &&
+                    dino.x + dino.width > obstacle.x &&
+                    dino.y < obstacle.y + obstacle.height &&
+                    dino.y + dino.height > obstacle.y
+                ) {
+                    gameOver();
+                }
             });
-            updateChartText(progress);
+        }
+        
+        function updateScore() {
+            score++;
+            scoreEl.textContent = String(score).padStart(5, '0');
+            if (score > highscore) {
+                highscore = score;
+                highscoreEl.textContent = String(highscore).padStart(5, '0');
+                localStorage.setItem('dino-highscore', highscore);
+            }
         }
 
-        function updateChart() {
-            if (!progressChart) return;
-            const progress = (currentWeek / projectData.weeks.length) * 100;
-            progressChart.data.datasets[0].data = [currentWeek, projectData.weeks.length - currentWeek];
-            progressChart.update();
-            updateChartText(progress);
+        function gameLoop(timestamp) {
+            if (isGameOver) return;
+            
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            dino.update();
+            handleObstacles(deltaTime);
+            updateScore();
+            
+            gameSpeed += gameSpeedIncrement;
+
+            requestAnimationFrame(gameLoop);
         }
 
-        function updateChartText(progress) {
-             const chartContainer = document.querySelector('.chart-container');
-             let textElement = chartContainer.querySelector('.chart-text');
-             if (!textElement) {
-                 textElement = document.createElement('div');
-                 textElement.className = 'chart-text absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center';
-                 chartContainer.appendChild(textElement);
-             }
-             textElement.innerHTML = `
-                <div class="text-4xl font-bold text-blue-600">${Math.round(progress)}%</div>
-                <div class="text-sm text-stone-500">진행됨</div>
-             `;
+        function startGame() {
+            if (isGameOver) {
+                isGameOver = false;
+                isGameStarted = true;
+                score = 0;
+                gameSpeed = 5;
+                obstacles = [];
+                dino = new Dino();
+                
+                startMessageEl.classList.add('hidden');
+                gameOverMessageEl.classList.add('hidden');
+                
+                lastTime = 0; // requestAnimationFrame 시작 전 초기화
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        function gameOver() {
+            if (!isGameOver) {
+                isGameOver = true;
+                gameOverMessageEl.classList.remove('hidden');
+            }
+        }
+        
+        function handleInput() {
+            if (isGameOver) {
+                startGame();
+            }
+            if (dino) {
+                 dino.jump();
+            }
         }
 
-        function renderAll() {
-            renderTimelineNav();
-            renderDetails();
-            updateChart();
+        // 초기화 함수
+        function init() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            highscore = localStorage.getItem('dino-highscore') || 0;
+            highscoreEl.textContent = String(highscore).padStart(5, '0');
+
+            document.addEventListener('keydown', e => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    handleInput();
+                }
+            });
+            
+            document.addEventListener('touchstart', e => {
+                e.preventDefault();
+                handleInput();
+            });
+
+            startMessageEl.classList.remove('hidden');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderTimelineNav();
-            renderDetails();
-            renderTechStack();
-            initializeChart();
-        });
+        init();
+
     </script>
-
 </body>
 </html>
