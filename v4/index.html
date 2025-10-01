@@ -1,266 +1,248 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공룡 점프 게임</title>
+    <title>방치형 돈나무 키우기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'VT323', monospace;
-            background-color: #202124; /* 어두운 배경색 */
-            color: #d7dadc; /* 밝은 텍스트 색 */
+            font-family: 'Jua', sans-serif;
             touch-action: manipulation; /* 모바일에서 더블 탭 확대 방지 */
         }
-        canvas {
-            background-color: #202124;
-            display: block;
+        #money-tree {
+            font-size: 8rem; /* 🌳 이모지 크기 */
+            cursor: pointer;
+            user-select: none; /* 텍스트 선택 방지 */
+            transition: transform 0.1s ease;
         }
-        .game-container {
-            border-bottom: 2px solid #d7dadc;
+        #money-tree:active {
+            transform: scale(0.95);
+        }
+        .floating-text {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #facc15; /* 노란색 */
+            animation: float-up 1s ease-out forwards;
+            pointer-events: none; /* 클릭 이벤트 방해하지 않도록 */
+        }
+        @keyframes float-up {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-80px);
+                opacity: 0;
+            }
+        }
+        .disabled-button {
+            background-color: #4a5568 !important; /* 어두운 회색 */
+            cursor: not-allowed !important;
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-gray-800 text-white flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-2xl mx-auto text-center">
-        <div id="ui" class="flex justify-between items-center mb-4 text-2xl">
-            <div id="score-container">SCORE: <span id="score">0</span></div>
-            <div id="highscore-container">HI: <span id="highscore">0</span></div>
+    <div class="w-full max-w-md mx-auto text-center bg-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-700">
+        
+        <!-- 머니 디스플레이 -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-yellow-400">💰 현재 자산 💰</h1>
+            <p id="money-display" class="text-5xl my-2 break-all">0</p>
+            <p class="text-xl text-gray-400">(초당 <span id="mps-display">0</span>원)</p>
+        </div>
+
+        <!-- 돈나무 -->
+        <div id="tree-container" class="relative mb-8">
+            <div id="money-tree">🌳</div>
+        </div>
+
+        <!-- 업그레이드 섹션 -->
+        <div class="space-y-4">
+            <h2 class="text-2xl font-bold">✨ 업그레이드 ✨</h2>
+            <!-- 클릭 파워 업그레이드 -->
+            <button id="click-upgrade" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-lg shadow-lg transition-all duration-200">
+                <p class="font-bold text-lg">클릭 파워 강화 (Lv.<span id="click-level-display">1</span>)</p>
+                <p>클릭당 <span id="click-power-display">1</span>원</p>
+                <p>비용: <span id="click-cost-display">10</span>원</p>
+            </button>
+            <!-- 자동 생산 업그레이드 -->
+            <button id="auto-upgrade" class="w-full bg-green-600 hover:bg-green-700 p-4 rounded-lg shadow-lg transition-all duration-200">
+                <p class="font-bold text-lg">자동 생산 공장 (Lv.<span id="auto-level-display">0</span>)</p>
+                <p>초당 <span id="auto-power-display">0.1</span>원 추가</p>
+                <p>비용: <span id="auto-cost-display">25</span>원</p>
+            </button>
         </div>
         
-        <div class="game-container w-full aspect-[4/1] relative">
-             <canvas id="gameCanvas"></canvas>
-             <div id="startMessage" class="absolute inset-0 flex flex-col items-center justify-center text-3xl">
-                <p>JUMP TO START</p>
-                <p class="text-xl mt-2">(SPACE or TAP)</p>
-            </div>
-            <div id="gameOverMessage" class="absolute inset-0 flex-col items-center justify-center text-4xl hidden">
-                <p>GAME OVER</p>
-                <p class="text-xl mt-4">JUMP TO RESTART</p>
-            </div>
+        <!-- 게임 저장/초기화 -->
+        <div class="mt-8">
+            <button id="reset-button" class="text-gray-500 hover:text-red-500 transition-colors">게임 초기화</button>
         </div>
-        <p class="mt-4 text-lg">스페이스바 또는 화면을 탭하여 점프하세요!</p>
     </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gameContainer = document.querySelector('.game-container');
+        // DOM 요소 가져오기
+        const moneyDisplay = document.getElementById('money-display');
+        const mpsDisplay = document.getElementById('mps-display');
+        const moneyTree = document.getElementById('money-tree');
+        const treeContainer = document.getElementById('tree-container');
+
+        const clickUpgradeBtn = document.getElementById('click-upgrade');
+        const clickLevelDisplay = document.getElementById('click-level-display');
+        const clickPowerDisplay = document.getElementById('click-power-display');
+        const clickCostDisplay = document.getElementById('click-cost-display');
+
+        const autoUpgradeBtn = document.getElementById('auto-upgrade');
+        const autoLevelDisplay = document.getElementById('auto-level-display');
+        const autoPowerDisplay = document.getElementById('auto-power-display');
+        const autoCostDisplay = document.getElementById('auto-cost-display');
         
-        const scoreEl = document.getElementById('score');
-        const highscoreEl = document.getElementById('highscore');
-        const startMessageEl = document.getElementById('startMessage');
-        const gameOverMessageEl = document.getElementById('gameOverMessage');
+        const resetButton = document.getElementById('reset-button');
 
-        let dino;
-        let obstacles = [];
-        let score = 0;
-        let highscore = 0;
-        let gameSpeed = 5;
-        let gameSpeedIncrement = 0.001;
-        let lastTime = 0;
-        let obstacleTimer = 0;
-        let randomObstacleInterval = 1000;
-        let isGameOver = true;
-        let isGameStarted = false;
+        // 게임 상태 변수
+        let gameState = {
+            money: 0,
+            moneyPerSecond: 0,
+            moneyPerClick: 1,
+            clickUpgradeLevel: 1,
+            clickUpgradeCost: 10,
+            autoUpgradeLevel: 0,
+            autoUpgradeCost: 25,
+            autoPower: 0.1, // 한번 업그레이드 시 오르는 초당 생산량
+        };
 
-        const DINO_COLOR = '#d7dadc';
-        const OBSTACLE_COLOR = '#d7dadc';
-
-        // 캔버스 크기 조절 함수
-        function resizeCanvas() {
-            canvas.width = gameContainer.clientWidth;
-            canvas.height = gameContainer.clientHeight;
-        }
-
-        class Dino {
-            constructor() {
-                this.width = canvas.width * 0.05; // 캔버스 너비에 비례
-                this.height = canvas.height * 0.25; // 캔버스 높이에 비례
-                this.x = this.width;
-                this.y = canvas.height - this.height;
-                this.yVelocity = 0;
-                this.gravity = 0.8;
-                this.jumpForce = 18;
-                this.groundY = canvas.height - this.height;
-                this.isJumping = false;
-            }
-
-            draw() {
-                ctx.fillStyle = DINO_COLOR;
-                // 간단한 공룡 모양 그리기
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-                // 눈
-                ctx.fillStyle = '#202124';
-                ctx.fillRect(this.x + this.width * 0.6, this.y + this.height * 0.2, this.width * 0.2, this.height * 0.2);
-            }
-
-            update() {
-                if (this.isJumping) {
-                    this.y -= this.yVelocity;
-                    this.yVelocity -= this.gravity;
-                    if (this.y >= this.groundY) {
-                        this.y = this.groundY;
-                        this.isJumping = false;
-                        this.yVelocity = 0;
-                    }
-                }
-                this.draw();
-            }
-
-            jump() {
-                if (!this.isJumping && !isGameOver) {
-                    this.isJumping = true;
-                    this.yVelocity = this.jumpForce;
-                }
+        // 게임 데이터 불러오기
+        function loadGame() {
+            const savedState = localStorage.getItem('moneyTreeSave');
+            if (savedState) {
+                gameState = JSON.parse(savedState);
             }
         }
 
-        class Obstacle {
-            constructor() {
-                const sizeType = Math.random();
-                if (sizeType < 0.33) { // 작은 선인장
-                    this.width = canvas.width * 0.03;
-                    this.height = canvas.height * 0.2;
-                } else if (sizeType < 0.66) { // 중간 선인장
-                    this.width = canvas.width * 0.05;
-                    this.height = canvas.height * 0.25;
-                } else { // 큰 선인장
-                    this.width = canvas.width * 0.08;
-                    this.height = canvas.height * 0.25;
-                }
-                this.x = canvas.width;
-                this.y = canvas.height - this.height;
-            }
-
-            draw() {
-                ctx.fillStyle = OBSTACLE_COLOR;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-            }
-
-            update() {
-                this.x -= gameSpeed;
-                this.draw();
-            }
+        // 게임 데이터 저장하기
+        function saveGame() {
+            localStorage.setItem('moneyTreeSave', JSON.stringify(gameState));
         }
 
-        function handleObstacles(deltaTime) {
-            if (obstacleTimer > randomObstacleInterval) {
-                obstacles.push(new Obstacle());
-                randomObstacleInterval = Math.random() * (2000 - 1000) + 1000 - (gameSpeed * 50);
-                obstacleTimer = 0;
+        // 숫자 포맷팅 (예: 1000 -> 1,000)
+        function formatNumber(num) {
+            return Math.floor(num).toLocaleString();
+        }
+
+        function formatDecimal(num) {
+             if (num < 10) {
+                return num.toFixed(1);
+            }
+            return formatNumber(num);
+        }
+
+        // UI 업데이트
+        function updateUI() {
+            moneyDisplay.textContent = formatNumber(gameState.money);
+            mpsDisplay.textContent = formatDecimal(gameState.moneyPerSecond);
+
+            clickLevelDisplay.textContent = gameState.clickUpgradeLevel;
+            clickPowerDisplay.textContent = formatNumber(gameState.moneyPerClick);
+            clickCostDisplay.textContent = formatNumber(gameState.clickUpgradeCost);
+
+            autoLevelDisplay.textContent = gameState.autoUpgradeLevel;
+            autoPowerDisplay.textContent = formatDecimal(gameState.autoPower);
+            autoCostDisplay.textContent = formatNumber(gameState.autoUpgradeCost);
+            
+            // 버튼 활성화/비활성화
+            updateButtonState(clickUpgradeBtn, gameState.money >= gameState.clickUpgradeCost);
+            updateButtonState(autoUpgradeBtn, gameState.money >= gameState.autoUpgradeCost);
+        }
+
+        function updateButtonState(button, isEnabled) {
+            if (isEnabled) {
+                button.classList.remove('disabled-button');
+                button.disabled = false;
             } else {
-                obstacleTimer += deltaTime;
+                button.classList.add('disabled-button');
+                button.disabled = true;
             }
-
-            obstacles.forEach((obstacle, index) => {
-                obstacle.update();
-
-                // 화면 밖으로 나간 장애물 제거
-                if (obstacle.x + obstacle.width < 0) {
-                    obstacles.splice(index, 1);
-                }
-
-                // 충돌 감지
-                if (
-                    dino.x < obstacle.x + obstacle.width &&
-                    dino.x + dino.width > obstacle.x &&
-                    dino.y < obstacle.y + obstacle.height &&
-                    dino.y + dino.height > obstacle.y
-                ) {
-                    gameOver();
-                }
-            });
         }
+
+        // 클릭 이벤트 핸들러
+        moneyTree.addEventListener('click', (e) => {
+            gameState.money += gameState.moneyPerClick;
+            showFloatingText(e);
+            updateUI();
+        });
+
+        // 클릭 시 뜨는 텍스트
+        function showFloatingText(e) {
+            const floatingText = document.createElement('div');
+            floatingText.textContent = `+${formatNumber(gameState.moneyPerClick)}`;
+            floatingText.className = 'floating-text';
+            
+            // 클릭 위치에 텍스트 표시
+            const rect = treeContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            floatingText.style.left = `${x}px`;
+            floatingText.style.top = `${y}px`;
+
+            treeContainer.appendChild(floatingText);
+
+            // 애니메이션 종료 후 요소 제거
+            setTimeout(() => {
+                floatingText.remove();
+            }, 1000);
+        }
+
+        // 클릭 파워 업그레이드
+        clickUpgradeBtn.addEventListener('click', () => {
+            if (gameState.money >= gameState.clickUpgradeCost) {
+                gameState.money -= gameState.clickUpgradeCost;
+                gameState.clickUpgradeLevel++;
+                gameState.moneyPerClick = Math.ceil(gameState.moneyPerClick * 1.2);
+                gameState.clickUpgradeCost = Math.ceil(gameState.clickUpgradeCost * 1.25);
+                updateUI();
+            }
+        });
+
+        // 자동 생산 업그레이드
+        autoUpgradeBtn.addEventListener('click', () => {
+            if (gameState.money >= gameState.autoUpgradeCost) {
+                gameState.money -= gameState.autoUpgradeCost;
+                gameState.autoUpgradeLevel++;
+                gameState.moneyPerSecond += gameState.autoPower;
+                gameState.autoUpgradeCost = Math.ceil(gameState.autoUpgradeCost * 1.2);
+                gameState.autoPower = parseFloat((gameState.autoPower * 1.05).toFixed(2));
+                updateUI();
+            }
+        });
         
-        function updateScore() {
-            score++;
-            scoreEl.textContent = String(score).padStart(5, '0');
-            if (score > highscore) {
-                highscore = score;
-                highscoreEl.textContent = String(highscore).padStart(5, '0');
-                localStorage.setItem('dino-highscore', highscore);
+        // 게임 초기화
+        resetButton.addEventListener('click', () => {
+            if (confirm('정말로 게임을 초기화하시겠습니까? 모든 진행 상황이 사라집니다.')) {
+                localStorage.removeItem('moneyTreeSave');
+                // 페이지를 새로고침하여 초기 상태로 되돌립니다.
+                window.location.reload();
             }
-        }
-
-        function gameLoop(timestamp) {
-            if (isGameOver) return;
-            
-            const deltaTime = timestamp - lastTime;
-            lastTime = timestamp;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            dino.update();
-            handleObstacles(deltaTime);
-            updateScore();
-            
-            gameSpeed += gameSpeedIncrement;
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function startGame() {
-            if (isGameOver) {
-                isGameOver = false;
-                isGameStarted = true;
-                score = 0;
-                gameSpeed = 5;
-                obstacles = [];
-                dino = new Dino();
-                
-                startMessageEl.classList.add('hidden');
-                gameOverMessageEl.classList.add('hidden');
-                
-                lastTime = 0; // requestAnimationFrame 시작 전 초기화
-                requestAnimationFrame(gameLoop);
-            }
-        }
+        });
         
-        function gameOver() {
-            if (!isGameOver) {
-                isGameOver = true;
-                gameOverMessageEl.classList.remove('hidden');
-            }
-        }
+
+        // 메인 게임 루프 (1초마다 실행)
+        setInterval(() => {
+            gameState.money += gameState.moneyPerSecond;
+            updateUI();
+        }, 1000);
         
-        function handleInput() {
-            if (isGameOver) {
-                startGame();
-            }
-            if (dino) {
-                 dino.jump();
-            }
-        }
+        // 10초마다 자동 저장
+        setInterval(saveGame, 10000);
 
-        // 초기화 함수
-        function init() {
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            
-            highscore = localStorage.getItem('dino-highscore') || 0;
-            highscoreEl.textContent = String(highscore).padStart(5, '0');
-
-            document.addEventListener('keydown', e => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    handleInput();
-                }
-            });
-            
-            document.addEventListener('touchstart', e => {
-                e.preventDefault();
-                handleInput();
-            });
-
-            startMessageEl.classList.remove('hidden');
-        }
-
-        init();
-
+        // 초기화
+        loadGame();
+        updateUI();
     </script>
 </body>
 </html>
