@@ -3,246 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>방치형 돈나무 키우기</title>
+    <title>자동 매매 전략 분석 대시보드: 1x-1%-Hold</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Jua', sans-serif;
-            touch-action: manipulation; /* 모바일에서 더블 탭 확대 방지 */
+            font-family: 'Inter', 'Pretendard', sans-serif;
         }
-        #money-tree {
-            font-size: 8rem; /* 🌳 이모지 크기 */
-            cursor: pointer;
-            user-select: none; /* 텍스트 선택 방지 */
-            transition: transform 0.1s ease;
-        }
-        #money-tree:active {
-            transform: scale(0.95);
-        }
-        .floating-text {
-            position: absolute;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #facc15; /* 노란색 */
-            animation: float-up 1s ease-out forwards;
-            pointer-events: none; /* 클릭 이벤트 방해하지 않도록 */
-        }
-        @keyframes float-up {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-80px);
-                opacity: 0;
-            }
-        }
-        .disabled-button {
-            background-color: #4a5568 !important; /* 어두운 회색 */
-            cursor: not-allowed !important;
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            max-height: 50vh;
         }
     </style>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page dashboard structure was chosen to transform the linear report into an engaging, interactive experience. The structure consists of four main sections: 1) A main dashboard summarizing the core strategy rules (leverage, take profit, stop loss) and a simple outcome simulator for immediate understanding. 2) A side-by-side analysis of strengths and weaknesses for a balanced perspective. 3) A dedicated, interactive risk simulation section focusing on the critical flaw of funding fees, using a dynamic chart to visualize capital erosion. 4) A final summary. This user-centric design prioritizes exploration and comprehension over simply presenting the report's text. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Method -> Interaction -> Justification. 1) Core Rules -> Inform -> Stat Cards (HTML/Tailwind) -> Static Display -> Clear, at-a-glance understanding of the strategy's foundation. 2) Strategy Outcome -> Demonstrate -> Simple Simulator (HTML/JS) -> User inputs scenario -> Makes abstract rules tangible and shows immediate consequences. 3) Strengths/Weaknesses -> Compare -> Two-column list (HTML/Tailwind) -> Static Display -> Provides a balanced, easy-to-digest comparison. 4) Funding Fee Risk -> Emphasize Critical Risk -> Dynamic Line Chart (Chart.js/Canvas) -> User adjusts parameters (investment, fee rate) -> Visualizes the abstract and most significant danger (capital erosion over time) in a powerful, interactive manner. This confirms NO SVG/Mermaid is used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-gray-800 text-white flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-stone-50 text-stone-800">
 
-    <div class="w-full max-w-md mx-auto text-center bg-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-700">
-        
-        <!-- 머니 디스플레이 -->
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-yellow-400">💰 현재 자산 💰</h1>
-            <p id="money-display" class="text-5xl my-2 break-all">0</p>
-            <p class="text-xl text-gray-400">(초당 <span id="mps-display">0</span>원)</p>
-        </div>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
 
-        <!-- 돈나무 -->
-        <div id="tree-container" class="relative mb-8">
-            <div id="money-tree">🌳</div>
-        </div>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-900">자동 매매 전략 분석 대시보드</h1>
+            <p class="mt-4 text-lg text-stone-600">`1x-1%-Hold` 전략의 모든 것을 대화형으로 탐색해보세요.</p>
+        </header>
 
-        <!-- 업그레이드 섹션 -->
-        <div class="space-y-4">
-            <h2 class="text-2xl font-bold">✨ 업그레이드 ✨</h2>
-            <!-- 클릭 파워 업그레이드 -->
-            <button id="click-upgrade" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-lg shadow-lg transition-all duration-200">
-                <p class="font-bold text-lg">클릭 파워 강화 (Lv.<span id="click-level-display">1</span>)</p>
-                <p>클릭당 <span id="click-power-display">1</span>원</p>
-                <p>비용: <span id="click-cost-display">10</span>원</p>
-            </button>
-            <!-- 자동 생산 업그레이드 -->
-            <button id="auto-upgrade" class="w-full bg-green-600 hover:bg-green-700 p-4 rounded-lg shadow-lg transition-all duration-200">
-                <p class="font-bold text-lg">자동 생산 공장 (Lv.<span id="auto-level-display">0</span>)</p>
-                <p>초당 <span id="auto-power-display">0.1</span>원 추가</p>
-                <p>비용: <span id="auto-cost-display">25</span>원</p>
-            </button>
-        </div>
-        
-        <!-- 게임 저장/초기화 -->
-        <div class="mt-8">
-            <button id="reset-button" class="text-gray-500 hover:text-red-500 transition-colors">게임 초기화</button>
-        </div>
+        <main class="space-y-16">
+
+            <section id="dashboard" class="bg-white p-8 rounded-2xl shadow-lg">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-2">전략 핵심 규칙</h2>
+                    <p class="text-stone-600">이 전략은 세 가지 핵심 원칙을 기반으로 운영됩니다. 각 규칙은 청산 위험을 없애고 기계적인 매매를 지향합니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-12">
+                    <div class="bg-stone-100 p-6 rounded-xl">
+                        <h3 class="text-lg font-semibold text-stone-500">레버리지 (Leverage)</h3>
+                        <p class="text-4xl font-bold text-teal-600">1x</p>
+                        <p class="text-sm text-stone-500 mt-2">강제 청산 위험 없음</p>
+                    </div>
+                    <div class="bg-stone-100 p-6 rounded-xl">
+                        <h3 class="text-lg font-semibold text-stone-500">익절 (Take Profit)</h3>
+                        <p class="text-4xl font-bold text-green-600">+1%</p>
+                        <p class="text-sm text-stone-500 mt-2">수익 발생 시 즉시 실현</p>
+                    </div>
+                    <div class="bg-stone-100 p-6 rounded-xl">
+                        <h3 class="text-lg font-semibold text-stone-500">손절 (Stop Loss)</h3>
+                        <p class="text-4xl font-bold text-red-600">N/A</p>
+                        <p class="text-sm text-stone-500 mt-2">수익권 회복까지 무기한 보유</p>
+                    </div>
+                </div>
+
+                <div>
+                     <h2 class="text-3xl font-bold text-stone-900 mb-2">간단 시뮬레이터</h2>
+                    <p class="text-stone-600 mb-6">만약 10,000 USDT로 BTC 롱 포지션에 진입했다면 어떤 결과가 나올까요? 시나리오를 선택해 결과를 확인해보세요.</p>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 bg-stone-100 p-6 rounded-xl">
+                        <select id="scenarioSelect" class="w-full sm:w-auto flex-grow bg-white border border-stone-300 rounded-md px-4 py-2 text-lg">
+                            <option value="profit">시나리오 1: BTC 가격이 +1% 상승</option>
+                            <option value="hold">시나리오 2: BTC 가격이 -5% 하락</option>
+                            <option value="recover">시나리오 3: -5% 하락 후 다시 +1% 상승까지 회복</option>
+                        </select>
+                        <button id="simulateBtn" class="w-full sm:w-auto bg-teal-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-teal-700 transition">결과 확인</button>
+                    </div>
+                    <div id="simulationResult" class="mt-6 bg-white p-6 rounded-xl border border-stone-200 text-lg">
+                        <p class="text-stone-500">시나리오를 선택하고 '결과 확인' 버튼을 눌러주세요.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="analysis">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-stone-900">전략 강점 vs 약점 분석</h2>
+                    <p class="text-stone-600 mt-2">이 전략이 가진 명확한 장점과 치명적인 단점을 비교 분석합니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-green-500">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center"><span class="text-3xl mr-3">👍</span>전략의 강점</h3>
+                        <ul class="space-y-4 text-stone-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 font-bold mr-2">✔</span>
+                                <div><strong class="font-semibold text-stone-900">완벽한 청산 리스크 방어:</strong> 1배율 레버리지로 최고 수준의 안정성을 확보합니다.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 font-bold mr-2">✔</span>
+                                <div><strong class="font-semibold text-stone-900">감정적 매매 차단:</strong> '+1%'라는 수학적 규칙에 따라서만 매매하여 일관성을 유지합니다.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 font-bold mr-2">✔</span>
+                                <div><strong class="font-semibold text-stone-900">단순하고 직관적인 룰:</strong> 복잡한 분석 없이 누구나 쉽게 이해하고 적용할 수 있습니다.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-500">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center"><span class="text-3xl mr-3">👎</span>식별된 리스크 및 약점</h3>
+                        <ul class="space-y-4 text-stone-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 font-bold mr-2">✖</span>
+                                <div><strong class="font-semibold text-stone-900">펀딩비로 인한 자본 잠식:</strong> 장기 보유 시 펀딩비가 누적되어 원금을 지속적으로 감소시키는 가장 치명적인 약점입니다.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 font-bold mr-2">✖</span>
+                                <div><strong class="font-semibold text-stone-900">기회비용 상실:</strong> 자금이 장기간 묶여 다른 투자 기회를 놓치게 되는 보이지 않는 손실이 발생합니다.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 font-bold mr-2">✖</span>
+                                <div><strong class="font-semibold text-stone-900">낮은 자본 효율성:</strong> 자본 회전율이 낮아, 시장이 횡보하거나 반대 추세일 때 수익 없이 비용만 발생할 수 있습니다.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="risk-simulation" class="bg-white p-8 rounded-2xl shadow-lg">
+                 <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-stone-900">핵심 리스크 시뮬레이션: 펀딩비</h2>
+                    <p class="text-stone-600 mt-2">손실 상태로 포지션을 보유할 때, 펀딩비가 자본에 어떤 영향을 미치는지 직접 시뮬레이션 해보세요.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2">
+                        <div class="chart-container mx-auto max-w-4xl">
+                            <canvas id="fundingFeeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                         <div>
+                            <label for="initialInvestment" class="block text-sm font-medium text-stone-700">초기 투자금 (USDT)</label>
+                            <input type="number" id="initialInvestment" value="10000" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                        <div>
+                            <label for="fundingRate" class="block text-sm font-medium text-stone-700">평균 펀딩비 (%) - 8시간 기준</label>
+                            <input type="number" id="fundingRate" value="0.01" step="0.001" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                         <div>
+                            <label for="holdingPeriod" class="block text-sm font-medium text-stone-700">보유 기간 (일)</label>
+                            <input type="number" id="holdingPeriod" value="365" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                        <div id="fundingFeeResult" class="bg-stone-100 p-4 rounded-lg text-center">
+                            <p class="text-stone-600">총 펀딩비 손실:</p>
+                            <p id="totalLoss" class="text-2xl font-bold text-red-600">0 USDT</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="conclusion" class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-teal-600">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">종합 검토 및 결론</h2>
+                <p class="text-lg text-stone-700 leading-relaxed">"1x-1%-Hold" 전략은 '강제 청산 없음'이라는 명확한 안정성을 제공하지만, '무한 보유' 원칙은 **펀딩비로 인한 자본 잠식**이라는 현실적인 비용 문제를 해결하지 못합니다. 이로 인해 장기적으로는 자본을 보존하기보다 소멸시킬 위험이 매우 큽니다. 따라서 이 전략을 실전에 적용하기 위해서는 펀딩비 누적 문제에 대한 명확한 보완책, 예를 들어 **최대 보유 기간 설정이나 누적 펀딩비 기반의 손절매 규칙 추가**가 반드시 필요합니다.</p>
+            </section>
+
+        </main>
     </div>
 
     <script>
-        // DOM 요소 가져오기
-        const moneyDisplay = document.getElementById('money-display');
-        const mpsDisplay = document.getElementById('mps-display');
-        const moneyTree = document.getElementById('money-tree');
-        const treeContainer = document.getElementById('tree-container');
-
-        const clickUpgradeBtn = document.getElementById('click-upgrade');
-        const clickLevelDisplay = document.getElementById('click-level-display');
-        const clickPowerDisplay = document.getElementById('click-power-display');
-        const clickCostDisplay = document.getElementById('click-cost-display');
-
-        const autoUpgradeBtn = document.getElementById('auto-upgrade');
-        const autoLevelDisplay = document.getElementById('auto-level-display');
-        const autoPowerDisplay = document.getElementById('auto-power-display');
-        const autoCostDisplay = document.getElementById('auto-cost-display');
-        
-        const resetButton = document.getElementById('reset-button');
-
-        // 게임 상태 변수
-        let gameState = {
-            money: 0,
-            moneyPerSecond: 0,
-            moneyPerClick: 1,
-            clickUpgradeLevel: 1,
-            clickUpgradeCost: 10,
-            autoUpgradeLevel: 0,
-            autoUpgradeCost: 25,
-            autoPower: 0.1, // 한번 업그레이드 시 오르는 초당 생산량
-        };
-
-        // 게임 데이터 불러오기
-        function loadGame() {
-            const savedState = localStorage.getItem('moneyTreeSave');
-            if (savedState) {
-                gameState = JSON.parse(savedState);
-            }
-        }
-
-        // 게임 데이터 저장하기
-        function saveGame() {
-            localStorage.setItem('moneyTreeSave', JSON.stringify(gameState));
-        }
-
-        // 숫자 포맷팅 (예: 1000 -> 1,000)
-        function formatNumber(num) {
-            return Math.floor(num).toLocaleString();
-        }
-
-        function formatDecimal(num) {
-             if (num < 10) {
-                return num.toFixed(1);
-            }
-            return formatNumber(num);
-        }
-
-        // UI 업데이트
-        function updateUI() {
-            moneyDisplay.textContent = formatNumber(gameState.money);
-            mpsDisplay.textContent = formatDecimal(gameState.moneyPerSecond);
-
-            clickLevelDisplay.textContent = gameState.clickUpgradeLevel;
-            clickPowerDisplay.textContent = formatNumber(gameState.moneyPerClick);
-            clickCostDisplay.textContent = formatNumber(gameState.clickUpgradeCost);
-
-            autoLevelDisplay.textContent = gameState.autoUpgradeLevel;
-            autoPowerDisplay.textContent = formatDecimal(gameState.autoPower);
-            autoCostDisplay.textContent = formatNumber(gameState.autoUpgradeCost);
+        document.addEventListener('DOMContentLoaded', () => {
             
-            // 버튼 활성화/비활성화
-            updateButtonState(clickUpgradeBtn, gameState.money >= gameState.clickUpgradeCost);
-            updateButtonState(autoUpgradeBtn, gameState.money >= gameState.autoUpgradeCost);
-        }
+            const simulateBtn = document.getElementById('simulateBtn');
+            const scenarioSelect = document.getElementById('scenarioSelect');
+            const simulationResult = document.getElementById('simulationResult');
 
-        function updateButtonState(button, isEnabled) {
-            if (isEnabled) {
-                button.classList.remove('disabled-button');
-                button.disabled = false;
-            } else {
-                button.classList.add('disabled-button');
-                button.disabled = true;
+            simulateBtn.addEventListener('click', () => {
+                const scenario = scenarioSelect.value;
+                const initial = 10000;
+                let resultText = '';
+
+                switch(scenario) {
+                    case 'profit':
+                        const profit = initial * 0.01;
+                        resultText = `<p><strong class="font-semibold text-green-600">거래 성공:</strong> +1% 수익 조건이 충족되어 포지션이 종료되었습니다.</p>
+                                      <p><strong>최종 자산:</strong> ${initial + profit} USDT (수익: ${profit} USDT)</p>`;
+                        break;
+                    case 'hold':
+                        const loss = initial * 0.05;
+                        resultText = `<p><strong class="font-semibold text-red-600">포지션 보유 중:</strong> -5% 손실 상태입니다.</p>
+                                      <p><strong>현재 자산 가치:</strong> ${initial - loss} USDT. 전략에 따라 수익권으로 회복될 때까지 계속 보유합니다.</p>`;
+                        break;
+                    case 'recover':
+                         const finalProfit = initial * 0.01;
+                        resultText = `<p><strong class="font-semibold text-blue-600">회복 후 거래 성공:</strong> -5%까지 하락했지만, 가격이 회복되어 +1% 수익 조건에 도달했습니다.</p>
+                                      <p><strong>최종 자산:</strong> ${initial + finalProfit} USDT (수익: ${finalProfit} USDT)</p>
+                                      <p class="text-sm text-stone-500 mt-2">(참고: 이 시뮬레이션에는 보유 기간 동안의 펀딩비가 포함되지 않았습니다.)</p>`;
+                        break;
+                }
+                simulationResult.innerHTML = resultText;
+            });
+
+            const fundingFeeChartCanvas = document.getElementById('fundingFeeChart');
+            const initialInvestmentInput = document.getElementById('initialInvestment');
+            const fundingRateInput = document.getElementById('fundingRate');
+            const holdingPeriodInput = document.getElementById('holdingPeriod');
+            const totalLossEl = document.getElementById('totalLoss');
+            let fundingFeeChart;
+
+            function calculateAndDrawChart() {
+                const initialInvestment = parseFloat(initialInvestmentInput.value) || 10000;
+                const fundingRate = parseFloat(fundingRateInput.value) / 100 || 0.01 / 100;
+                const holdingPeriod = parseInt(holdingPeriodInput.value) || 365;
+                const fundingEventsPerDay = 3;
+
+                const labels = Array.from({ length: holdingPeriod + 1 }, (_, i) => `${i}일`);
+                const data = [];
+                let currentBalance = initialInvestment;
+
+                for (let i = 0; i <= holdingPeriod; i++) {
+                    data.push(currentBalance);
+                    const dailyLoss = currentBalance * fundingRate * fundingEventsPerDay;
+                    currentBalance -= dailyLoss;
+                }
+                
+                const totalLoss = initialInvestment - currentBalance;
+                totalLossEl.textContent = `${totalLoss.toFixed(2)} USDT`;
+
+                if (fundingFeeChart) {
+                    fundingFeeChart.destroy();
+                }
+
+                fundingFeeChart = new Chart(fundingFeeChartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '펀딩비 적용 후 자산',
+                            data: data,
+                            borderColor: 'rgb(220, 38, 38)',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: '초기 자산 (펀딩비 없음)',
+                            data: Array(holdingPeriod + 1).fill(initialInvestment),
+                            borderColor: 'rgb(75, 192, 192)',
+                             borderDash: [5, 5],
+                            fill: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '시간에 따른 펀딩비 누적 효과',
+                                font: { size: 18 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '자산 (USDT)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '보유 기간 (일)'
+                                },
+                                ticks: {
+                                     maxTicksLimit: 10
+                                }
+                            }
+                        }
+                    }
+                });
             }
-        }
 
-        // 클릭 이벤트 핸들러
-        moneyTree.addEventListener('click', (e) => {
-            gameState.money += gameState.moneyPerClick;
-            showFloatingText(e);
-            updateUI();
+            [initialInvestmentInput, fundingRateInput, holdingPeriodInput].forEach(input => {
+                input.addEventListener('input', calculateAndDrawChart);
+            });
+
+            calculateAndDrawChart();
         });
-
-        // 클릭 시 뜨는 텍스트
-        function showFloatingText(e) {
-            const floatingText = document.createElement('div');
-            floatingText.textContent = `+${formatNumber(gameState.moneyPerClick)}`;
-            floatingText.className = 'floating-text';
-            
-            // 클릭 위치에 텍스트 표시
-            const rect = treeContainer.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            floatingText.style.left = `${x}px`;
-            floatingText.style.top = `${y}px`;
-
-            treeContainer.appendChild(floatingText);
-
-            // 애니메이션 종료 후 요소 제거
-            setTimeout(() => {
-                floatingText.remove();
-            }, 1000);
-        }
-
-        // 클릭 파워 업그레이드
-        clickUpgradeBtn.addEventListener('click', () => {
-            if (gameState.money >= gameState.clickUpgradeCost) {
-                gameState.money -= gameState.clickUpgradeCost;
-                gameState.clickUpgradeLevel++;
-                gameState.moneyPerClick = Math.ceil(gameState.moneyPerClick * 1.2);
-                gameState.clickUpgradeCost = Math.ceil(gameState.clickUpgradeCost * 1.25);
-                updateUI();
-            }
-        });
-
-        // 자동 생산 업그레이드
-        autoUpgradeBtn.addEventListener('click', () => {
-            if (gameState.money >= gameState.autoUpgradeCost) {
-                gameState.money -= gameState.autoUpgradeCost;
-                gameState.autoUpgradeLevel++;
-                gameState.moneyPerSecond += gameState.autoPower;
-                gameState.autoUpgradeCost = Math.ceil(gameState.autoUpgradeCost * 1.2);
-                gameState.autoPower = parseFloat((gameState.autoPower * 1.05).toFixed(2));
-                updateUI();
-            }
-        });
-        
-        // 게임 초기화
-        resetButton.addEventListener('click', () => {
-            if (confirm('정말로 게임을 초기화하시겠습니까? 모든 진행 상황이 사라집니다.')) {
-                localStorage.removeItem('moneyTreeSave');
-                // 페이지를 새로고침하여 초기 상태로 되돌립니다.
-                window.location.reload();
-            }
-        });
-        
-
-        // 메인 게임 루프 (1초마다 실행)
-        setInterval(() => {
-            gameState.money += gameState.moneyPerSecond;
-            updateUI();
-        }, 1000);
-        
-        // 10초마다 자동 저장
-        setInterval(saveGame, 10000);
-
-        // 초기화
-        loadGame();
-        updateUI();
     </script>
 </body>
 </html>
