@@ -1,7 +1,3 @@
-<!-- Chosen Palette: Calm Harmony (Slate, White, Indigo, Red) -->
-<!-- Application Structure Plan: Interactive calculator/dashboard. User adjusts sliders (leverage, etc.) and sees real-time updates to key metrics, a dynamic ROI comparison table, and a contextual summary. This active learning approach is more engaging and effective for demonstrating the impact of fees than a static report. -->
-<!-- Visualization & Content Choices: Report data -> Goal: Demonstrate fee impact -> Viz: Interactive data table and dynamic stat cards -> Interaction: User-controlled sliders for leverage and other inputs trigger real-time recalculations and UI updates. Justification: Turns a static analysis into an exploratory tool for better user understanding. Library: None needed for table. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -48,6 +44,21 @@
                             <input type="number" id="initialCapital" value="20000000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">포지션</label>
+                            <div class="flex space-x-2">
+                                <button id="positionLong" class="flex-1 p-2 border rounded-md ctrl-btn-active">롱 (매수)</button>
+                                <button id="positionShort" class="flex-1 p-2 border rounded-md ctrl-btn-inactive">숏 (매도)</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="entryPrice" class="block text-sm font-medium text-slate-600 mb-1">비트코인 진입 가격 (USDT)</label>
+                            <div class="relative flex items-center">
+                               <input type="number" id="entryPrice" value="68000" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                               <button id="fetchBtcPriceBtn" class="absolute right-0 mr-2 text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1 px-2 rounded">현재가</button>
+                            </div>
+                           <p id="btcPriceLabel" class="text-xs text-slate-500 mt-1 text-right">현재가 로딩중...</p>
+                        </div>
+                        <div>
                             <label for="leverage" class="flex justify-between text-sm font-medium text-slate-600 mb-1">
                                 <span>레버리지</span>
                                 <span id="leverageValue" class="font-bold text-indigo-600">10 배</span>
@@ -84,7 +95,7 @@
             </section>
 
             <section id="results" class="lg:col-span-2 space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="card stat-card">
                         <h3 class="stat-title">총 포지션 규모</h3>
                         <p id="positionSize" class="stat-value text-slate-800"></p>
@@ -93,12 +104,16 @@
                         <h3 class="stat-title">왕복 총수수료</h3>
                         <p id="totalFees" class="stat-value text-amber-600"></p>
                         <p id="totalFeesEffectivePercent" class="text-sm text-amber-700 font-medium mt-1"></p>
-                        <p id="totalFeesPercent" class="text-xs text-slate-400 mt-1"></p>
                     </div>
                     <div class="card stat-card">
                         <h3 class="stat-title">최종 순손익</h3>
                         <p id="netProfit" class="stat-value text-red-600"></p>
                         <p id="netProfitBreakdown" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                    <div class="card stat-card border-t-4 border-red-500">
+                        <h3 class="stat-title">예상 청산가</h3>
+                        <p id="liquidationPrice" class="stat-value text-red-700"></p>
+                        <p id="liquidationPriceInfo" class="text-xs text-slate-500 mt-1"></p>
                     </div>
                 </div>
 
@@ -144,7 +159,8 @@
         const state = {
             currency: 'KRW',
             exchangeRate: 1420,
-            profitMode: 'amount'
+            profitMode: 'amount',
+            positionType: 'long',
         };
 
         const initialCapitalEl = document.getElementById('initialCapital');
@@ -152,12 +168,18 @@
         const targetProfitEl = document.getElementById('targetProfit');
         const feeRateEl = document.getElementById('feeRate');
         const targetProfitPercentEl = document.getElementById('targetProfitPercent');
+        const entryPriceEl = document.getElementById('entryPrice');
         
         const currencyKRWBtn = document.getElementById('currencyKRW');
         const currencyUSDTBtn = document.getElementById('currencyUSDT');
         const capitalCurrencyEl = document.getElementById('capitalCurrency');
         const profitCurrencyEl = document.getElementById('profitCurrency');
         const exchangeRateLabelEl = document.getElementById('exchangeRateLabel');
+
+        const positionLongBtn = document.getElementById('positionLong');
+        const positionShortBtn = document.getElementById('positionShort');
+        const fetchBtcPriceBtn = document.getElementById('fetchBtcPriceBtn');
+        const btcPriceLabelEl = document.getElementById('btcPriceLabel');
         
         const profitModeAmountBtn = document.getElementById('profitModeAmount');
         const profitModePercentBtn = document.getElementById('profitModePercent');
@@ -178,6 +200,8 @@
         const realROIFeeEl = document.getElementById('realROIFee');
         const analysisTextEl = document.getElementById('analysisText');
         const analysisTableBodyEl = document.getElementById('analysisTableBody');
+        const liquidationPriceEl = document.getElementById('liquidationPrice');
+        const liquidationPriceInfoEl = document.getElementById('liquidationPriceInfo');
         
         const formatKRW = (num) => `₩${Math.round(num).toLocaleString('ko-KR')}`;
         const formatUSDT = (num) => `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -197,6 +221,7 @@
             const capital = parseFloat(initialCapitalEl.value) || 0;
             const leverage = parseInt(leverageEl.value);
             const feeRate = parseFloat(feeRateEl.value) / 100;
+            const entryPrice = parseFloat(entryPriceEl.value) || 0;
             let profit;
 
             if (state.profitMode === 'percent') {
@@ -232,8 +257,7 @@
             
             const effectiveFeePercent = leverage * feeRate * 2 * 100;
             totalFeesEffectivePercentEl.textContent = `(원금 대비 실질 ${effectiveFeePercent.toFixed(2)}%)`;
-            totalFeesPercentEl.textContent = `(기본 왕복 ${(feeRate * 2 * 100).toFixed(3)}%)`;
-
+            
             apparentROIEl.textContent = (apparentROI >= 0 ? '+' : '') + formatPercent(apparentROI);
             realROIEl.textContent = (realROI >= 0 ? '+' : '') + formatPercent(realROI);
             realROIFeeEl.textContent = `(수수료 ${effectiveFeePercent.toFixed(2)}% 차감)`;
@@ -246,15 +270,30 @@
             realROIEl.classList.toggle('text-red-600', realROI < 0);
             realROIEl.classList.toggle('text-indigo-600', realROI >= 0);
 
+            // Liquidation Price Calculation (Simplified)
+            let liquidationPrice = 0;
+            if (leverage > 0 && entryPrice > 0) {
+                 // Note: A more precise formula includes maintenance margin, but this is a good approximation.
+                liquidationPrice = state.positionType === 'long' 
+                    ? entryPrice * (1 - (1 / leverage)) 
+                    : entryPrice * (1 + (1 / leverage));
+            }
+            liquidationPriceEl.textContent = formatUSDT(liquidationPrice);
+            const priceChangePercent = entryPrice > 0 ? ((liquidationPrice / entryPrice) - 1) * 100 : 0;
+            liquidationPriceInfoEl.textContent = `(진입가 대비 ${priceChangePercent.toFixed(2)}%)`;
+
+
+            let summary = '';
             if (profit >= 0) {
                 if (netProfit < 0) {
-                    analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-orange-600">${formatDual(profit)}</strong>의 수익을 냈음에도 불구하고, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>이 더 커서 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 보게 됩니다.`;
+                    summary = `현재 조건에서는 <strong class="text-orange-600">${formatDual(profit)}</strong>의 수익을 냈음에도 불구하고, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>이 더 커서 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 보게 됩니다.`;
                 } else {
-                    analysisTextEl.innerHTML = `현재 조건에서는 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>를 모두 지불하고도, 최종적으로 <strong class="text-indigo-600">${formatDual(netProfit)}</strong>의 순수익을 달성했습니다.`;
+                    summary = `현재 조건에서는 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>를 모두 지불하고도, 최종적으로 <strong class="text-indigo-600">${formatDual(netProfit)}</strong>의 순수익을 달성했습니다.`;
                 }
             } else {
-                 analysisTextEl.innerHTML = `현재 조건에서는 <strong class="text-red-600">${formatDual(profit)}</strong>의 손절로 인해, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>까지 더해져 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 확정하게 됩니다.`;
+                 summary = `현재 조건에서는 <strong class="text-red-600">${formatDual(profit)}</strong>의 손절로 인해, 왕복 수수료 <strong class="text-amber-700">${formatDual(totalFees)}</strong>까지 더해져 최종적으로 <strong class="text-red-600">${formatDual(netProfit)}</strong>의 손실을 확정하게 됩니다.`;
             }
+            analysisTextEl.innerHTML = summary + `<br><br>또한, 현재 설정된 ${leverage}배 ${state.positionType === 'long' ? '롱' : '숏'} 포지션은 비트코인 가격이 <strong class="text-red-700">${formatUSDT(liquidationPrice)}</strong>에 도달할 경우 청산될 수 있습니다.`;
             
             updateTable(capital, profit, feeRate);
         }
@@ -286,6 +325,20 @@
                 `;
                 analysisTableBodyEl.insertAdjacentHTML('beforeend', row);
             });
+        }
+        
+        function switchPositionType(newType) {
+            if (state.positionType === newType) return;
+            state.positionType = newType;
+            updatePositionTypeUI();
+            calculateAndUpdate();
+        }
+
+        function updatePositionTypeUI() {
+            positionLongBtn.classList.toggle('ctrl-btn-active', state.positionType === 'long');
+            positionLongBtn.classList.toggle('ctrl-btn-inactive', state.positionType !== 'long');
+            positionShortBtn.classList.toggle('ctrl-btn-active', state.positionType === 'short');
+            positionShortBtn.classList.toggle('ctrl-btn-inactive', state.positionType !== 'short');
         }
 
         function switchCurrency(newCurrency) {
@@ -346,8 +399,28 @@
                 exchangeRateLabelEl.textContent = `(기본: 1 USDT ≈ ${state.exchangeRate} KRW)`;
             }
         }
+        
+        async function fetchBitcoinPrice() {
+            btcPriceLabelEl.textContent = '로딩중...';
+             try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                if (data.bitcoin && data.bitcoin.usd) {
+                    const btcPrice = data.bitcoin.usd;
+                    entryPriceEl.value = btcPrice.toFixed(2);
+                    btcPriceLabelEl.textContent = `현재가: ${formatUSDT(btcPrice)}`;
+                    calculateAndUpdate(); // Update calculations with the new price
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (error) {
+                console.error("비트코인 가격 정보를 가져오는데 실패했습니다:", error);
+                btcPriceLabelEl.textContent = '현재가 로딩 실패';
+            }
+        }
 
-        [initialCapitalEl, leverageEl, targetProfitEl, feeRateEl, targetProfitPercentEl].forEach(el => {
+        [initialCapitalEl, leverageEl, targetProfitEl, feeRateEl, targetProfitPercentEl, entryPriceEl].forEach(el => {
             el.addEventListener('input', calculateAndUpdate);
         });
         
@@ -355,13 +428,18 @@
         currencyUSDTBtn.addEventListener('click', () => switchCurrency('USDT'));
         profitModeAmountBtn.addEventListener('click', () => switchProfitMode('amount'));
         profitModePercentBtn.addEventListener('click', () => switchProfitMode('percent'));
+        positionLongBtn.addEventListener('click', () => switchPositionType('long'));
+        positionShortBtn.addEventListener('click', () => switchPositionType('short'));
+        fetchBtcPriceBtn.addEventListener('click', fetchBitcoinPrice);
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             updateProfitModeUI();
+            updatePositionTypeUI();
             await fetchExchangeRate();
+            await fetchBitcoinPrice();
             calculateAndUpdate();
         });
     </script>
 </body>
 </html>
-
