@@ -3,298 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>자동 매매 전략 분석 대시보드: 1x-1%-Hold</title>
+    <title>스마트 우산꽂이 개발 보고서</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', 'Pretendard', sans-serif;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            max-height: 50vh;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: A single-page dashboard structure was chosen to transform the linear report into an engaging, interactive experience. The structure consists of four main sections: 1) A main dashboard summarizing the core strategy rules (leverage, take profit, stop loss) and a simple outcome simulator for immediate understanding. 2) A side-by-side analysis of strengths and weaknesses for a balanced perspective. 3) A dedicated, interactive risk simulation section focusing on the critical flaw of funding fees, using a dynamic chart to visualize capital erosion. 4) A final summary. This user-centric design prioritizes exploration and comprehension over simply presenting the report's text. -->
-    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Method -> Interaction -> Justification. 1) Core Rules -> Inform -> Stat Cards (HTML/Tailwind) -> Static Display -> Clear, at-a-glance understanding of the strategy's foundation. 2) Strategy Outcome -> Demonstrate -> Simple Simulator (HTML/JS) -> User inputs scenario -> Makes abstract rules tangible and shows immediate consequences. 3) Strengths/Weaknesses -> Compare -> Two-column list (HTML/Tailwind) -> Static Display -> Provides a balanced, easy-to-digest comparison. 4) Funding Fee Risk -> Emphasize Critical Risk -> Dynamic Line Chart (Chart.js/Canvas) -> User adjusts parameters (investment, fee rate) -> Visualizes the abstract and most significant danger (capital erosion over time) in a powerful, interactive manner. This confirms NO SVG/Mermaid is used. -->
+    <!-- Application Structure Plan: 본 애플리케이션은 사용자가 보고서의 복잡한 기술 내용을 단계별로 쉽게 탐색할 수 있도록 '고정 사이드바 네비게이션' 구조를 채택했습니다. 이 구조는 사용자가 '개요', '기술 스택', '백엔드', '프론트엔드', '배포' 등 주요 주제 사이를 자유롭게 이동하며 원하는 정보를 빠르게 찾을 수 있도록 돕습니다. 각 섹션은 보고서의 내용을 재구성하여, 텍스트 설명과 함께 인터랙티브 차트 및 다이어그램을 배치함으로써 정보의 시각적 이해를 극대화하도록 설계되었습니다. 이 비선형적 탐색 구조는 사용자가 자신의 관심사에 따라 정보를 소비하고, 전체 시스템의 각 부분이 어떻게 유기적으로 연결되는지 직관적으로 파악할 수 있게 합니다. -->
+    <!-- Visualization & Content Choices: 
+        - [개요] -> 정보 전달 -> 3계층 아키텍처 다이어그램 (HTML/CSS) -> 핵심 구성요소와 데이터 흐름을 한눈에 파악.
+        - [기술 스택] -> 정리 -> 기술 스택 분포 차트 (Chart.js 도넛) -> 각 영역별 기술의 비중을 시각적으로 비교.
+        - [백엔드] -> 비교 -> API 엔드포인트 역할 비교 차트 (Chart.js 막대) -> GET/POST 요청의 기능적 차이를 명확히 구분.
+        - [UI/UX] -> 비교 -> UI/UX 구현 요소 차트 (Chart.js 막대) -> UI, 기능, 경험 개선 요소들의 비중을 시각적으로 비교.
+        - [배포] -> 변화/프로세스 -> CI/CD 파이프라인 다이어그램 (HTML/CSS) -> Git Push로부터 실제 서버 배포까지의 자동화 과정을 단계별로 시각화.
+        모든 선택은 복잡한 기술 개념을 단순화하고 사용자의 직관적인 이해를 돕기 위함이며, SVG/Mermaid는 사용하지 않았습니다. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #FDFBF8; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link.active { background-color: #4A5568; color: white; transform: translateX(4px); }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .tag { display: inline-block; background-color: #E2E8F0; color: #4A5568; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .diagram-arrow { display: flex; align-items: center; justify-content: center; color: #A0AEC0; }
+    </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="text-gray-800">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-gray-100 text-gray-700 p-4 md:p-6 flex-shrink-0">
+            <h1 class="text-xl font-bold text-gray-900 mb-8">스마트 우산꽂이<br/>개발 보고서</h1>
+            <nav id="navigation">
+                <a href="#" data-target="overview" class="nav-link active flex items-center p-3 rounded-lg hover:bg-gray-200">
+                    <span class="mr-3">📄</span> 프로젝트 개요
+                </a>
+                <a href="#" data-target="tech-stack" class="nav-link flex items-center p-3 rounded-lg hover:bg-gray-200 mt-2">
+                    <span class="mr-3">📚</span> 기술 스택
+                </a>
+                <a href="#" data-target="backend" class="nav-link flex items-center p-3 rounded-lg hover:bg-gray-200 mt-2">
+                    <span class="mr-3">⚙️</span> 백엔드 아키텍처
+                </a>
+                <a href="#" data-target="frontend" class="nav-link flex items-center p-3 rounded-lg hover:bg-gray-200 mt-2">
+                    <span class="mr-3">🎨</span> 프론트엔드 & UI/UX
+                </a>
+                <a href="#" data-target="deployment" class="nav-link flex items-center p-3 rounded-lg hover:bg-gray-200 mt-2">
+                    <span class="mr-3">🚀</span> 빌드 & 배포
+                </a>
+            </nav>
+        </aside>
 
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-stone-900">자동 매매 전략 분석 대시보드</h1>
-            <p class="mt-4 text-lg text-stone-600">`1x-1%-Hold` 전략의 모든 것을 대화형으로 탐색해보세요.</p>
-        </header>
-
-        <main class="space-y-16">
-
-            <section id="dashboard" class="bg-white p-8 rounded-2xl shadow-lg">
-                <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-stone-900 mb-2">전략 핵심 규칙</h2>
-                    <p class="text-stone-600">이 전략은 세 가지 핵심 원칙을 기반으로 운영됩니다. 각 규칙은 청산 위험을 없애고 기계적인 매매를 지향합니다.</p>
+        <main class="flex-1 p-6 md:p-10 bg-white">
+            <div id="overview" class="content-section active">
+                <h2 class="text-3xl font-bold mb-4">프로젝트 개요</h2>
+                <p class="text-lg text-gray-600 mb-8">본 보고서는 스마트 우산꽂이 시스템의 소프트웨어 개발 전 과정을 요약합니다. 단일 언어(JavaScript)를 사용하여 Node.js/Express 기반의 백엔드 서버와 React 기반의 프론트엔드 앱을 개발했으며, Capacitor를 통해 안드로이드/iOS 네이티브 앱으로 최종 패키징했습니다.</p>
+                
+                <h3 class="text-2xl font-bold mb-4">시스템 아키텍처</h3>
+                <p class="text-gray-600 mb-6">시스템은 각 요소의 독립성을 보장하는 3계층 아키텍처를 채택했습니다. 모든 데이터는 중앙 서버의 REST API를 통해 교환됩니다.</p>
+                <div class="w-full max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg">
+                    <div class="grid md:grid-cols-5 items-center gap-4 text-center">
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">📱 클라이언트</h4>
+                            <p class="text-sm text-gray-500">(React + Capacitor)</p>
+                        </div>
+                        <div class="diagram-arrow text-2xl font-light">➡️</div>
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">🖥️ 서버</h4>
+                            <p class="text-sm text-gray-500">(Node.js + Express)</p>
+                        </div>
+                        <div class="diagram-arrow text-2xl font-light">➡️</div>
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">☂️ 디바이스</h4>
+                            <p class="text-sm text-gray-500">(하드웨어)</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-12">
-                    <div class="bg-stone-100 p-6 rounded-xl">
-                        <h3 class="text-lg font-semibold text-stone-500">레버리지 (Leverage)</h3>
-                        <p class="text-4xl font-bold text-teal-600">1x</p>
-                        <p class="text-sm text-stone-500 mt-2">강제 청산 위험 없음</p>
-                    </div>
-                    <div class="bg-stone-100 p-6 rounded-xl">
-                        <h3 class="text-lg font-semibold text-stone-500">익절 (Take Profit)</h3>
-                        <p class="text-4xl font-bold text-green-600">+1%</p>
-                        <p class="text-sm text-stone-500 mt-2">수익 발생 시 즉시 실현</p>
-                    </div>
-                    <div class="bg-stone-100 p-6 rounded-xl">
-                        <h3 class="text-lg font-semibold text-stone-500">손절 (Stop Loss)</h3>
-                        <p class="text-4xl font-bold text-red-600">N/A</p>
-                        <p class="text-sm text-stone-500 mt-2">수익권 회복까지 무기한 보유</p>
-                    </div>
-                </div>
+            </div>
 
-                <div>
-                     <h2 class="text-3xl font-bold text-stone-900 mb-2">간단 시뮬레이터</h2>
-                    <p class="text-stone-600 mb-6">만약 10,000 USDT로 BTC 롱 포지션에 진입했다면 어떤 결과가 나올까요? 시나리오를 선택해 결과를 확인해보세요.</p>
-                    <div class="flex flex-col sm:flex-row items-center gap-4 bg-stone-100 p-6 rounded-xl">
-                        <select id="scenarioSelect" class="w-full sm:w-auto flex-grow bg-white border border-stone-300 rounded-md px-4 py-2 text-lg">
-                            <option value="profit">시나리오 1: BTC 가격이 +1% 상승</option>
-                            <option value="hold">시나리오 2: BTC 가격이 -5% 하락</option>
-                            <option value="recover">시나리오 3: -5% 하락 후 다시 +1% 상승까지 회복</option>
-                        </select>
-                        <button id="simulateBtn" class="w-full sm:w-auto bg-teal-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-teal-700 transition">결과 확인</button>
+            <div id="tech-stack" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">기술 스택</h2>
+                <p class="text-lg text-gray-600 mb-8">프로젝트의 신속한 개발과 확장성을 위해 검증된 최신 기술들을 조합하여 사용했습니다. 전체 기술 스택은 프론트엔드, 백엔드, 그리고 배포/빌드 영역으로 구성됩니다.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">기술 스택 분포</h3>
+                        <p class="text-gray-600 mb-4">본 프로젝트는 JavaScript 생태계를 중심으로 구성되어 있으며, 각 영역별로 전문화된 라이브러리와 프레임워크를 활용했습니다. 아래 차트는 각 영역이 전체 프로젝트에서 차지하는 기술적 중요도를 시각적으로 보여줍니다.</p>
+                        <div class="chart-container h-80 max-h-80">
+                            <canvas id="techStackChart"></canvas>
+                        </div>
                     </div>
-                    <div id="simulationResult" class="mt-6 bg-white p-6 rounded-xl border border-stone-200 text-lg">
-                        <p class="text-stone-500">시나리오를 선택하고 '결과 확인' 버튼을 눌러주세요.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="analysis">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-stone-900">전략 강점 vs 약점 분석</h2>
-                    <p class="text-stone-600 mt-2">이 전략이 가진 명확한 장점과 치명적인 단점을 비교 분석합니다.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-green-500">
-                        <h3 class="text-2xl font-bold mb-4 flex items-center"><span class="text-3xl mr-3">👍</span>전략의 강점</h3>
-                        <ul class="space-y-4 text-stone-700">
-                            <li class="flex items-start">
-                                <span class="text-green-500 font-bold mr-2">✔</span>
-                                <div><strong class="font-semibold text-stone-900">완벽한 청산 리스크 방어:</strong> 1배율 레버리지로 최고 수준의 안정성을 확보합니다.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-green-500 font-bold mr-2">✔</span>
-                                <div><strong class="font-semibold text-stone-900">감정적 매매 차단:</strong> '+1%'라는 수학적 규칙에 따라서만 매매하여 일관성을 유지합니다.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-green-500 font-bold mr-2">✔</span>
-                                <div><strong class="font-semibold text-stone-900">단순하고 직관적인 룰:</strong> 복잡한 분석 없이 누구나 쉽게 이해하고 적용할 수 있습니다.</div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-500">
-                        <h3 class="text-2xl font-bold mb-4 flex items-center"><span class="text-3xl mr-3">👎</span>식별된 리스크 및 약점</h3>
-                        <ul class="space-y-4 text-stone-700">
-                            <li class="flex items-start">
-                                <span class="text-red-500 font-bold mr-2">✖</span>
-                                <div><strong class="font-semibold text-stone-900">펀딩비로 인한 자본 잠식:</strong> 장기 보유 시 펀딩비가 누적되어 원금을 지속적으로 감소시키는 가장 치명적인 약점입니다.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-red-500 font-bold mr-2">✖</span>
-                                <div><strong class="font-semibold text-stone-900">기회비용 상실:</strong> 자금이 장기간 묶여 다른 투자 기회를 놓치게 되는 보이지 않는 손실이 발생합니다.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-red-500 font-bold mr-2">✖</span>
-                                <div><strong class="font-semibold text-stone-900">낮은 자본 효율성:</strong> 자본 회전율이 낮아, 시장이 횡보하거나 반대 추세일 때 수익 없이 비용만 발생할 수 있습니다.</div>
-                            </li>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4">주요 기술 상세</h3>
+                        <ul class="space-y-4">
+                            <li><span class="tag">프론트엔드</span><strong class="ml-2">React:</strong> 컴포넌트 기반 UI 개발</li>
+                            <li><span class="tag">백엔드</span><strong class="ml-2">Node.js/Express:</strong> 경량 API 서버 구축</li>
+                            <li><span class="tag">크로스플랫폼</span><strong class="ml-2">Capacitor:</strong> 웹 앱의 네이티브 패키징</li>
+                            <li><span class="tag">배포</span><strong class="ml-2">Render & GitHub:</strong> 클라우드 배포 및 CI/CD</li>
+                            <li><span class="tag">스타일링</span><strong class="ml-2">Tailwind CSS:</strong> 유틸리티 기반 CSS 프레임워크</li>
+                            <li><span class="tag">애니메이션</span><strong class="ml-2">Framer Motion:</strong> 인터랙티브 UI 애니메이션</li>
                         </ul>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="risk-simulation" class="bg-white p-8 rounded-2xl shadow-lg">
-                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-stone-900">핵심 리스크 시뮬레이션: 펀딩비</h2>
-                    <p class="text-stone-600 mt-2">손실 상태로 포지션을 보유할 때, 펀딩비가 자본에 어떤 영향을 미치는지 직접 시뮬레이션 해보세요.</p>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                    <div class="lg:col-span-2">
-                        <div class="chart-container mx-auto max-w-4xl">
-                            <canvas id="fundingFeeChart"></canvas>
+            <div id="backend" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">백엔드 아키텍처</h2>
+                <p class="text-lg text-gray-600 mb-8">Node.js와 Express를 사용하여 '상태 저장'과 '명령 중계'라는 두 가지 핵심 기능에 집중하는 경량 API 서버를 구축했습니다. 별도의 데이터베이스 없이 인메모리 방식으로 상태를 관리하여 신속한 개발을 추구했습니다.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4">API 엔드포인트</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-mono text-sm p-2 bg-green-100 text-green-800 rounded">GET /api/device/status</p>
+                                <p class="text-gray-600 mt-1 text-sm">서버에 저장된 현재 기기 상태를 JSON으로 조회합니다.</p>
+                            </div>
+                            <div>
+                                <p class="font-mono text-sm p-2 bg-blue-100 text-blue-800 rounded">POST /api/device/control</p>
+                                <p class="text-gray-600 mt-1 text-sm">클라이언트의 요청에 따라 서버의 기기 상태를 변경합니다.</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="space-y-6">
-                         <div>
-                            <label for="initialInvestment" class="block text-sm font-medium text-stone-700">초기 투자금 (USDT)</label>
-                            <input type="number" id="initialInvestment" value="10000" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
-                        </div>
-                        <div>
-                            <label for="fundingRate" class="block text-sm font-medium text-stone-700">평균 펀딩비 (%) - 8시간 기준</label>
-                            <input type="number" id="fundingRate" value="0.01" step="0.001" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
-                        </div>
-                         <div>
-                            <label for="holdingPeriod" class="block text-sm font-medium text-stone-700">보유 기간 (일)</label>
-                            <input type="number" id="holdingPeriod" value="365" class="mt-1 block w-full bg-white border border-stone-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-teal-500 focus:border-teal-500">
-                        </div>
-                        <div id="fundingFeeResult" class="bg-stone-100 p-4 rounded-lg text-center">
-                            <p class="text-stone-600">총 펀딩비 손실:</p>
-                            <p id="totalLoss" class="text-2xl font-bold text-red-600">0 USDT</p>
+                    <div>
+                         <h3 class="text-xl font-bold mb-4">API 역할 비교</h3>
+                        <p class="text-gray-600 mb-4">두 API는 명확히 다른 역할을 수행합니다. `GET` 요청은 단순히 정보를 조회(읽기)하는 반면, `POST` 요청은 서버의 상태를 실제로 변경(쓰기)하는 역할을 담당합니다. 이 차이는 시스템 안정성의 핵심입니다.</p>
+                        <div class="chart-container h-80 max-h-80">
+                            <canvas id="apiChart"></canvas>
                         </div>
                     </div>
                 </div>
-            </section>
-            
-            <section id="conclusion" class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-teal-600">
-                <h2 class="text-3xl font-bold text-stone-900 mb-4">종합 검토 및 결론</h2>
-                <p class="text-lg text-stone-700 leading-relaxed">"1x-1%-Hold" 전략은 '강제 청산 없음'이라는 명확한 안정성을 제공하지만, '무한 보유' 원칙은 **펀딩비로 인한 자본 잠식**이라는 현실적인 비용 문제를 해결하지 못합니다. 이로 인해 장기적으로는 자본을 보존하기보다 소멸시킬 위험이 매우 큽니다. 따라서 이 전략을 실전에 적용하기 위해서는 펀딩비 누적 문제에 대한 명확한 보완책, 예를 들어 **최대 보유 기간 설정이나 누적 펀딩비 기반의 손절매 규칙 추가**가 반드시 필요합니다.</p>
-            </section>
+            </div>
 
+            <div id="frontend" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">프론트엔드 & UI/UX</h2>
+                <p class="text-lg text-gray-600 mb-8">사용자 경험(UX) 향상을 위해 직관적이고 반응성이 뛰어난 사용자 인터페이스(UI)를 구축하는 데 중점을 두었습니다. Tailwind CSS로 스타일링하고, framer-motion으로 애니메이션 효과를 적용했습니다.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">UI/UX 구현 요소</h3>
+                        <p class="text-gray-600 mb-4">좋은 앱 경험은 여러 요소의 조합으로 만들어집니다. 본 프로젝트에서는 기능별 컴포넌트화, 사용자 피드백, 그리고 시각적 효과에 자원을 배분하여 개발했습니다.</p>
+                        <div class="chart-container h-80 max-h-80">
+                           <canvas id="uiChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4">주요 UI 컴포넌트</h3>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>WeatherCard & HourlyForecast:</strong> 외부 API(OpenWeatherMap) 데이터를 시각화하여 날씨 정보를 제공.</li>
+                            <li><strong>FanControl & UVCControl:</strong> 사용자가 시간, 세기 등을 설정할 수 있는 인터랙티브 제어판.</li>
+                            <li><strong>DeviceStatusCard:</strong> 백엔드로부터 받은 기기 상태를 종합적으로 보여주는 대시보드.</li>
+                            <li><strong>피드백 요소:</strong> 로딩 스피너, 오류 알림 등을 통해 사용자에게 시스템의 현재 상태를 명확히 전달.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="deployment" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">빌드 & 배포</h2>
+                <p class="text-lg text-gray-600 mb-8">React 웹 프로젝트를 네이티브 앱으로 빌드하고, 백엔드 서버를 클라우드에 배포하여 언제 어디서든 접근 가능한 시스템을 구축했습니다.</p>
+                
+                <h3 class="text-2xl font-bold mb-4">자동화된 배포 파이프라인 (CI/CD)</h3>
+                <p class="text-gray-600 mb-6">GitHub와 Render.com을 연동하여, 코드 변경사항이 `git push`를 통해 깃허브에 올라가면 자동으로 새로운 버전의 서버가 배포되도록 CI/CD 파이프라인을 구축했습니다.</p>
+                <div class="w-full max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-5 items-center gap-4 text-center">
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">1. 코드 수정</h4>
+                            <p class="text-sm text-gray-500">(git push)</p>
+                        </div>
+                        <div class="diagram-arrow text-2xl font-light">➡️</div>
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">2. GitHub</h4>
+                            <p class="text-sm text-gray-500">(코드 저장) </p>
+                        </div>
+                        <div class="diagram-arrow text-2xl font-light">➡️</div>
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold">3. Render</h4>
+                            <p class="text-sm text-gray-500">(자동 빌드 & 배포)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 grid md:grid-cols-2 gap-8">
+                     <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4">프론트엔드 빌드</h3>
+                        <p class="text-gray-700">완성된 React 웹 프로젝트에 Capacitor를 적용하여 `android`와 `ios` 네이티브 프로젝트를 생성했습니다. `npm run build`와 `npx cap sync` 명령어를 통해 단일 코드베이스의 변경사항을 양 플랫폼에 효율적으로 반영하는 워크플로우를 구축했습니다.</p>
+                     </div>
+                      <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4">백엔드 배포</h3>
+                        <p class="text-gray-700">백엔드 서버는 Render.com에 배포되었으며, GitHub 저장소와 연동하여 `git push` 시 자동으로 서버가 재배포되는 CI/CD 파이프라인을 통해 운영 효율성을 확보했습니다. 이를 통해 개발자는 코드 수정에만 집중할 수 있습니다.</p>
+                     </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            const simulateBtn = document.getElementById('simulateBtn');
-            const scenarioSelect = document.getElementById('scenarioSelect');
-            const simulationResult = document.getElementById('simulationResult');
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const reportData = {
+        techStack: {
+            labels: ['프론트엔드', '백엔드', '크로스플랫폼 & 배포'],
+            data: [45, 30, 25],
+        },
+        apiRoles: {
+            labels: ['상태 조회 (GET)', '상태 변경 (POST)'],
+            data: [40, 60],
+        },
+        uiComponents: {
+            labels: ['기능 컴포넌트', '정보 시각화', 'UX 개선'],
+            data: [50, 30, 20],
+        }
+    };
 
-            simulateBtn.addEventListener('click', () => {
-                const scenario = scenarioSelect.value;
-                const initial = 10000;
-                let resultText = '';
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
 
-                switch(scenario) {
-                    case 'profit':
-                        const profit = initial * 0.01;
-                        resultText = `<p><strong class="font-semibold text-green-600">거래 성공:</strong> +1% 수익 조건이 충족되어 포지션이 종료되었습니다.</p>
-                                      <p><strong>최종 자산:</strong> ${initial + profit} USDT (수익: ${profit} USDT)</p>`;
-                        break;
-                    case 'hold':
-                        const loss = initial * 0.05;
-                        resultText = `<p><strong class="font-semibold text-red-600">포지션 보유 중:</strong> -5% 손실 상태입니다.</p>
-                                      <p><strong>현재 자산 가치:</strong> ${initial - loss} USDT. 전략에 따라 수익권으로 회복될 때까지 계속 보유합니다.</p>`;
-                        break;
-                    case 'recover':
-                         const finalProfit = initial * 0.01;
-                        resultText = `<p><strong class="font-semibold text-blue-600">회복 후 거래 성공:</strong> -5%까지 하락했지만, 가격이 회복되어 +1% 수익 조건에 도달했습니다.</p>
-                                      <p><strong>최종 자산:</strong> ${initial + finalProfit} USDT (수익: ${finalProfit} USDT)</p>
-                                      <p class="text-sm text-stone-500 mt-2">(참고: 이 시뮬레이션에는 보유 기간 동안의 펀딩비가 포함되지 않았습니다.)</p>`;
-                        break;
-                }
-                simulationResult.innerHTML = resultText;
-            });
+    function navigateTo(targetId) {
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.dataset.target === targetId);
+        });
+        contentSections.forEach(section => {
+            section.classList.toggle('active', section.id === targetId);
+        });
+    }
 
-            const fundingFeeChartCanvas = document.getElementById('fundingFeeChart');
-            const initialInvestmentInput = document.getElementById('initialInvestment');
-            const fundingRateInput = document.getElementById('fundingRate');
-            const holdingPeriodInput = document.getElementById('holdingPeriod');
-            const totalLossEl = document.getElementById('totalLoss');
-            let fundingFeeChart;
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = e.currentTarget.dataset.target;
+            navigateTo(targetId);
+        });
+    });
 
-            function calculateAndDrawChart() {
-                const initialInvestment = parseFloat(initialInvestmentInput.value) || 10000;
-                const fundingRate = parseFloat(fundingRateInput.value) / 100 || 0.01 / 100;
-                const holdingPeriod = parseInt(holdingPeriodInput.value) || 365;
-                const fundingEventsPerDay = 3;
-
-                const labels = Array.from({ length: holdingPeriod + 1 }, (_, i) => `${i}일`);
-                const data = [];
-                let currentBalance = initialInvestment;
-
-                for (let i = 0; i <= holdingPeriod; i++) {
-                    data.push(currentBalance);
-                    const dailyLoss = currentBalance * fundingRate * fundingEventsPerDay;
-                    currentBalance -= dailyLoss;
-                }
-                
-                const totalLoss = initialInvestment - currentBalance;
-                totalLossEl.textContent = `${totalLoss.toFixed(2)} USDT`;
-
-                if (fundingFeeChart) {
-                    fundingFeeChart.destroy();
-                }
-
-                fundingFeeChart = new Chart(fundingFeeChartCanvas, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '펀딩비 적용 후 자산',
-                            data: data,
-                            borderColor: 'rgb(220, 38, 38)',
-                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                            fill: true,
-                            tension: 0.1
-                        },
-                        {
-                            label: '초기 자산 (펀딩비 없음)',
-                            data: Array(holdingPeriod + 1).fill(initialInvestment),
-                            borderColor: 'rgb(75, 192, 192)',
-                             borderDash: [5, 5],
-                            fill: false,
-                        }]
+    function createChart(ctx, type, labels, data, backgroundColor, borderColor) {
+        return new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '구성 비율',
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: type === 'doughnut' ? 'bottom' : 'none',
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: '시간에 따른 펀딩비 누적 효과',
-                                font: { size: 18 }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: '자산 (USDT)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return value.toLocaleString();
-                                    }
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: '보유 기간 (일)'
-                                },
-                                ticks: {
-                                     maxTicksLimit: 10
-                                }
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
                             }
                         }
                     }
-                });
+                },
+                scales: type === 'bar' ? {
+                    x: { grid: { display: false } },
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: '#E2E8F0' },
+                        ticks: {
+                           callback: function(value) {
+                                return value + '%';
+                           }
+                        }
+                    }
+                } : {},
             }
-
-            [initialInvestmentInput, fundingRateInput, holdingPeriodInput].forEach(input => {
-                input.addEventListener('input', calculateAndDrawChart);
-            });
-
-            calculateAndDrawChart();
         });
-    </script>
+    }
+    
+    const techStackCtx = document.getElementById('techStackChart').getContext('2d');
+    createChart(techStackCtx, 'doughnut', reportData.techStack.labels, reportData.techStack.data, ['#60A5FA', '#34D399', '#A78BFA'], ['#BFDBFE', '#A7F3D0', '#DDD6FE']);
+
+    const apiCtx = document.getElementById('apiChart').getContext('2d');
+    createChart(apiCtx, 'bar', reportData.apiRoles.labels, reportData.apiRoles.data, ['#93C5FD', '#60A5FA'], ['#BFDBFE', '#3B82F6']);
+
+    const uiCtx = document.getElementById('uiChart').getContext('2d');
+    createChart(uiCtx, 'bar', reportData.uiComponents.labels, reportData.uiComponents.data, ['#FBBF24', '#F87171', '#60A5FA'], ['#FDE68A', '#FCA5A5', '#BFDBFE']);
+
+    navigateTo('overview');
+});
+</script>
+
 </body>
 </html>
