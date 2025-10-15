@@ -10,12 +10,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Subtle Academia -->
-    <!-- Application Structure Plan: The application is structured as a single-page, vertical-scrolling learning module with five thematic sections, moving from simple to complex concepts. This structure was chosen over the original Q&A format to create a logical and intuitive learning path. 1) Basics (Perceptrons), 2) Depth (Shallow vs. Deep), 3) Core Tech (CNNs), 4) Application (Digit Recognition), and 5) Challenges (Overfitting). A sticky top navigation allows users to jump between sections, facilitating non-linear exploration. Interactive charts and diagrams are used to visually explain abstract concepts, enhancing comprehension and engagement. -->
+    <!-- Application Structure Plan: The application is structured as a single-page, vertical-scrolling learning module with six thematic sections, moving from simple to complex concepts. This structure was chosen over the original Q&A format to create a logical and intuitive learning path. 1) Basics (Perceptrons), 2) Depth (Shallow vs. Deep), 3) Learning Mechanism (Backpropagation), 4) Core Tech (CNNs), 5) Application (Digit Recognition), and 6) Challenges (Overfitting). A sticky top navigation allows users to jump between sections, facilitating non-linear exploration. Interactive charts and diagrams are used to visually explain abstract concepts, enhancing comprehension and engagement. -->
     <!-- Visualization & Content Choices: 
         - Perceptron Limits (Q1): Goal: Compare. Viz: Interactive Chart.js scatter plot. Interaction: Buttons to switch between AND/OR/XOR problems to visually demonstrate the concept of linear separability. Justification: A static explanation is less impactful than seeing the boundary fail on XOR.
         - Activation Functions (Q2): Goal: Inform. Viz: HTML/CSS diagram. Interaction: Static visual aid. Justification: A simple diagram is sufficient to explain the role of non-linearity.
-        - Shallow vs. Deep (서술형 Q1): Goal: Compare. Viz: HTML/CSS hierarchical diagram. Interaction: Static visual flow. Justification: Visually represents the abstract concept of hierarchical feature extraction from low-level to high-level features.
-        - CNN Components (Q3): Goal: Inform. Viz: HTML/CSS animated-style diagrams. Interaction: Hover effects to simulate convolution and pooling. Justification: Simplifies complex matrix operations into an understandable visual process.
+        - Shallow vs. Deep (서술형 Q1): Goal: Compare. Viz: HTML/CSS hierarchical diagram. Interaction: Static visual flow. Justification: Visually represents the abstract concept of hierarchical feature extraction.
+        - Backpropagation (New): Goal: Inform/Organize. Viz: Interactive HTML/CSS flowchart. Interaction: Buttons to toggle between Forward and Backward Pass, highlighting steps and showing explanations. Justification: Decomposes a complex, two-phase algorithm into a simple, step-by-step visual flow, making it easier to grasp the core concepts of error calculation and weight updates.
+        - CNN Components (Q3): Goal: Inform. Viz: HTML/CSS diagrams. Justification: Simplifies complex matrix operations into an understandable visual process.
         - Digit Recognition (서술형 Q2): Goal: Organize. Viz: Interactive HTML/CSS flowchart. Interaction: Users click on each step to reveal detailed explanations. Justification: Breaks down a complex process into manageable, explorable steps.
         - Overfitting (서술형 Q3): Goal: Inform/Compare. Viz: Chart.js line chart and interactive cards. Interaction: The chart visually defines overfitting, and clickable cards explain the solutions. Justification: The combination of a clear visual problem statement (the chart) and interactive solutions provides a comprehensive overview. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -78,6 +79,13 @@
         .solution-card-back {
             transform: rotateY(180deg);
         }
+        .bp-step {
+            transition: all 0.3s ease;
+        }
+        .bp-step.active {
+            background-color: #ccfbf1;
+            border-color: #14b8a6;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -92,9 +100,10 @@
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#section1" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">퍼셉트론 기초</a>
                         <a href="#section2" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">신경망의 깊이</a>
-                        <a href="#section3" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">CNN 집중 탐구</a>
-                        <a href="#section4" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">실전 응용</a>
-                        <a href="#section5" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">과적합 문제</a>
+                        <a href="#section3" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">역전파 알고리즘</a>
+                        <a href="#section4" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">CNN 집중 탐구</a>
+                        <a href="#section5" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">실전 응용</a>
+                        <a href="#section6" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">과적합 문제</a>
                     </div>
                 </div>
             </div>
@@ -108,7 +117,6 @@
             <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
                 <h2 class="text-2xl font-bold text-teal-700 mb-2">1. 신경망의 시작: 퍼셉트론 기초</h2>
                 <p class="text-slate-600 mb-6">모든 복잡한 신경망은 단순한 계산 모델인 퍼셉트론에서 시작됩니다. 여기서는 단층 퍼셉트론의 명확한 한계와, 그 한계를 극복하기 위한 활성화 함수의 중요성에 대해 알아봅니다.</p>
-
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div>
                         <h3 class="text-xl font-semibold mb-3">단층 퍼셉트론의 한계: XOR 문제</h3>
@@ -177,10 +185,37 @@
             </div>
         </section>
 
-        <!-- Section 3: CNN 집중 탐구 -->
+        <!-- Section 3: Backpropagation -->
         <section id="section3" class="scroll-mt-20 mb-16">
             <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">3. 이미지 인식의 핵심: CNN 집중 탐구</h2>
+                <h2 class="text-2xl font-bold text-teal-700 mb-2">3. 신경망은 어떻게 학습할까?: 역전파 알고리즘</h2>
+                <p class="text-slate-600 mb-6">신경망 학습의 핵심은 **역전파(Backpropagation)** 알고리즘입니다. 이 알고리즘은 예측값과 실제값의 오차(error)를 계산하고, 이 오차를 출력층에서부터 입력층 방향으로 역으로 전파하면서 각 가중치(weight)를 얼마나 조정해야 할지 계산하여 모델을 점진적으로 개선합니다.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4 text-center">역전파의 두 단계</h3>
+                        <div class="flex justify-center space-x-2 mb-4">
+                            <button id="btn-forward" class="px-4 py-2 bg-teal-100 text-teal-800 rounded-lg text-sm font-medium hover:bg-teal-200">1. 순전파 (Forward Pass)</button>
+                            <button id="btn-backward" class="px-4 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-200">2. 역전파 (Backward Pass)</button>
+                        </div>
+                        <div class="space-y-2">
+                            <div id="step-input" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Input</span><span class="text-2xl text-slate-400">→</span></div>
+                            <div id="step-predict" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Prediction</span><span class="text-2xl text-slate-400">→</span></div>
+                            <div id="step-loss" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Loss Calculation</span><span id="arrow-loss" class="text-2xl text-slate-400">→</span></div>
+                            <div id="step-gradient" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Gradient Calculation</span><span class="text-2xl text-slate-400">→</span></div>
+                            <div id="step-update" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md"><span>Weight Update</span></div>
+                        </div>
+                    </div>
+                    <div id="bp-explanation" class="pt-2">
+                        <!-- Explanation will be loaded here by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: CNN 집중 탐구 -->
+        <section id="section4" class="scroll-mt-20 mb-16">
+            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-teal-700 mb-2">4. 이미지 인식의 핵심: CNN 집중 탐구</h2>
                 <p class="text-slate-600 mb-6">합성곱 신경망(CNN)은 이미지와 같은 그리드 형태의 데이터를 처리하는 데 특화된 모델입니다. CNN의 핵심 구성 요소와, 효율적인 모델 개발을 돕는 전이 학습에 대해 알아봅니다.</p>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="bg-slate-50 p-6 rounded-lg">
@@ -229,10 +264,10 @@
             </div>
         </section>
 
-        <!-- Section 4: 실전 응용 -->
-        <section id="section4" class="scroll-mt-20 mb-16">
+        <!-- Section 5: 실전 응용 -->
+        <section id="section5" class="scroll-mt-20 mb-16">
             <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">4. 실전 응용: CNN으로 숫자 인식 시스템 설계하기</h2>
+                <h2 class="text-2xl font-bold text-teal-700 mb-2">5. 실전 응용: CNN으로 숫자 인식 시스템 설계하기</h2>
                 <p class="text-slate-600 mb-6">이론을 실제 문제에 적용해 봅시다. MNIST와 같은 손글씨 숫자 이미지를 인식하는 CNN 모델을 설계하는 전체 과정을 단계별로 살펴봅니다. 각 단계를 클릭하여 자세한 내용을 확인하세요.</p>
                 <div id="pipeline" class="flex flex-col md:flex-row items-stretch justify-center gap-4 text-center">
                     <!-- Steps will be inserted here by JS -->
@@ -243,10 +278,10 @@
             </div>
         </section>
 
-        <!-- Section 5: 과적합 문제 -->
-        <section id="section5" class="scroll-mt-20">
+        <!-- Section 6: 과적합 문제 -->
+        <section id="section6" class="scroll-mt-20">
             <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">5. 주요 과제: 과적합(Overfitting) 문제와 해결 방안</h2>
+                <h2 class="text-2xl font-bold text-teal-700 mb-2">6. 주요 과제: 과적합(Overfitting) 문제와 해결 방안</h2>
                 <p class="text-slate-600 mb-6">딥러닝 모델 훈련 시 가장 흔하게 마주치는 문제는 과적합입니다. 모델이 훈련 데이터에만 과도하게 최적화되어 새로운 데이터에 대한 성능이 떨어지는 현상이죠. 과적합이 무엇인지 시각적으로 확인하고, 해결 방안을 알아보세요.</p>
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div>
@@ -391,8 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const allBtns = [andBtn, orBtn, xorBtn];
 
-    function updateButtonStyles(activeBtn) {
-        allBtns.forEach(btn => {
+    function updateButtonStyles(activeBtn, buttons) {
+        buttons.forEach(btn => {
             btn.classList.remove('bg-teal-100', 'text-teal-800');
             btn.classList.add('bg-slate-100', 'text-slate-800');
         });
@@ -400,13 +435,72 @@ document.addEventListener('DOMContentLoaded', () => {
         activeBtn.classList.remove('bg-slate-100', 'text-slate-800');
     }
 
-    andBtn.addEventListener('click', () => { createPerceptronChart('and'); updateButtonStyles(andBtn); });
-    orBtn.addEventListener('click', () => { createPerceptronChart('or'); updateButtonStyles(orBtn); });
-    xorBtn.addEventListener('click', () => { createPerceptronChart('xor'); updateButtonStyles(xorBtn); });
+    andBtn.addEventListener('click', () => { createPerceptronChart('and'); updateButtonStyles(andBtn, allBtns); });
+    orBtn.addEventListener('click', () => { createPerceptronChart('or'); updateButtonStyles(orBtn, allBtns); });
+    xorBtn.addEventListener('click', () => { createPerceptronChart('xor'); updateButtonStyles(xorBtn, allBtns); });
 
     createPerceptronChart('and');
 
-    // Section 4: Pipeline
+    // Section 3: Backpropagation
+    const bpExplanations = {
+        forward: `
+            <h4 class="text-lg font-semibold text-teal-700 mb-2">순전파 (Forward Pass)</h4>
+            <p class="text-slate-600">입력 데이터가 신경망을 통과하여 최종 예측값을 만들어내는 과정입니다.</p>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 mt-2">
+                <li><strong>1. 예측 (Prediction):</strong> 입력 데이터와 가중치를 사용하여 각 층을 거쳐 최종 출력(예측값)을 계산합니다.</li>
+                <li><strong>2. 손실 계산 (Loss Calculation):</strong> 모델의 예측값과 실제 정답을 비교하여 오차(손실)를 계산합니다.</li>
+            </ul>
+        `,
+        backward: `
+            <h4 class="text-lg font-semibold text-teal-700 mb-2">역전파 (Backward Pass)</h4>
+            <p class="text-slate-600">계산된 오차를 반대 방향으로 전파하며 모델의 가중치를 업데이트하는 과정입니다.</p>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 mt-2">
+                <li><strong>3. 기울기 계산 (Gradient Calculation):</strong> 오차에 각 가중치가 얼마나 영향을 미쳤는지(기울기)를 연쇄 법칙(chain rule)을 이용해 계산합니다.</li>
+                <li><strong>4. 가중치 업데이트 (Weight Update):</strong> 계산된 기울기를 사용하여 오차를 줄이는 방향으로 모든 가중치를 약간씩 조정합니다. 이 과정을 반복하며 모델이 최적화됩니다.</li>
+            </ul>
+        `
+    };
+
+    const forwardBtn = document.getElementById('btn-forward');
+    const backwardBtn = document.getElementById('btn-backward');
+    const bpButtons = [forwardBtn, backwardBtn];
+    const bpExplanationContainer = document.getElementById('bp-explanation');
+    const bpSteps = {
+        input: document.getElementById('step-input'),
+        predict: document.getElementById('step-predict'),
+        loss: document.getElementById('step-loss'),
+        gradient: document.getElementById('step-gradient'),
+        update: document.getElementById('step-update'),
+    };
+    const arrowLoss = document.getElementById('arrow-loss');
+
+    function showForwardPass() {
+        Object.values(bpSteps).forEach(el => el.classList.remove('active'));
+        bpSteps.input.classList.add('active');
+        bpSteps.predict.classList.add('active');
+        bpSteps.loss.classList.add('active');
+        bpExplanationContainer.innerHTML = bpExplanations.forward;
+        updateButtonStyles(forwardBtn, bpButtons);
+        arrowLoss.innerHTML = '→';
+    }
+
+    function showBackwardPass() {
+        Object.values(bpSteps).forEach(el => el.classList.remove('active'));
+        bpSteps.loss.classList.add('active');
+        bpSteps.gradient.classList.add('active');
+        bpSteps.update.classList.add('active');
+        bpExplanationContainer.innerHTML = bpExplanations.backward;
+        updateButtonStyles(backwardBtn, bpButtons);
+        arrowLoss.innerHTML = '↙';
+    }
+    
+    forwardBtn.addEventListener('click', showForwardPass);
+    backwardBtn.addEventListener('click', showBackwardPass);
+    
+    showForwardPass();
+
+
+    // Section 5: Pipeline
     const pipelineData = [
         { 
             title: '1. 데이터 전처리',
@@ -476,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Section 5: Overfitting Chart
+    // Section 6: Overfitting Chart
     const overfittingCtx = document.getElementById('overfittingChart').getContext('2d');
     const overfittingChart = new Chart(overfittingCtx, {
         type: 'line',
@@ -535,3 +629,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
