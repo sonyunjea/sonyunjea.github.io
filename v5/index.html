@@ -2,595 +2,593 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="LJJwlcpuE0xx4kf6RPxWObkVWTVaMx1cysCLl3J9My4" />
-    <meta name="naver-site-verification" content="5e6ecf422ab41e3217450f67460721a96f18c2c8" />
-    <meta name="description" content="전국 3시간 이내 빠른 배송, 결혼식 축하화환, 장례식 근조화환 전문점. 대표 손광성. 정성을 다해 마음을 전합니다." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17608266544"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'AW-17608266544');
-    </script>
-
-    <title>국제플라워 - 전국 당일 꽃배달, 축하/근조화환 전문</title>
-    <link rel="icon" href="https://i.postimg.cc/76qGBBnw/image.png" type="image/png">
+    <title>인터랙티브 임대차 계약서 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Calm Harmony (Stone, Gray, Soft Blue) -->
+    <!-- Application Structure Plan: A single-page, task-oriented application that transforms the static lease agreement into an interactive form. The structure uses distinct, collapsible sections for Property Info, Terms, Period, Parties, and Special Conditions. This guided, chunked approach simplifies data entry and reduces user error. Key interactions include automatic calculations (balance payment, duration), number-to-text conversion for currency, and a one-click preview modal that generates a print-ready version of the contract. This structure was chosen to make the complex process of contract creation intuitive and efficient for landlords, tenants, and agents. -->
+    <!-- Visualization & Content Choices: The application eschews traditional data charts as the source is a legal document. Instead, it "visualizes" the contract structure through an interactive form. Report Info: Contract fields (e.g., deposit amount). Goal: Inform, Organize, Reduce Error. Viz/Presentation Method: Labeled number inputs with real-time formatting and Korean text conversion. Interaction: User input triggers automatic calculation of the remaining balance. Justification: Improves clarity and accuracy of financial details. Library/Method: Vanilla JS. Report Info: Special Clauses. Goal: Organize, Improve Efficiency. Viz/Presentation Method: A textarea supplemented by buttons for common clauses. Interaction: Clicking a button appends the clause text. Justification: Speeds up the process for standard agreements. Library/Method: Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        /* 폰트 불러오기 (Pretendard, Nanum Myeongjo) */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
-
-        /* 🎨 1. 새로운 컬러 시스템 (얼스 톤) */
-        :root {
-            --main-color: #8A9A5B;      /* 올리브 그린 */
-            --bg-color: #F5F5DC;        /* 웜 베이지 */
-            --surface-color: #FFFFF0;    /* 아이보리 */
-            --accent-color: #E2725B;     /* 테라코타 */
-            --text-color: #413F3D;      /* 짙은 갈색 */
-            --border-color: #e5e1d4;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
         body {
-            /* ✍️ 2. 새로운 폰트 적용 (본문) */
-            font-family: 'Pretendard', sans-serif;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            line-height: 1.7;
-            word-break: keep-all;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc; /* bg-slate-50 */
         }
-        
-        /* ✍️ 2. 새로운 폰트 적용 (제목) */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Nanum Myeongjo', serif;
-            font-weight: 700;
+        .form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease-in-out;
         }
-
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-
-        /* 헤더 & 네비게이션 */
-        header {
-            background-color: rgba(255, 255, 240, 0.8); /* 아이보리 배경에 투명도 추가 */
-            backdrop-filter: blur(10px);
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar {
+        .form-section h2 {
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 500;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
-        .logo img {
-            height: 100px; /* 로고 크기 조정 */
-            vertical-align: middle;
+        .form-section h2 .icon {
+            transition: transform 0.3s ease-in-out;
         }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 35px; /* 메뉴 간격 조정 */
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            font-size: 1.1em;
-            position: relative;
-            padding: 5px 0;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--main-color);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        /* 메인 배너 (Hero) */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1526047774128-253c0512c2a2?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            color: #fff;
-            text-align: center;
-            padding: 150px 20px;
-        }
-
-        .hero h1 {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-        }
-
-        .hero p {
-            font-size: 1.3em;
-            font-weight: 300;
-            margin-bottom: 30px;
-        }
-
-        .hero-button {
-            background-color: var(--accent-color);
-            color: #fff;
-            padding: 15px 35px;
-            text-decoration: none;
-            border-radius: 50px; /* 둥근 버튼 */
-            font-weight: 500;
-            font-size: 1.1em;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .hero-button:hover {
-            background-color: #c9614d;
-            transform: translateY(-3px);
-        }
-
-        /* 🖼️ 3. 레이아웃: 여백과 애니메이션 */
-        .section {
-            padding: 100px 0; /* 섹션 간 여백 확장 */
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 3em;
-            margin-bottom: 80px; /* 제목 아래 여백 확장 */
-            color: var(--main-color);
-        }
-
-        .product-display {
-            display: flex;
-            gap: 60px; /* 이미지와 텍스트 간격 확장 */
-            align-items: center;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-        }
-
-        .product-display.in-view {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 지그재그 레이아웃을 위한 설정 */
-        #condolence .product-display {
-            flex-direction: row-reverse;
-        }
-
-        .image-gallery {
-            flex: 1.2; /* 이미지 영역을 더 크게 */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 12px;
+        .form-section .content {
+            max-height: 0;
             overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding: 0 1.5rem;
         }
-
-        .main-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            aspect-ratio: 3 / 4;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+        .form-section.open .content {
+            max-height: 1000px;
+            padding: 1.5rem;
         }
-
-        .main-image img:hover {
-            transform: scale(1.05); /* 호버 줌 효과 */
+        .form-section.open h2 .icon {
+            transform: rotate(180deg);
         }
-
-        .thumbnail-container {
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .input-field {
             display: flex;
-            background-color: #fff;
-            padding: 10px;
+            flex-direction: column;
         }
-
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
-            margin: 0 5px;
+        .input-field label {
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #4b5563;
         }
-
-        .thumbnail:hover, .thumbnail.active {
-            border-color: var(--main-color);
-        }
-        
-        .product-details {
-            flex: 1;
-        }
-
-        .product-details h3 {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-        
-        .product-description-text {
-            font-size: 1.1em;
-            margin-bottom: 25px;
-            color: #5c5a58;
-        }
-
-        .product-price {
-            font-size: 2em;
-            color: var(--main-color);
-            font-weight: 700;
-            margin-bottom: 30px;
-        }
-
-        .order-button, .suggestion-button {
-            display: block;
+        .input-field input, .input-field select, .input-field textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
             width: 100%;
-            padding: 16px 30px;
-            border: none;
-            border-radius: 8px; /* 더 둥근 버튼 */
-            cursor: pointer;
-            font-size: 1.1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field input:focus, .input-field select:focus, .input-field textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #bfdbfe;
+        }
+        .currency-display {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            height: 1rem;
+        }
+        .action-buttons {
+            position: sticky;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            backdrop-filter: blur(5px);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-            text-align: center;
-            transition: all 0.3s;
-            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        .order-button {
-            background-color: var(--accent-color);
-            color: #fff;
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
         }
-
-        .order-button:hover {
-            background-color: #c9614d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        .btn-primary:hover {
+            background-color: #1d4ed8;
         }
-
-        .suggestion-button {
-            background-color: transparent;
-            color: var(--main-color);
-            border: 2px solid var(--main-color);
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
         }
-
-        .suggestion-button:hover {
-            background-color: var(--main-color);
-            color: #fff;
+        .btn-secondary:hover {
+            background-color: #d1d5db;
         }
-        
-        /* 주문 안내 섹션 */
-        #order-info {
-            background-color: var(--surface-color);
-        }
-        
-        .info-box {
-            background-color: #fff;
-            padding: 50px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        
-        .info-box h3 {
-            font-size: 2.2em;
-            margin-bottom: 15px;
-        }
-        
-        .info-box .contact-number {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--main-color);
-            margin-top: 20px;
-            display: block;
-            text-decoration: none;
-        }
-
-        .info-box .call-helper-text {
-            font-size: 1em;
-            color: #888;
-            margin-top: 10px;
-        }
-        
-        /* 푸터 */
-        footer {
-            background-color: #413F3D;
-            color: #f5f5f5; /* 밝은 회색 (거의 흰색)으로 변경 */
-            text-align: center;
-            padding: 50px 20px;
-            font-size: 0.9em;
-        }
-        
-        footer p {
-            margin: 8px 0;
-        }
-
-        /* 문구 추천 Modal Style */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 2000; opacity: 0; visibility: hidden;
+        #previewModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
-        .modal-overlay.visible { opacity: 1; visibility: visible; }
-        .modal-content {
-            background-color: white; padding: 30px; border-radius: 10px;
-            width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transform: translateY(-20px); transition: transform 0.3s;
+        #previewModal.visible {
+            opacity: 1;
+            visibility: visible;
         }
-        .modal-overlay.visible .modal-content { transform: translateY(0); }
-        .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
+        #previewContent {
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+            height: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            font-size: 14px;
         }
-        .modal-title { font-size: 1.8em; color: var(--main-color); }
-        .close-button { background: none; border: none; font-size: 1.8em; cursor: pointer; color: #888; }
-        .modal-body select {
-            width: 100%; padding: 12px; border-radius: 5px; font-size: 1em;
-            border: 1px solid var(--border-color); margin-bottom: 20px;
+        #previewContent h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
-        #gemini-result ul { list-style-type: none; padding-left: 0; }
-        #gemini-result li { padding: 10px; border-bottom: 1px dashed var(--border-color); cursor: pointer; transition: background-color 0.2s; }
-        #gemini-result li:hover { background-color: #f0f0f0; }
-        
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .navbar { flex-direction: column; gap: 20px; }
-            .logo img { height: 80px; }
-            .hero h1 { font-size: 2.5em; }
-            .product-display, #condolence .product-display { flex-direction: column; }
-            .section { padding: 80px 0; }
-            .section-title { font-size: 2.2em; margin-bottom: 50px; }
+        #previewContent table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        #previewContent th, #previewContent td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        #previewContent th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            width: 120px;
+        }
+        .special-clause-btn {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+        }
+        .special-clause-btn:hover {
+            background-color: #e5e7eb;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #previewModal, #previewContent, #previewContent * {
+                visibility: visible;
+            }
+            #previewModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background-color: white;
+                padding: 0;
+            }
+            #previewContent {
+                width: 100%;
+                height: auto;
+                max-height: none;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            .modal-actions {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container navbar">
-            <a href="#" class="logo">
-                <img src="https://i.postimg.cc/Z5jf6kfm/v2.png" alt="국제플라워 로고">
-            </a>
-            <ul class="nav-links">
-                <li><a href="#celebration">축하화환</a></li>
-                <li><a href="#condolence">근조화환</a></li>
-                <li><a href="#order-info">주문안내</a></li>
-            </ul>
-        </div>
-    </header>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">인터랙티브 임대차 계약서</h1>
+            <p class="text-gray-500 mt-2">필수 정보를 입력하여 간편하게 부동산 임대차 계약서를 완성하세요.</p>
+        </header>
 
-    <main>
-        <section class="hero">
-            <h1>마음을 전하는 가장 아름다운 방법</h1>
-            <p>소중한 순간, 국제플라워가 정성을 다해 함께합니다.</p>
-            <a href="#celebration" class="hero-button">화환 둘러보기</a>
-        </section>
-
-        <section id="celebration" class="section">
-            <div class="container">
-                <h2 class="section-title">축하화환</h2>
-                <div class="product-display">
-                    <div class="image-gallery">
-                        <div class="main-image">
-                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="익산 국제플라워 축하 3단 화환 정면 사진" id="main-image-celeb">
+        <form id="lease-form">
+            <div class="form-section open" id="section-property">
+                <h2><span>1. 부동산의 표시</span> <span class="icon">▼</span></h2>
+                <div class="content">
+                    <div class="input-group">
+                        <div class="input-field md:col-span-2">
+                            <label for="address">소재지</label>
+                            <input type="text" id="address" name="address" value="서울특별시 강남구 테헤란로 212 (역삼동)">
                         </div>
-                        <div class="thumbnail-container">
-                            <img src="https://i.postimg.cc/brJGPsMj/1.png" alt="축하화환 정면 썸네일" class="thumbnail active" onclick="changeImage('celeb', this, 'https://i.postimg.cc/brJGPsMj/1.png')">
-                            <img src="https://i.postimg.cc/KzQKCn0q/1.png" alt="축하화환 측면 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/KzQKCn0q/1.png')">
-                            <img src="https://i.postimg.cc/90M42rkL/1.png" alt="축하화환 확대 썸네일" class="thumbnail" onclick="changeImage('celeb', this, 'https://i.postimg.cc/90M42rkL/1.png')">
+                        <div class="input-field">
+                            <label for="land_category">토지 지목</label>
+                            <input type="text" id="land_category" name="land_category" value="대">
                         </div>
-                    </div>
-                    <div class="product-details">
-                        <h3>3단 축하화환</h3>
-                        <p class="product-description-text">
-                            결혼식, 개업식, 전시회 등 모든 기쁜 날을 더욱 빛내줄 정성 가득한 3단 축하화환입니다.
-                            가장 신선하고 아름다운 꽃들로 구성하여 보내시는 분의 마음까지 온전히 전달합니다.
-                        </p>
-                        <p class="product-price">₩50,000 부터</p>
-                        <button class="suggestion-button" onclick="openSuggestionModal('celebration')">✨ 리본 문구 추천 보기</button>
-                        <button class="order-button" onclick="placeOrder('3단 축하화환')">전화로 주문하기</button>
+                        <div class="input-field">
+                            <label for="land_area">토지 면적(㎡)</label>
+                            <input type="number" id="land_area" name="land_area" placeholder="예: 100.5">
+                        </div>
+                        <div class="input-field">
+                            <label for="building_use">건물 구조/용도</label>
+                            <input type="text" id="building_use" name="building_use" value="철근콘크리트구조 / 공동주택">
+                        </div>
+                        <div class="input-field">
+                            <label for="building_area">건물 면적(㎡)</label>
+                            <input type="number" id="building_area" name="building_area" placeholder="예: 84.9">
+                        </div>
+                         <div class="input-field md:col-span-2">
+                            <label for="lease_part">임대할 부분</label>
+                            <input type="text" id="lease_part" name="lease_part" placeholder="예: 제101동 제1001호">
+                        </div>
+                        <div class="input-field">
+                            <label for="lease_area">임대 면적(㎡)</label>
+                            <input type="number" id="lease_area" name="lease_area" placeholder="예: 84.9">
+                        </div>
+                        <div class="input-field">
+                            <label for="room_count">방 개수</label>
+                            <input type="number" id="room_count" name="room_count" placeholder="예: 3">
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <section id="condolence" class="section" style="background-color: var(--surface-color);">
-            <div class="container">
-                <h2 class="section-title">근조화환</h2>
-                <div class="product-display">
-                    <div class="image-gallery">
-                        <div class="main-image">
-                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="익산 국제플라워 근조 3단 화환 정면 사진" id="main-image-condol">
+            <div class="form-section" id="section-terms">
+                <h2><span>2. 계약 내용 (보증금과 차임)</span> <span class="icon">▶</span></h2>
+                <div class="content">
+                     <div class="input-group">
+                        <div class="input-field">
+                            <label for="deposit">보증금 (원)</label>
+                            <input type="number" id="deposit" name="deposit" placeholder="숫자만 입력">
+                            <div class="currency-display" id="deposit_kr"></div>
                         </div>
-                        <div class="thumbnail-container">
-                            <img src="https://i.postimg.cc/fL531x8B/1.png" alt="근조화환 정면 썸네일" class="thumbnail active" onclick="changeImage('condol', this, 'https://i.postimg.cc/fL531x8B/1.png')">
-                            <img src="https://i.postimg.cc/k4wVLxTy/1.png" alt="근조화환 측면 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/k4wVLxTy/1.png')">
-                            <img src="https://i.postimg.cc/wvFtnhww/1.png" alt="근조화환 확대 썸네일" class="thumbnail" onclick="changeImage('condol', this, 'https://i.postimg.cc/wvFtnhww/1.png')">
+                        <div class="input-field">
+                            <label for="down_payment">계약금 (원)</label>
+                            <input type="number" id="down_payment" name="down_payment" placeholder="숫자만 입력">
+                            <div class="currency-display" id="down_payment_kr"></div>
                         </div>
-                    </div>
-                     <div class="product-details">
-                        <h3>3단 근조화환</h3>
-                        <p class="product-description-text">
-                            슬픈 마음을 위로하고 고인의 마지막 가시는 길을 추모하는 3단 근조화환입니다.
-                            엄숙하고 예를 다하는 마음으로 정성껏 제작하여 고인과 유족에게 깊은 애도를 표합니다.
-                        </p>
-                        <p class="product-price">₩50,000 부터</p>
-                        <button class="suggestion-button" onclick="openSuggestionModal('condolence')">✨ 리본 문구 추천 보기</button>
-                        <button class="order-button" onclick="placeOrder('3단 근조화환')">전화로 주문하기</button>
+                        <div class="input-field">
+                            <label for="interim_payment">중도금 (원)</label>
+                            <input type="number" id="interim_payment" name="interim_payment" placeholder="숫자만 입력">
+                            <div class="currency-display" id="interim_payment_kr"></div>
+                        </div>
+                        <div class="input-field">
+                            <label for="balance_payment">잔금 (원)</label>
+                            <input type="number" id="balance_payment" name="balance_payment" placeholder="자동 계산" readonly class="bg-gray-100">
+                             <div class="currency-display" id="balance_payment_kr"></div>
+                        </div>
+                        <div class="input-field">
+                            <label for="rent">차임 (월세) (원)</label>
+                            <input type="number" id="rent" name="rent" placeholder="숫자만 입력">
+                            <div class="currency-display" id="rent_kr"></div>
+                        </div>
+                        <div class="input-field">
+                            <label for="rent_payment_day">차임 지불일</label>
+                            <input type="text" id="rent_payment_day" name="rent_payment_day" placeholder="예: 매월 25일">
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <div class="form-section" id="section-period">
+                <h2><span>3. 임대차 기간</span> <span class="icon">▶</span></h2>
+                <div class="content">
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="start_date">기간 시작일</label>
+                            <input type="date" id="start_date" name="start_date">
+                        </div>
+                        <div class="input-field">
+                            <label for="end_date">기간 종료일</label>
+                            <input type="date" id="end_date" name="end_date">
+                        </div>
+                        <div class="input-field md:col-span-2">
+                            <label>총 기간</label>
+                            <p id="total_period" class="mt-2 text-gray-700 font-medium h-8 flex items-center">-</p>
+                        </div>
+                        <div class="input-field">
+                            <label for="delivery_date">부동산 인계일</label>
+                            <input type="date" id="delivery_date" name="delivery_date">
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <section id="order-info" class="section">
-            <div class="container">
-                <h2 class="section-title">주문 및 문의 안내</h2>
-                <div class="info-box">
-                    <h3>대표: 손광성</h3>
-                    <p>
-                        365일 언제나 상담 가능합니다.<br>
-                        전화 또는 문자로 문의해주시면 가장 빠르고 친절하게 안내해 드리겠습니다.
-                    </p>
-                    <a href="tel:010-7709-8983" class="contact-number">📞 010-7709-8983</a>
-                    <p class="call-helper-text">위 번호를 누르시면 자동으로 전화가 연결됩니다.</p>
+            
+            <div class="form-section" id="section-parties">
+                <h2><span>4. 계약 당사자 정보</span> <span class="icon">▶</span></h2>
+                <div class="content">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="border p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">임대인</h3>
+                            <div class="space-y-3">
+                                <input type="text" name="lessor_name" placeholder="성명" class="input-field w-full">
+                                <input type="text" name="lessor_id" placeholder="주민등록번호" class="input-field w-full">
+                                <input type="text" name="lessor_address" placeholder="주소" class="input-field w-full">
+                                <input type="tel" name="lessor_phone" placeholder="연락처" class="input-field w-full">
+                            </div>
+                        </div>
+                        <div class="border p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">임차인</h3>
+                            <div class="space-y-3">
+                                <input type="text" name="lessee_name" placeholder="성명" class="input-field w-full">
+                                <input type="text" name="lessee_id" placeholder="주민등록번호" class="input-field w-full">
+                                <input type="text" name="lessee_address" placeholder="주소" class="input-field w-full">
+                                <input type="tel" name="lessee_phone" placeholder="연락처" class="input-field w-full">
+                            </div>
+                        </div>
+                        <div class="border p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">공인중개사</h3>
+                            <div class="space-y-3">
+                                <input type="text" name="agent_office" placeholder="사무소 명칭" class="input-field w-full">
+                                <input type="text" name="agent_name" placeholder="대표" class="input-field w-full">
+                                <input type="text" name="agent_reg_no" placeholder="등록번호" class="input-field w-full">
+                                <input type="text" name="agent_address" placeholder="소재지" class="input-field w-full">
+                                <input type="tel" name="agent_phone" placeholder="연락처" class="input-field w-full">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-    </main>
+
+            <div class="form-section" id="section-special">
+                <h2><span>5. 특약사항</span> <span class="icon">▶</span></h2>
+                <div class="content">
+                    <div class="input-field">
+                        <label for="special_clauses">특약사항을 입력하거나 아래 버튼을 눌러 추가하세요.</label>
+                        <textarea id="special_clauses" name="special_clauses" rows="6"></textarea>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button type="button" class="btn special-clause-btn text-sm" data-clause="현 시설 상태에서의 계약이며, 기본 시설(보일러, 수도, 전기 등)의 고장은 임대인이 수리하고, 임차인의 고의·과실에 의한 파손이나 간단한 소모품(전구, 수전 등)은 임차인이 부담한다.">기본 수리 책임</button>
+                        <button type="button" class="btn special-clause-btn text-sm" data-clause="임차인은 관리비를 별도로 부담한다.">관리비 부담</button>
+                        <button type="button" class="btn special-clause-btn text-sm" data-clause="애완동물 사육을 금지한다.">애완동물 금지</button>
+                        <button type="button" class="btn special-clause-btn text-sm" data-clause="보증금 및 월차임의 조정은 임대차 기간 중에는 할 수 없다.">임대료 동결</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
     
-    <div class="modal-overlay" id="gemini-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">✨ 리본 문구 추천</h2>
-                <button class="close-button" onclick="closeSuggestionModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <label for="occasion-select">상황을 선택해주세요:</label>
-                <select id="occasion-select"></select>
-                <button class="order-button" id="generate-button" style="margin-top: 20px;">추천 문구 보기</button>
-                <div id="gemini-result" style="margin-top: 20px;"></div>
+    <div class="action-buttons">
+        <button type="button" id="resetBtn" class="btn btn-secondary">초기화</button>
+        <button type="button" id="previewBtn" class="btn btn-primary">미리보기 및 인쇄</button>
+    </div>
+
+    <div id="previewModal">
+        <div id="previewContent">
+            <h1>부동산 임대차 계약서</h1>
+            <div id="preview-body"></div>
+            <div class="modal-actions mt-6 text-center">
+                 <button type="button" id="printBtn" class="btn btn-primary">인쇄</button>
+                 <button type="button" id="closeModalBtn" class="btn btn-secondary">닫기</button>
             </div>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p><strong>상호:</strong> 국제플라워</p>
-            <p><strong>대표:</strong> 손광성</p>
-            <p><strong>연락처:</strong> 010-7709-8983</p>
-            <p>&copy; 2025 국제플라워. All Rights Reserved.</p>
-        </div>
-    </footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('lease-form');
 
-    <script>
-        // --- 기존 기능 스크립트 (수정 없음) ---
-        function placeOrder(productName) {
-            alert(
-                productName + " 주문을 위해 아래 번호로 연락해주세요.\n\n" +
-                "👨‍💼 대표: 손광성\n" +
-                "☎️ 연락처: 010-7709-8983"
-            );
-        }
-        function changeImage(section, clickedThumbnail, newSrc) {
-            document.getElementById(`main-image-${section}`).src = newSrc;
-            const thumbnails = clickedThumbnail.parentElement.children;
-            for (let i = 0; i < thumbnails.length; i++) {
-                thumbnails[i].classList.remove('active');
+    const sections = document.querySelectorAll('.form-section');
+    sections.forEach(section => {
+        const header = section.querySelector('h2');
+        header.addEventListener('click', () => {
+            const isOpen = section.classList.contains('open');
+            sections.forEach(s => s.classList.remove('open'));
+            if (!isOpen) {
+                section.classList.add('open');
             }
-            clickedThumbnail.classList.add('active');
-        }
-        const modal = document.getElementById('gemini-modal');
-        const occasionSelect = document.getElementById('occasion-select');
-        const generateButton = document.getElementById('generate-button');
-        const resultDiv = document.getElementById('gemini-result');
-        let currentWreathType = '';
-        const occasions = {
-            celebration: [ { value: '결혼식', text: '결혼식' }, { value: '개업식', text: '개업/이전' }, { value: '승진/영전', text: '승진/영전' }, { value: '전시회/공연', text: '전시회/공연' }, { value: '생일/기념일', text: '생일/기념일' }, ],
-            condolence: [ { value: '일반 추모', text: '일반 추모' }, { value: '기독교식', text: '기독교식 위로' }, { value: '불교식', text: '불교식 위로' }, ]
-        };
-        const suggestionLists = {
-            celebration: {
-                '결혼식': ['祝結婚 (축결혼)', '결혼을 진심으로 축하합니다', '세상 가장 행복한 부부되세요', '두 분의 아름다운 시작을 응원합니다', 'Happy Wedding Day'],
-                '개업식': ['祝發展 (축발전)', '無窮한 發展을 祈願합니다', '대박나세요!', '돈세다 잠드소서', '번창을 기원합니다'],
-                '승진/영전': ['祝昇進 (축승진)', '祝榮轉 (축영전)', '승진을 축하드립니다', '더 높은 곳을 향한 비상을 응원합니다', '꽃길만 걸으세요'],
-                '전시회/공연': ['祝展示會 (축전시회)', '成功적인 開催를 祈願합니다', '당신의 열정을 응원합니다', '멋진 공연을 축하합니다', '문화예술의 발전을 위하여'],
-                '생일/기념일': ['祝生日 (축생일)', '생일 축하합니다', '오늘을 진심으로 축하해요', '기념일을 축하합니다', 'Happy Birthday']
-            },
-            condolence: {
-                '일반 추모': ['삼가 故人의 冥福을 빕니다', '謹弔 (근조)', '깊은 애도를 표합니다', '좋은 곳으로 가시길 기도합니다', '마음을 위로합니다'],
-                '기독교식': ['하나님의 위로가 함께하시길', '召天을 애도합니다', '주님 품 안에서 편히 잠드소서', '위로의 주님이 함께 하시기를', '부활의 소망을 나눕니다'],
-                '불교식': ['極樂往生 發願 (극락왕생 발원)', '王生極樂 (왕생극락)', '빛의 세계로 떠나소서', '좋은 곳으로 가시길 발원합니다', '삼가 조의를 표합니다']
+            updateSectionIcons();
+        });
+    });
+
+    function updateSectionIcons() {
+        sections.forEach(section => {
+            const icon = section.querySelector('h2 .icon');
+            if (section.classList.contains('open')) {
+                icon.textContent = '▼';
+            } else {
+                icon.textContent = '▶';
             }
-        };
-        function openSuggestionModal(wreathType) {
-            currentWreathType = wreathType;
-            occasionSelect.innerHTML = '';
-            occasions[wreathType].forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.value;
-                opt.textContent = option.text;
-                occasionSelect.appendChild(opt);
-            });
-            resultDiv.innerHTML = '';
-            modal.classList.add('visible');
-        }
-        function closeSuggestionModal() { modal.classList.remove('visible'); }
-        generateButton.addEventListener('click', () => {
-            const selectedOccasion = occasionSelect.value;
-            resultDiv.innerHTML = '';
-            const suggestionsList = suggestionLists[currentWreathType]?.[selectedOccasion];
-            if (suggestionsList && suggestionsList.length > 0) { displaySuggestions(suggestionsList.join('\n')); }
         });
-        function displaySuggestions(text) {
-            const suggestions = text.split('\n').filter(line => line.trim().length > 0);
-            const ul = document.createElement('ul');
-            suggestions.forEach(suggestionText => {
-                const li = document.createElement('li');
-                li.textContent = suggestionText.replace(/^\d+\.\s*/, '');
-                li.onclick = () => copyToClipboard(li.textContent);
-                ul.appendChild(li);
+    }
+
+    const numberInputs = ['deposit', 'down_payment', 'interim_payment', 'balance_payment', 'rent'];
+    numberInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', () => {
+                updateCalculations();
+                formatCurrency(id);
             });
-            resultDiv.innerHTML = '';
-            resultDiv.appendChild(ul);
         }
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            alert(`'${text}'\n\n위 문구가 클립보드에 복사되었습니다.`);
+    });
+
+    function formatCurrency(id) {
+        const input = document.getElementById(id);
+        const display = document.getElementById(`${id}_kr`);
+        const value = parseInt(input.value, 10);
+        if (display && !isNaN(value) && value > 0) {
+            display.textContent = `일금 ${numberToKorean(value)} 원정`;
+        } else if (display) {
+            display.textContent = '';
         }
+    }
 
-        // 🖼️ 3. 스크롤 애니메이션을 위한 새 스크립트
-        document.addEventListener('DOMContentLoaded', () => {
-            const animatedElements = document.querySelectorAll('.product-display');
+    function numberToKorean(number) {
+        const units = ['', '만', '억', '조', '경'];
+        const numArr = String(number).split('').reverse().join('').match(/.{1,4}/g) || [];
+        let result = '';
+        for (let i = 0; i < numArr.length; i++) {
+            let part = numArr[i].split('').reverse().join('');
+            if (parseInt(part, 10) === 0) continue;
+            result = readFourDigits(part) + units[i] + ' ' + result;
+        }
+        return result.trim();
+    }
+    
+    function readFourDigits(part) {
+        const digits = '일이삼사오육칠팔구';
+        const places = ['', '십', '백', '천'];
+        let str = '';
+        for (let j = 0; j < part.length; j++) {
+            let digit = parseInt(part[part.length - 1 - j], 10);
+            if (digit > 0) {
+                str += (digit > 1 || j === 0 ? digits[digit - 1] : '') + places[j];
+            }
+        }
+        return str;
+    }
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('in-view');
-                    }
-                });
-            }, {
-                threshold: 0.1 // 요소가 10% 보이면 애니메이션 시작
-            });
+    function updateCalculations() {
+        const deposit = parseInt(document.getElementById('deposit').value) || 0;
+        const downPayment = parseInt(document.getElementById('down_payment').value) || 0;
+        const interimPayment = parseInt(document.getElementById('interim_payment').value) || 0;
+        const balancePayment = deposit - downPayment - interimPayment;
+        const balanceInput = document.getElementById('balance_payment');
+        balanceInput.value = balancePayment >= 0 ? balancePayment : 0;
+        formatCurrency('balance_payment');
+    }
 
-            animatedElements.forEach(el => {
-                observer.observe(el);
-            });
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    startDateInput.addEventListener('change', updatePeriod);
+    endDateInput.addEventListener('change', updatePeriod);
+    
+    function updatePeriod() {
+        if (startDateInput.value && endDateInput.value) {
+            const start = new Date(startDateInput.value);
+            const end = new Date(endDateInput.value);
+            if (start < end) {
+                let years = end.getFullYear() - start.getFullYear();
+                let months = end.getMonth() - start.getMonth();
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                document.getElementById('total_period').textContent = `총 ${years > 0 ? years + '년 ' : ''}${months > 0 ? months + '개월' : ''}`;
+            } else {
+                document.getElementById('total_period').textContent = '종료일은 시작일보다 이후여야 합니다.';
+            }
+        }
+    }
+
+    const specialClauseBtns = document.querySelectorAll('.special-clause-btn');
+    const specialClausesTextarea = document.getElementById('special_clauses');
+    specialClauseBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const currentText = specialClausesTextarea.value;
+            const newClause = btn.dataset.clause;
+            specialClausesTextarea.value += (currentText ? '\n- ' : '- ') + newClause;
         });
+    });
 
-    </script>
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if(confirm('정말로 모든 내용을 초기화하시겠습니까?')) {
+            form.reset();
+            updateCalculations();
+            document.getElementById('total_period').textContent = '-';
+            numberInputs.forEach(id => formatCurrency(id));
+        }
+    });
+
+    const previewModal = document.getElementById('previewModal');
+    document.getElementById('previewBtn').addEventListener('click', () => {
+        generatePreview();
+        previewModal.classList.add('visible');
+    });
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        previewModal.classList.remove('visible');
+    });
+    document.getElementById('printBtn').addEventListener('click', () => {
+        window.print();
+    });
+
+    function getFormData() {
+        const formData = new FormData(form);
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+        return data;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '____';
+        const date = new Date(dateString);
+        return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+    }
+    
+    function formatNumber(num) {
+         if(!num || isNaN(num)) return '';
+         return parseInt(num).toLocaleString('ko-KR');
+    }
+
+    function generatePreview() {
+        const data = getFormData();
+        const previewBody = document.getElementById('preview-body');
+        
+        let specialClausesHtml = '';
+        if (data.special_clauses) {
+            specialClausesHtml = `<ul>${data.special_clauses.split('\n').map(item => `<li>${item}</li>`).join('')}</ul>`;
+        }
+
+        previewBody.innerHTML = `
+            <p class="text-center font-bold mb-4">[임대인과 임차인은 아래 표시 부동산에 관하여 다음 계약내용과 같이 임대차 계약을 체결한다.]</p>
+            
+            <h3 class="font-bold my-2">1. 부동산의 표시</h3>
+            <table>
+                <tr><th>소재지</th><td colspan="3">${data.address || ''}</td></tr>
+                <tr><th>토지</th><td colspan="3">지목: ${data.land_category || ''} / 면적: ${data.land_area || ''} ㎡</td></tr>
+                <tr><th>건물</th><td colspan="3">구조/용도: ${data.building_use || ''} / 면적: ${data.building_area || ''} ㎡</td></tr>
+                <tr><th>임대할 부분</th><td>${data.lease_part || ''} (면적: ${data.lease_area || ''}㎡)</td><th>방 개수</th><td>${data.room_count || ''}개</td></tr>
+            </table>
+
+            <h3 class="font-bold my-2">2. 계약 내용</h3>
+            <p><strong>제1조 (보증금과 차임)</strong>: 위 부동산의 임대차에 있어 임차인은 아래와 같이 보증금 및 차임을 임대인에게 지불한다.</p>
+            <table>
+                <tr><th>보증금</th><td colspan="3">금 ${numberToKorean(data.deposit)} 원정 (₩ ${formatNumber(data.deposit)})</td></tr>
+                <tr><th>계약금</th><td>금 ${numberToKorean(data.down_payment)} 원정</td><th>지불일</th><td>계약 시</td></tr>
+                <tr><th>중도금</th><td>금 ${numberToKorean(data.interim_payment)} 원정</td><th>지불일</th><td> - </td></tr>
+                <tr><th>잔금</th><td>금 ${numberToKorean(data.balance_payment)} 원정</td><th>지불일</th><td>${formatDate(data.delivery_date)} (입주 시)</td></tr>
+                <tr><th>차임(월세)</th><td>금 ${numberToKorean(data.rent)} 원정 (₩ ${formatNumber(data.rent)})</td><th>지불일</th><td>${data.rent_payment_day || '매월 __일'}</td></tr>
+            </table>
+            
+            <p><strong>제2조 (임대차 기간)</strong>: 임대차 기간은 ${formatDate(data.start_date)}부터 ${formatDate(data.end_date)}까지 (${document.getElementById('total_period').textContent})로 한다.</p>
+            <p><strong>제3조 (부동산의 인도)</strong>: 임대인은 위 부동산을 ${formatDate(data.delivery_date)}까지 임차인에게 인도한다.</p>
+            
+            <h3 class="font-bold my-2">3. 특약사항</h3>
+            <div class="border p-2 min-h-[100px]">${specialClausesHtml.replace(/- /g, '• ')}</div>
+
+            <p class="text-center my-4">본 계약을 증명하기 위하여 계약 당사자가 이의 없음을 확인하고 각각 서명·날인한다.</p>
+            <p class="text-center font-bold">${formatDate(new Date())}</p>
+            
+            <table class="mt-4">
+                <tr><th>임대인</th><td><strong>주소:</strong> ${data.lessor_address || ''}<br><strong>주민등록번호:</strong> ${data.lessor_id || ''}<br><strong>성명:</strong> ${data.lessor_name || ''} (인)<br><strong>연락처:</strong> ${data.lessor_phone || ''}</td></tr>
+                <tr><th>임차인</th><td><strong>주소:</strong> ${data.lessee_address || ''}<br><strong>주민등록번호:</strong> ${data.lessee_id || ''}<br><strong>성명:</strong> ${data.lessee_name || ''} (인)<br><strong>연락처:</strong> ${data.lessee_phone || ''}</td></tr>
+                <tr><th>공인중개사</th><td><strong>사무소:</strong> ${data.agent_office || ''} (${data.agent_name || ''}) (인)<br><strong>등록번호:</strong> ${data.agent_reg_no || ''}<br><strong>소재지:</strong> ${data.agent_address || ''}<br><strong>연락처:</strong> ${data.agent_phone || ''}</td></tr>
+            </table>
+        `;
+    }
+    
+    updateSectionIcons();
+});
+</script>
 </body>
 </html>
-
