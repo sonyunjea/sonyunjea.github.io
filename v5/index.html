@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인터랙티브 임대차 계약서 생성기</title>
+    <title>상호 성장 및 신뢰 약정서 생성기</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chosen Palette: Calm Harmony (Stone, Gray, Soft Blue) -->
-    <!-- Application Structure Plan: A single-page, task-oriented application that transforms the static lease agreement into an interactive form. The structure uses distinct, collapsible sections for Property Info, Terms, Period, Parties, and Special Conditions. This guided, chunked approach simplifies data entry and reduces user error. Key interactions include automatic calculations (balance payment, duration), number-to-text conversion for currency, and a one-click preview modal that generates a print-ready version of the contract. This structure was chosen to make the complex process of contract creation intuitive and efficient for landlords, tenants, and agents. -->
-    <!-- Visualization & Content Choices: The application eschews traditional data charts as the source is a legal document. Instead, it "visualizes" the contract structure through an interactive form. Report Info: Contract fields (e.g., deposit amount). Goal: Inform, Organize, Reduce Error. Viz/Presentation Method: Labeled number inputs with real-time formatting and Korean text conversion. Interaction: User input triggers automatic calculation of the remaining balance. Justification: Improves clarity and accuracy of financial details. Library/Method: Vanilla JS. Report Info: Special Clauses. Goal: Organize, Improve Efficiency. Viz/Presentation Method: A textarea supplemented by buttons for common clauses. Interaction: Clicking a button appends the clause text. Justification: Speeds up the process for standard agreements. Library/Method: Vanilla JS. -->
+    <!-- Application Structure Plan: A single-page, task-oriented application that transforms the static lease agreement into an interactive form for a personal growth pact. The structure uses distinct, collapsible sections for Parties, Term, Obligations, and Penalties. This guided approach simplifies formalizing the personal agreement. Key interactions include pre-filled core promises, editable clauses, and a one-click preview modal that generates a formal-looking, print-ready version of the pact. This structure was chosen to give a serious, structured feel to a deeply personal and unique agreement. -->
+    <!-- Visualization & Content Choices: The application visualizes the contract structure through an interactive form. Report Info: Core promises and obligations. Goal: Inform, Organize, Formalize. Viz/Presentation Method: Labeled text areas with pre-filled, editable content. Interaction: Users can modify or accept the core terms. Justification: Provides a solid foundation while allowing personalization. Library/Method: Vanilla JS. Report Info: Penalties for breach. Goal: Emphasize seriousness. Viz/Presentation Method: A pre-written, editable list of non-financial, personal consequences. Interaction: Users can review and agree upon the stakes. Justification: Aligns with the non-legal, trust-based nature of the agreement. Library/Method: Vanilla JS. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
@@ -73,12 +73,6 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 2px #bfdbfe;
         }
-        .currency-display {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
-            height: 1rem;
-        }
         .action-buttons {
             position: sticky;
             bottom: 0;
@@ -139,230 +133,124 @@
             max-height: 90vh;
             overflow-y: auto;
             border-radius: 0.5rem;
-            padding: 2rem;
-            font-size: 14px;
+            padding: 2.5rem;
+            font-size: 15px;
+            line-height: 1.8;
         }
         #previewContent h1 {
             font-size: 24px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        #previewContent table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
+        #previewContent h3 {
+             font-size: 1.1em;
+             font-weight: bold;
+             margin-top: 1.5rem;
+             margin-bottom: 0.5rem;
         }
-        #previewContent th, #previewContent td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
+        #previewContent p {
+            margin-bottom: 0.75rem;
         }
-        #previewContent th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            width: 120px;
+        #previewContent ol {
+            list-style-type: decimal;
+            list-style-position: inside;
+            padding-left: 1rem;
         }
-        .special-clause-btn {
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-        }
-        .special-clause-btn:hover {
-            background-color: #e5e7eb;
-        }
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #previewModal, #previewContent, #previewContent * {
-                visibility: visible;
-            }
-            #previewModal {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: auto;
-                background-color: white;
-                padding: 0;
-            }
-            #previewContent {
-                width: 100%;
-                height: auto;
-                max-height: none;
-                box-shadow: none;
-                border: none;
-                margin: 0;
-                padding: 0;
-            }
-            .modal-actions {
-                display: none;
-            }
+         @media print {
+            body * { visibility: hidden; }
+            #previewModal, #previewContent, #previewContent * { visibility: visible; }
+            #previewModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background-color: white; padding: 0; }
+            #previewContent { width: 100%; height: auto; max-height: none; box-shadow: none; border: none; margin: 0; padding: 1cm; font-size: 12pt; }
+            .modal-actions { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">인터랙티브 임대차 계약서</h1>
-            <p class="text-gray-500 mt-2">필수 정보를 입력하여 간편하게 부동산 임대차 계약서를 완성하세요.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">상호 성장 및 신뢰 약정서</h1>
+            <p class="text-gray-500 mt-2">두 분의 약속을 정식 문서로 기록하고 완성하세요.</p>
         </header>
 
-        <form id="lease-form">
-            <div class="form-section open" id="section-property">
-                <h2><span>1. 부동산의 표시</span> <span class="icon">▼</span></h2>
+        <form id="agreement-form">
+            <div class="form-section open" id="section-parties">
+                <h2><span>제1조 (계약 당사자)</span> <span class="icon">▼</span></h2>
                 <div class="content">
                     <div class="input-group">
-                        <div class="input-field md:col-span-2">
-                            <label for="address">소재지</label>
-                            <input type="text" id="address" name="address" value="서울특별시 강남구 테헤란로 212 (역삼동)">
+                        <div class="input-field">
+                            <label for="party_gap">"갑"</label>
+                            <input type="text" id="party_gap" name="party_gap" value="허지현">
                         </div>
                         <div class="input-field">
-                            <label for="land_category">토지 지목</label>
-                            <input type="text" id="land_category" name="land_category" value="대">
-                        </div>
-                        <div class="input-field">
-                            <label for="land_area">토지 면적(㎡)</label>
-                            <input type="number" id="land_area" name="land_area" placeholder="예: 100.5">
-                        </div>
-                        <div class="input-field">
-                            <label for="building_use">건물 구조/용도</label>
-                            <input type="text" id="building_use" name="building_use" value="철근콘크리트구조 / 공동주택">
-                        </div>
-                        <div class="input-field">
-                            <label for="building_area">건물 면적(㎡)</label>
-                            <input type="number" id="building_area" name="building_area" placeholder="예: 84.9">
-                        </div>
-                         <div class="input-field md:col-span-2">
-                            <label for="lease_part">임대할 부분</label>
-                            <input type="text" id="lease_part" name="lease_part" placeholder="예: 제101동 제1001호">
-                        </div>
-                        <div class="input-field">
-                            <label for="lease_area">임대 면적(㎡)</label>
-                            <input type="number" id="lease_area" name="lease_area" placeholder="예: 84.9">
-                        </div>
-                        <div class="input-field">
-                            <label for="room_count">방 개수</label>
-                            <input type="number" id="room_count" name="room_count" placeholder="예: 3">
+                            <label for="party_eul">"을"</label>
+                            <input type="text" id="party_eul" name="party_eul" value="손윤재">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="form-section" id="section-terms">
-                <h2><span>2. 계약 내용 (보증금과 차임)</span> <span class="icon">▶</span></h2>
-                <div class="content">
-                     <div class="input-group">
-                        <div class="input-field">
-                            <label for="deposit">보증금 (원)</label>
-                            <input type="number" id="deposit" name="deposit" placeholder="숫자만 입력">
-                            <div class="currency-display" id="deposit_kr"></div>
-                        </div>
-                        <div class="input-field">
-                            <label for="down_payment">계약금 (원)</label>
-                            <input type="number" id="down_payment" name="down_payment" placeholder="숫자만 입력">
-                            <div class="currency-display" id="down_payment_kr"></div>
-                        </div>
-                        <div class="input-field">
-                            <label for="interim_payment">중도금 (원)</label>
-                            <input type="number" id="interim_payment" name="interim_payment" placeholder="숫자만 입력">
-                            <div class="currency-display" id="interim_payment_kr"></div>
-                        </div>
-                        <div class="input-field">
-                            <label for="balance_payment">잔금 (원)</label>
-                            <input type="number" id="balance_payment" name="balance_payment" placeholder="자동 계산" readonly class="bg-gray-100">
-                             <div class="currency-display" id="balance_payment_kr"></div>
-                        </div>
-                        <div class="input-field">
-                            <label for="rent">차임 (월세) (원)</label>
-                            <input type="number" id="rent" name="rent" placeholder="숫자만 입력">
-                            <div class="currency-display" id="rent_kr"></div>
-                        </div>
-                        <div class="input-field">
-                            <label for="rent_payment_day">차임 지불일</label>
-                            <input type="text" id="rent_payment_day" name="rent_payment_day" placeholder="예: 매월 25일">
-                        </div>
-                     </div>
-                </div>
-            </div>
-
             <div class="form-section" id="section-period">
-                <h2><span>3. 임대차 기간</span> <span class="icon">▶</span></h2>
+                <h2><span>제2조 (계약 기간 및 갱신)</span> <span class="icon">▶</span></h2>
                 <div class="content">
                     <div class="input-group">
                         <div class="input-field">
-                            <label for="start_date">기간 시작일</label>
+                            <label for="start_date">계약 시작일</label>
                             <input type="date" id="start_date" name="start_date">
                         </div>
                         <div class="input-field">
-                            <label for="end_date">기간 종료일</label>
+                            <label for="end_date">계약 종료일</label>
                             <input type="date" id="end_date" name="end_date">
                         </div>
                         <div class="input-field md:col-span-2">
                             <label>총 기간</label>
                             <p id="total_period" class="mt-2 text-gray-700 font-medium h-8 flex items-center">-</p>
                         </div>
-                        <div class="input-field">
-                            <label for="delivery_date">부동산 인계일</label>
-                            <input type="date" id="delivery_date" name="delivery_date">
-                        </div>
+                    </div>
+                    <div class="input-field mt-4">
+                        <label for="renewal_clause">갱신 조건</label>
+                        <textarea id="renewal_clause" name="renewal_clause" rows="3">본 계약은 2년마다 갱신되는 것을 원칙으로 하며, 계약 만료 최소 2개월 전까지 당사자 일방이 상대방에게 계약의 종료 또는 갱신 의사를 서면 또는 구두로 통지하여야 한다. 별도의 통지가 없을 경우, 동일한 조건으로 2년간 자동 갱신된 것으로 본다.</textarea>
                     </div>
                 </div>
             </div>
-            
-            <div class="form-section" id="section-parties">
-                <h2><span>4. 계약 당사자 정보</span> <span class="icon">▶</span></h2>
+
+            <div class="form-section" id="section-obligations">
+                <h2><span>제3조 (상호 의무)</span> <span class="icon">▶</span></h2>
                 <div class="content">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="border p-4 rounded-lg">
-                            <h3 class="font-semibold mb-2">임대인</h3>
-                            <div class="space-y-3">
-                                <input type="text" name="lessor_name" placeholder="성명" class="input-field w-full">
-                                <input type="text" name="lessor_id" placeholder="주민등록번호" class="input-field w-full">
-                                <input type="text" name="lessor_address" placeholder="주소" class="input-field w-full">
-                                <input type="tel" name="lessor_phone" placeholder="연락처" class="input-field w-full">
-                            </div>
-                        </div>
-                        <div class="border p-4 rounded-lg">
-                            <h3 class="font-semibold mb-2">임차인</h3>
-                            <div class="space-y-3">
-                                <input type="text" name="lessee_name" placeholder="성명" class="input-field w-full">
-                                <input type="text" name="lessee_id" placeholder="주민등록번호" class="input-field w-full">
-                                <input type="text" name="lessee_address" placeholder="주소" class="input-field w-full">
-                                <input type="tel" name="lessee_phone" placeholder="연락처" class="input-field w-full">
-                            </div>
-                        </div>
-                        <div class="border p-4 rounded-lg">
-                            <h3 class="font-semibold mb-2">공인중개사</h3>
-                            <div class="space-y-3">
-                                <input type="text" name="agent_office" placeholder="사무소 명칭" class="input-field w-full">
-                                <input type="text" name="agent_name" placeholder="대표" class="input-field w-full">
-                                <input type="text" name="agent_reg_no" placeholder="등록번호" class="input-field w-full">
-                                <input type="text" name="agent_address" placeholder="소재지" class="input-field w-full">
-                                <input type="tel" name="agent_phone" placeholder="연락처" class="input-field w-full">
-                            </div>
-                        </div>
+                    <div class="input-field">
+                        <label for="obligation_gap">"갑"의 의무</label>
+                        <textarea id="obligation_gap" name="obligation_gap" rows="4">"갑"(허지현)은 "을"(손윤재)에게 자신의 성장 과정을 진솔하게 공유할 의무를 지닌다. 이는 과거의 경험, 현재의 고민, 미래의 목표 등을 포함하며, "을"의 조언을 구하기 위한 충분한 정보를 제공하는 것을 목적으로 한다.</textarea>
+                    </div>
+                    <div class="input-field mt-4">
+                        <label for="obligation_eul">"을"의 의무</label>
+                        <textarea id="obligation_eul" name="obligation_eul" rows="4">"을"(손윤재)은 "갑"(허지현)의 공유 내용에 대하여, 자신의 지식과 경험을 바탕으로 한 최선의 조언(피드백)과 본인의 역량을 제공할 것을 약속한다. 이는 "갑"의 성장을 돕고 지지하는 것을 목적으로 한다.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section" id="section-penalties">
+                <h2><span>제4조 (계약 위반 시 불이익)</span> <span class="icon">▶</span></h2>
+                <div class="content">
+                     <div class="input-field">
+                        <label for="penalty_clauses">불이익 조항</label>
+                        <textarea id="penalty_clauses" name="penalty_clauses" rows="8">본 계약의 목적을 위반하거나 상호 의무를 성실히 이행하지 아니하여 계약이 파기될 경우, 위반 당사자("귀책 당사자")는 다음과 같은 불이익을 감수한다.
+1. 귀책 당사자는 상대방에게 진심을 담은 1,000자 이상의 자필 사과 편지를 작성하여 전달하고, 상대방이 수락할 때까지 월 1회, 총 3회에 걸쳐 관계 개선을 위한 대화를 요청해야 한다.
+2. 귀책 당사자는 상대방이 지정한 주제의 책을 1권 읽고, 그에 대한 깊이 있는 감상문과 '이 계약의 가치'에 대한 성찰을 담은 보고서를 A4 3장 분량으로 작성하여 제출해야 한다.
+3. 본 계약의 파기 시, 귀책 당사자는 향후 2년간 상대방에게 어떠한 형태로든 본 계약과 유사한 성격의 조언이나 성장에 관한 도움을 요청할 수 없으며, 상대방 또한 이에 응할 의무가 없다.</textarea>
                     </div>
                 </div>
             </div>
 
             <div class="form-section" id="section-special">
-                <h2><span>5. 특약사항</span> <span class="icon">▶</span></h2>
+                <h2><span>제5조 (기타 사항)</span> <span class="icon">▶</span></h2>
                 <div class="content">
                     <div class="input-field">
-                        <label for="special_clauses">특약사항을 입력하거나 아래 버튼을 눌러 추가하세요.</label>
-                        <textarea id="special_clauses" name="special_clauses" rows="6"></textarea>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        <button type="button" class="btn special-clause-btn text-sm" data-clause="현 시설 상태에서의 계약이며, 기본 시설(보일러, 수도, 전기 등)의 고장은 임대인이 수리하고, 임차인의 고의·과실에 의한 파손이나 간단한 소모품(전구, 수전 등)은 임차인이 부담한다.">기본 수리 책임</button>
-                        <button type="button" class="btn special-clause-btn text-sm" data-clause="임차인은 관리비를 별도로 부담한다.">관리비 부담</button>
-                        <button type="button" class="btn special-clause-btn text-sm" data-clause="애완동물 사육을 금지한다.">애완동물 금지</button>
-                        <button type="button" class="btn special-clause-btn text-sm" data-clause="보증금 및 월차임의 조정은 임대차 기간 중에는 할 수 없다.">임대료 동결</button>
+                        <label for="special_clauses">특약사항 (필요 시 입력)</label>
+                        <textarea id="special_clauses" name="special_clauses" rows="4" placeholder="예: 모든 대화 내용은 상호 동의 없이 제3자에게 누설하지 않는다."></textarea>
                     </div>
                 </div>
             </div>
         </form>
-
     </div>
     
     <div class="action-buttons">
@@ -372,7 +260,7 @@
 
     <div id="previewModal">
         <div id="previewContent">
-            <h1>부동산 임대차 계약서</h1>
+            <h1>상호 성장 및 신뢰에 관한 약정서</h1>
             <div id="preview-body"></div>
             <div class="modal-actions mt-6 text-center">
                  <button type="button" id="printBtn" class="btn btn-primary">인쇄</button>
@@ -383,7 +271,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('lease-form');
+    const form = document.getElementById('agreement-form');
 
     const sections = document.querySelectorAll('.form-section');
     sections.forEach(section => {
@@ -409,63 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const numberInputs = ['deposit', 'down_payment', 'interim_payment', 'balance_payment', 'rent'];
-    numberInputs.forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            input.addEventListener('input', () => {
-                updateCalculations();
-                formatCurrency(id);
-            });
-        }
-    });
-
-    function formatCurrency(id) {
-        const input = document.getElementById(id);
-        const display = document.getElementById(`${id}_kr`);
-        const value = parseInt(input.value, 10);
-        if (display && !isNaN(value) && value > 0) {
-            display.textContent = `일금 ${numberToKorean(value)} 원정`;
-        } else if (display) {
-            display.textContent = '';
-        }
-    }
-
-    function numberToKorean(number) {
-        const units = ['', '만', '억', '조', '경'];
-        const numArr = String(number).split('').reverse().join('').match(/.{1,4}/g) || [];
-        let result = '';
-        for (let i = 0; i < numArr.length; i++) {
-            let part = numArr[i].split('').reverse().join('');
-            if (parseInt(part, 10) === 0) continue;
-            result = readFourDigits(part) + units[i] + ' ' + result;
-        }
-        return result.trim();
-    }
-    
-    function readFourDigits(part) {
-        const digits = '일이삼사오육칠팔구';
-        const places = ['', '십', '백', '천'];
-        let str = '';
-        for (let j = 0; j < part.length; j++) {
-            let digit = parseInt(part[part.length - 1 - j], 10);
-            if (digit > 0) {
-                str += (digit > 1 || j === 0 ? digits[digit - 1] : '') + places[j];
-            }
-        }
-        return str;
-    }
-
-    function updateCalculations() {
-        const deposit = parseInt(document.getElementById('deposit').value) || 0;
-        const downPayment = parseInt(document.getElementById('down_payment').value) || 0;
-        const interimPayment = parseInt(document.getElementById('interim_payment').value) || 0;
-        const balancePayment = deposit - downPayment - interimPayment;
-        const balanceInput = document.getElementById('balance_payment');
-        balanceInput.value = balancePayment >= 0 ? balancePayment : 0;
-        formatCurrency('balance_payment');
-    }
-
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
     startDateInput.addEventListener('change', updatePeriod);
@@ -478,33 +309,34 @@ document.addEventListener('DOMContentLoaded', function() {
             if (start < end) {
                 let years = end.getFullYear() - start.getFullYear();
                 let months = end.getMonth() - start.getMonth();
+                let days = end.getDate() - start.getDate();
+
+                if (days < 0) {
+                    months--;
+                    const prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+                    days += prevMonth.getDate();
+                }
                 if (months < 0) {
                     years--;
                     months += 12;
                 }
-                document.getElementById('total_period').textContent = `총 ${years > 0 ? years + '년 ' : ''}${months > 0 ? months + '개월' : ''}`;
+                
+                let result = '총 ';
+                if (years > 0) result += `${years}년 `;
+                if (months > 0) result += `${months}개월 `;
+                if (days > 0) result += `${days}일`;
+
+                document.getElementById('total_period').textContent = result.trim();
             } else {
                 document.getElementById('total_period').textContent = '종료일은 시작일보다 이후여야 합니다.';
             }
         }
     }
-
-    const specialClauseBtns = document.querySelectorAll('.special-clause-btn');
-    const specialClausesTextarea = document.getElementById('special_clauses');
-    specialClauseBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const currentText = specialClausesTextarea.value;
-            const newClause = btn.dataset.clause;
-            specialClausesTextarea.value += (currentText ? '\n- ' : '- ') + newClause;
-        });
-    });
-
+    
     document.getElementById('resetBtn').addEventListener('click', () => {
         if(confirm('정말로 모든 내용을 초기화하시겠습니까?')) {
             form.reset();
-            updateCalculations();
             document.getElementById('total_period').textContent = '-';
-            numberInputs.forEach(id => formatCurrency(id));
         }
     });
 
@@ -530,64 +362,65 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function formatDate(dateString) {
-        if (!dateString) return '____';
+        if (!dateString) return '____년 __월 __일';
         const date = new Date(dateString);
         return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
     }
-    
-    function formatNumber(num) {
-         if(!num || isNaN(num)) return '';
-         return parseInt(num).toLocaleString('ko-KR');
+
+    function nl2p(str) {
+        return str.replace(/\n/g, '<br>');
     }
 
     function generatePreview() {
         const data = getFormData();
         const previewBody = document.getElementById('preview-body');
         
-        let specialClausesHtml = '';
-        if (data.special_clauses) {
-            specialClausesHtml = `<ul>${data.special_clauses.split('\n').map(item => `<li>${item}</li>`).join('')}</ul>`;
-        }
-
         previewBody.innerHTML = `
-            <p class="text-center font-bold mb-4">[임대인과 임차인은 아래 표시 부동산에 관하여 다음 계약내용과 같이 임대차 계약을 체결한다.]</p>
+            <p><strong>${data.party_gap || '허지현'}</strong>(이하 "갑"이라 칭한다)과 <strong>${data.party_eul || '손윤재'}</strong>(이하 "을"이라 칭한다)은 상호간의 성장과 신뢰를 바탕으로 다음과 같이 약정을 체결한다.</p>
             
-            <h3 class="font-bold my-2">1. 부동산의 표시</h3>
-            <table>
-                <tr><th>소재지</th><td colspan="3">${data.address || ''}</td></tr>
-                <tr><th>토지</th><td colspan="3">지목: ${data.land_category || ''} / 면적: ${data.land_area || ''} ㎡</td></tr>
-                <tr><th>건물</th><td colspan="3">구조/용도: ${data.building_use || ''} / 면적: ${data.building_area || ''} ㎡</td></tr>
-                <tr><th>임대할 부분</th><td>${data.lease_part || ''} (면적: ${data.lease_area || ''}㎡)</td><th>방 개수</th><td>${data.room_count || ''}개</td></tr>
-            </table>
+            <h3>제1조 (목적)</h3>
+            <p>본 약정은 "갑"과 "을"이 상호 존중과 신의성실의 원칙에 입각하여, 각자의 성장과 발전을 도모하고 지지하는 것을 목적으로 한다.</p>
+            
+            <h3>제2조 (계약 기간 및 갱신)</h3>
+            <p>① 본 약정의 기간은 <strong>${formatDate(data.start_date)}</strong>부터 <strong>${formatDate(data.end_date)}</strong>까지(${document.getElementById('total_period').textContent})로 한다.</p>
+            <p>② ${nl2p(data.renewal_clause || '')}</p>
 
-            <h3 class="font-bold my-2">2. 계약 내용</h3>
-            <p><strong>제1조 (보증금과 차임)</strong>: 위 부동산의 임대차에 있어 임차인은 아래와 같이 보증금 및 차임을 임대인에게 지불한다.</p>
-            <table>
-                <tr><th>보증금</th><td colspan="3">금 ${numberToKorean(data.deposit)} 원정 (₩ ${formatNumber(data.deposit)})</td></tr>
-                <tr><th>계약금</th><td>금 ${numberToKorean(data.down_payment)} 원정</td><th>지불일</th><td>계약 시</td></tr>
-                <tr><th>중도금</th><td>금 ${numberToKorean(data.interim_payment)} 원정</td><th>지불일</th><td> - </td></tr>
-                <tr><th>잔금</th><td>금 ${numberToKorean(data.balance_payment)} 원정</td><th>지불일</th><td>${formatDate(data.delivery_date)} (입주 시)</td></tr>
-                <tr><th>차임(월세)</th><td>금 ${numberToKorean(data.rent)} 원정 (₩ ${formatNumber(data.rent)})</td><th>지불일</th><td>${data.rent_payment_day || '매월 __일'}</td></tr>
-            </table>
-            
-            <p><strong>제2조 (임대차 기간)</strong>: 임대차 기간은 ${formatDate(data.start_date)}부터 ${formatDate(data.end_date)}까지 (${document.getElementById('total_period').textContent})로 한다.</p>
-            <p><strong>제3조 (부동산의 인도)</strong>: 임대인은 위 부동산을 ${formatDate(data.delivery_date)}까지 임차인에게 인도한다.</p>
-            
-            <h3 class="font-bold my-2">3. 특약사항</h3>
-            <div class="border p-2 min-h-[100px]">${specialClausesHtml.replace(/- /g, '• ')}</div>
+            <h3>제3조 (상호 의무)</h3>
+            <p>① "갑"의 의무: ${nl2p(data.obligation_gap || '')}</p>
+            <p>② "을"의 의무: ${nl2p(data.obligation_eul || '')}</p>
 
-            <p class="text-center my-4">본 계약을 증명하기 위하여 계약 당사자가 이의 없음을 확인하고 각각 서명·날인한다.</p>
+            <h3>제4조 (계약 위반 시 불이익)</h3>
+            <p>${nl2p(data.penalty_clauses || '')}</p>
+
+            <h3>제5조 (기타 사항)</h3>
+            <p>${nl2p(data.special_clauses || '본 계약서에서 정하지 않은 사항은 일반적인 상관례와 상호 협의에 따른다.')}</p>
+
+            <br><br>
+            <p class="text-center">본 약정의 내용을 증명하기 위하여 약정서 2부를 작성하여 "갑"과 "을"이 각각 서명 또는 날인한 후 1부씩 보관한다.</p>
+            <br>
             <p class="text-center font-bold">${formatDate(new Date())}</p>
+            <br><br><br>
             
-            <table class="mt-4">
-                <tr><th>임대인</th><td><strong>주소:</strong> ${data.lessor_address || ''}<br><strong>주민등록번호:</strong> ${data.lessor_id || ''}<br><strong>성명:</strong> ${data.lessor_name || ''} (인)<br><strong>연락처:</strong> ${data.lessor_phone || ''}</td></tr>
-                <tr><th>임차인</th><td><strong>주소:</strong> ${data.lessee_address || ''}<br><strong>주민등록번호:</strong> ${data.lessee_id || ''}<br><strong>성명:</strong> ${data.lessee_name || ''} (인)<br><strong>연락처:</strong> ${data.lessee_phone || ''}</td></tr>
-                <tr><th>공인중개사</th><td><strong>사무소:</strong> ${data.agent_office || ''} (${data.agent_name || ''}) (인)<br><strong>등록번호:</strong> ${data.agent_reg_no || ''}<br><strong>소재지:</strong> ${data.agent_address || ''}<br><strong>연락처:</strong> ${data.agent_phone || ''}</td></tr>
-            </table>
+            <div class="flex justify-around text-center">
+                <div>
+                    <p>(갑)</p>
+                    <p class="mt-8">성 명 : <strong>${data.party_gap || '허지현'}</strong> (인)</p>
+                </div>
+                <div>
+                    <p>(을)</p>
+                    <p class="mt-8">성 명 : <strong>${data.party_eul || '손윤재'}</strong> (인)</p>
+                </div>
+            </div>
         `;
     }
     
     updateSectionIcons();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').value = today;
+    const twoYearsLater = new Date();
+    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    document.getElementById('end_date').value = twoYearsLater.toISOString().split('T')[0];
+    updatePeriod();
 });
 </script>
 </body>
