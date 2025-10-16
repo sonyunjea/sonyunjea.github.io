@@ -1,63 +1,166 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이론 적용 훈련 - 사회·문화 공략집</title>
-<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="./assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이론 적용 훈련 - 사회·문화 공략집</title>
+    <!-- Tailwind CSS CDN 스크립트 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- 사용자 정의 스타일 -->
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', 'sans-serif'; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .tab-button.active {
+            border-color: #2563eb; /* blue-600 */
+            color: #2563eb;
+            font-weight: 600;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-gray-50 text-gray-800">
 
-<header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+<!-- Header Section -->
+<header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-md border-b border-gray-200">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
-             <a href="./index.html">
-              <h1 class="text-2xl font-bold text-emerald-600">✨ 허지현 학생을 위한 사회·문화 공략집</h1>
+            <a href="./index.html" class="flex items-center space-x-2">
+                <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">
+                    ✨ 사회·문화 공략집
+                </span>
             </a>
-            <div class="hidden md:flex space-x-6 text-lg">
-                <a href="./concepts.html" class="text-slate-600 hover:text-emerald-600 transition">심화 개념 다지기</a>
-                <a href="./killer-questions.html" class="text-slate-600 hover:text-emerald-600 transition">킬러 문항 정복</a>
-                <a href="./theories.html" class="text-emerald-600 font-semibold">이론 적용 훈련</a>
+            <div class="hidden md:flex items-center space-x-8 text-base font-medium">
+                <a href="./concepts.html" class="text-gray-600 hover:text-blue-600 transition duration-300">심화 개념</a>
+                <a href="./killer-questions.html" class="text-gray-600 hover:text-blue-600 transition duration-300">킬러 문항</a>
+                <a href="./theories.html" class="text-purple-600 font-semibold border-b-2 border-purple-600 pb-1">이론 적용</a>
             </div>
         </div>
     </nav>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-    <section id="theories" class="mb-20">
-        <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">이론 적용 훈련</h2>
-        <div class="bg-white p-8 rounded-xl shadow-lg">
-             <p class="text-center text-slate-600 mb-8">개별 이론 암기를 넘어, 실제 사회 현상에 각 이론을 '적용'하는 능력이 중요합니다. 특정 사례를 보고 어떤 이론으로 분석할 수 있을지 빠르게 연결하는 연습을 해보세요.</p>
-            <div class="mb-4 border-b border-slate-200">
+    <section id="theories-application" class="fade-in-up" style="opacity:0;">
+        <!-- Page Title -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">이론 적용 훈련</h2>
+            <p class="mt-4 text-lg text-gray-600">하나의 현상을 여러 이론으로 분석하는 통합적 사고력을 기릅니다.</p>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xl">
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">개별 이론 암기를 넘어, 실제 사회 현상에 각 이론을 '적용'하는 능력이 중요합니다. 특정 사례를 보고 어떤 이론으로 분석할 수 있을지 빠르게 연결하는 연습을 해보세요.</p>
+            
+            <!-- Tab Navigation -->
+            <div class="mb-6 border-b border-gray-200">
                 <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-                    <button class="tab-button active" data-tab="deviance">일탈 행동 이론 적용</button>
-                    <button class="tab-button" data-tab="perspectives">사회 현상 관점 적용</button>
+                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-colors duration-300 active" data-tab="deviance">일탈 행동 이론 적용</button>
+                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-colors duration-300" data-tab="perspectives">사회 현상 관점 적용</button>
                 </nav>
             </div>
+            
+            <!-- Tab Content Area -->
             <div id="tab-content">
-                <!-- Tab content will be inserted here by JavaScript -->
+                <!-- Content will be injected by JS -->
             </div>
-             <div class="mt-8 bg-emerald-50 p-6 rounded-lg">
-                <h4 class="font-bold text-lg text-emerald-800">🧠 1등급 Level Up Tip!</h4>
-                <p class="text-emerald-700 mt-2">지현 학생, '청소년의 스마트폰 과의존' 현상을 떠올려 보세요. 머튼의 아노미 이론으로는 어떻게 설명할 수 있을까요? (힌트: 문화적 목표와 수단 간의 괴리) 그렇다면 낙인 이론으로는 어떤 부분에 초점을 맞춰 분석할 수 있을까요? 이렇게 하나의 사례를 여러 관점으로 분석하는 연습이 실전에서 큰 도움이 될 거예요.</p>
+             
+             <!-- 1등급 Level Up Tip -->
+             <div class="mt-12 bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-gray-200">
+                <h4 class="font-bold text-xl flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zm6-8a2 2 0 100-4 2 2 0 000 4zm-12 0a2 2 0 100-4 2 2 0 000 4z"></path></svg>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">통합적 사고 훈련 Tip!</span>
+                </h4>
+                <p class="text-gray-700 mt-3 pl-8">
+                    지현 학생, '청소년의 스마트폰 과의존' 현상을 떠올려 보세요. <strong class="text-gray-800">머튼의 아노미 이론</strong>으로는 '성공(예: 친구 관계, 학업)'이라는 문화적 목표 달성의 어려움을 스마트폰 세상에서 해소하려는 수단'으로 설명할 수 있습니다. 반면 <strong class="text-gray-800">낙인 이론</strong>으로는 '문제아'라는 주변의 시선이 어떻게 스마트폰 중독을 심화시키는지에 초점을 맞출 수 있죠. 이렇게 하나의 사례를 여러 관점으로 분석하는 연습이 실전에서 큰 도움이 될 거예요.
+                </p>
             </div>
         </div>
     </section>
 
 </main>
 
-<footer class="bg-slate-800 text-white py-8">
+<!-- Footer Section -->
+<footer class="bg-gray-900 text-white py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p>&copy; 2025 허지현 학생 맞춤형 공략집. 만점을 응원합니다!</p>
-        <p class="text-sm text-slate-400 mt-2">본 페이지는 학습 목적으로 제작되었습니다.</p>
+        <p class="text-lg">&copy; 2025 허지현 학생 맞춤형 공략집</p>
+        <p class="text-base text-gray-400 mt-2">만점을 진심으로 응원합니다!</p>
     </div>
 </footer>
 
-<script src="./assets/js/theories.js"></script>
+<script>
+    const tabContents = {
+        deviance: `
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <h4 class="text-xl font-bold mb-4 text-gray-800">사례 연구: A고등학교의 값비싼 운동화 절도 사건</h4>
+                <div class="space-y-4">
+                    <div>
+                        <h5 class="font-semibold text-blue-700">머튼의 아노미 이론</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> '값비싼 운동화 소유'라는 문화적 목표는 있으나, 합법적 수단(용돈, 아르바이트)이 부족한 학생이 절도라는 비합법적 수단을 선택한 것으로 분석.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-emerald-700">차별 교제 이론</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 절도 행위를 정당화하거나 멋있다고 여기는 친구들과 어울리면서, 자연스럽게 절도 기술과 가치관을 학습하게 된 것으로 분석.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-purple-700">낙인 이론</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 우발적인 실수였으나, 주변에서 '도둑'이라는 낙인을 찍자 스스로를 일탈자로 규정하고 반복적으로 일탈을 저지르게 되는 과정(2차적 일탈)에 초점.</p>
+                    </div>
+                </div>
+            </div>
+        `,
+        perspectives: `
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <h4 class="text-xl font-bold mb-4 text-gray-800">사례 연구: '배달 앱' 열풍 현상 분석</h4>
+                <div class="space-y-4">
+                    <div>
+                        <h5 class="font-semibold text-blue-700">기능론적 관점</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 바쁜 현대 사회의 필요(신속, 편리)에 부응하며 사회 통합과 안정에 기여. 음식점, 소비자, 라이더에게 각기 다른 편익을 제공하며 사회가 원활히 작동하도록 하는 순기능을 강조.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-red-700">갈등론적 관점</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 거대 플랫폼 기업이 자영업자(음식점)와 노동자(라이더)를 착취하고 지배하는 구조를 조명. 과도한 수수료와 경쟁 심화 등 사회적 불평등을 심화시키는 측면을 비판.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-green-700">상징적 상호작용론</h5>
+                        <p class="text-gray-600 ml-4"><strong>분석:</strong> '리뷰'와 '별점'이라는 상징을 통해 소비자와 판매자가 상호작용하며 의미를 구성하는 과정에 주목. 배달 음식을 '나를 위한 작은 사치'로 여기는 등 개인이 부여하는 주관적인 의미를 탐구.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    };
 
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContentContainer = document.getElementById('tab-content');
+
+    function switchTab(tabName) {
+        tabButtons.forEach(button => {
+            if (button.dataset.tab === tabName) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+        tabContentContainer.innerHTML = tabContents[tabName];
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            switchTab(button.dataset.tab);
+        });
+    });
+
+    // 초기 탭 설정
+    switchTab('deviance');
+</script>
 
 </body>
 </html>
