@@ -93,10 +93,28 @@
                     </div>
                     <div id="population-explanation" class="bg-slate-50 p-6 rounded-lg border border-slate-200">
                         <h4 class="font-semibold text-lg mb-3"></h4>
-                        <ul class="space-y-2 text-slate-700">
-                            <li><strong>유소년 부양비:</strong> <span id="youth-ratio" class="font-bold text-blue-600"></span></li>
-                            <li><strong>노년 부양비:</strong> <span id="elderly-ratio" class="font-bold text-red-600"></span></li>
-                            <li class="border-t pt-2 mt-2"><strong>총 부양비:</strong> <span id="total-ratio" class="font-bold text-emerald-600"></span></li>
+                        <ul class="space-y-3 text-slate-700">
+                            <li>
+                                <strong>유소년 부양비:</strong> 
+                                <div class="text-sm text-gray-600 pl-2">
+                                    (<span id="youth-calc-numerator" class="font-medium"></span> ÷ <span id="youth-calc-denominator" class="font-medium"></span>) × 100 = 
+                                    <span id="youth-ratio" class="font-bold text-blue-600 text-base"></span>
+                                </div>
+                            </li>
+                            <li>
+                                <strong>노년 부양비:</strong> 
+                                <div class="text-sm text-gray-600 pl-2">
+                                    (<span id="elderly-calc-numerator" class="font-medium"></span> ÷ <span id="elderly-calc-denominator" class="font-medium"></span>) × 100 = 
+                                    <span id="elderly-ratio" class="font-bold text-red-600 text-base"></span>
+                                </div>
+                            </li>
+                            <li class="border-t pt-3 mt-3">
+                                <strong>총 부양비:</strong> 
+                                 <div class="text-sm text-gray-600 pl-2">
+                                    <span id="total-calc-youth-ratio" class="font-medium"></span> + <span id="total-calc-elderly-ratio" class="font-medium"></span> = 
+                                    <span id="total-ratio" class="font-bold text-emerald-600 text-base"></span>
+                                </div>
+                            </li>
                         </ul>
                          <p class="text-xs text-slate-500 mt-4">*부양비 = (부양 인구 / 생산가능인구) × 100</p>
                     </div>
@@ -224,8 +242,18 @@ if (document.getElementById('mobilityChart') && document.getElementById('populat
         const totalRatio = (parseFloat(youthRatio) + parseFloat(elderlyRatio)).toFixed(1);
 
         document.getElementById('population-explanation').querySelector('h4').textContent = `${data.year}년 인구 구조 분석` + (data.year === 2050 ? ' (전망)' : '');
+        
+        // Update calculation display
+        document.getElementById('youth-calc-numerator').textContent = data.youth;
+        document.getElementById('youth-calc-denominator').textContent = data.working;
         document.getElementById('youth-ratio').textContent = youthRatio;
+
+        document.getElementById('elderly-calc-numerator').textContent = data.elderly;
+        document.getElementById('elderly-calc-denominator').textContent = data.working;
         document.getElementById('elderly-ratio').textContent = elderlyRatio;
+
+        document.getElementById('total-calc-youth-ratio').textContent = youthRatio;
+        document.getElementById('total-calc-elderly-ratio').textContent = elderlyRatio;
         document.getElementById('total-ratio').textContent = totalRatio;
 
         populationButtons.forEach((btn, i) => {
