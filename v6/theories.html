@@ -20,8 +20,8 @@
         }
         .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
         .tab-button.active {
-            border-color: #2563eb; /* blue-600 */
-            color: #2563eb;
+            border-color: #4c1d95; /* purple-800 */
+            color: #4c1d95;
             font-weight: 600;
         }
     </style>
@@ -63,13 +63,13 @@
             <!-- Tab Navigation -->
             <div class="mb-6 border-b border-gray-200">
                 <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-colors duration-300 active" data-tab="deviance">일탈 행동 이론 적용</button>
-                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-colors duration-300" data-tab="perspectives">사회 현상 관점 적용</button>
+                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-700 transition-colors duration-300" data-tab="deviance">일탈 행동 이론</button>
+                    <button class="tab-button text-lg py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-purple-700 hover:border-purple-700 transition-colors duration-300" data-tab="perspectives">사회 현상 관점</button>
                 </nav>
             </div>
             
             <!-- Tab Content Area -->
-            <div id="tab-content">
+            <div id="tab-content" class="p-4 bg-gray-50 rounded-lg">
                 <!-- Content will be injected by JS -->
             </div>
              
@@ -97,57 +97,59 @@
 </footer>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+// 이 페이지에 탭 버튼이 있을 때만 스크립트를 실행합니다.
+if (document.querySelector('.tab-button')) {
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContentContainer = document.getElementById('tab-content');
+
     const tabContents = {
         deviance: `
-            <div class="p-4 bg-gray-50 rounded-lg">
-                <h4 class="text-xl font-bold mb-4 text-gray-800">사례 연구: A고등학교의 값비싼 운동화 절도 사건</h4>
-                <div class="space-y-4">
-                    <div>
-                        <h5 class="font-semibold text-blue-700">머튼의 아노미 이론</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> '값비싼 운동화 소유'라는 문화적 목표는 있으나, 합법적 수단(용돈, 아르바이트)이 부족한 학생이 절도라는 비합법적 수단을 선택한 것으로 분석.</p>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold text-emerald-700">차별 교제 이론</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 절도 행위를 정당화하거나 멋있다고 여기는 친구들과 어울리면서, 자연스럽게 절도 기술과 가치관을 학습하게 된 것으로 분석.</p>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold text-purple-700">낙인 이론</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 우발적인 실수였으나, 주변에서 '도둑'이라는 낙인을 찍자 스스로를 일탈자로 규정하고 반복적으로 일탈을 저지르게 되는 과정(2차적 일탈)에 초점.</p>
-                    </div>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">기능론적 관점</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">사회의 정상적인 작동을 위해 일탈이 발생하며, 특정 일탈은 사회 통합에 기여하기도 한다고 봅니다.</p>
+                    <ul class="ml-8 mt-2 space-y-1 list-disc list-inside text-slate-700">
+                        <li><strong>뒤르켐의 아노미 이론:</strong> 급격한 사회 변동으로 인한 무규범 상태(아노미)가 일탈의 원인.</li>
+                        <li><strong>머튼의 아노미 이론:</strong> 문화적 목표와 제도적 수단 간의 괴리가 일탈의 원인.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">갈등론적 관점</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">지배 집단이 자신들에게 유리한 규범을 만들고, 이를 위반하는 피지배 집단의 행위를 일탈로 규정한다고 봅니다.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론적 관점</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">개인 간의 상호작용 과정에서 일탈이 학습되거나 규정된다고 봅니다.</p>
+                     <ul class="ml-8 mt-2 space-y-1 list-disc list-inside text-slate-700">
+                        <li><strong>차별 교제 이론:</strong> 일탈자와의 상호작용을 통해 일탈 행동을 학습.</li>
+                        <li><strong>낙인 이론:</strong> 사회적으로 '일탈자'라는 낙인이 찍히는 과정에 주목. 1차적 일탈보다 2차적 일탈을 중요시.</li>
+                    </ul>
                 </div>
             </div>
         `,
         perspectives: `
-            <div class="p-4 bg-gray-50 rounded-lg">
-                <h4 class="text-xl font-bold mb-4 text-gray-800">사례 연구: '배달 앱' 열풍 현상 분석</h4>
-                <div class="space-y-4">
-                    <div>
-                        <h5 class="font-semibold text-blue-700">기능론적 관점</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 바쁜 현대 사회의 필요(신속, 편리)에 부응하며 사회 통합과 안정에 기여. 음식점, 소비자, 라이더에게 각기 다른 편익을 제공하며 사회가 원활히 작동하도록 하는 순기능을 강조.</p>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold text-red-700">갈등론적 관점</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> 거대 플랫폼 기업이 자영업자(음식점)와 노동자(라이더)를 착취하고 지배하는 구조를 조명. 과도한 수수료와 경쟁 심화 등 사회적 불평등을 심화시키는 측면을 비판.</p>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold text-green-700">상징적 상호작용론</h5>
-                        <p class="text-gray-600 ml-4"><strong>분석:</strong> '리뷰'와 '별점'이라는 상징을 통해 소비자와 판매자가 상호작용하며 의미를 구성하는 과정에 주목. 배달 음식을 '나를 위한 작은 사치'로 여기는 등 개인이 부여하는 주관적인 의미를 탐구.</p>
-                    </div>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">기능론 (거시적 관점)</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">사회를 유기체에 비유하며, 각 사회 제도가 사회 전체의 안정과 통합을 위해 기능한다고 봅니다. 조화와 균형을 강조합니다.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">갈등론 (거시적 관점)</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">사회를 희소자원을 둘러싼 집단 간의 갈등과 대립의 장으로 봅니다. 사회 변동을 긍정적으로 평가합니다.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론 (미시적 관점)</h4>
+                    <p class="ml-4 pl-4 border-l-2 border-slate-200">개인의 주관적인 해석과 상황 정의, 그리고 상징을 통한 상호작용에 초점을 맞춥니다. 인간의 능동성을 강조합니다.</p>
                 </div>
             </div>
         `
     };
 
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContentContainer = document.getElementById('tab-content');
-
     function switchTab(tabName) {
+        if (!tabContentContainer) return;
         tabButtons.forEach(button => {
-            if (button.dataset.tab === tabName) {
-                button.classList.add('active');
-            } else {
-                button.classList.remove('active');
-            }
+            button.classList.toggle('active', button.dataset.tab === tabName);
         });
         tabContentContainer.innerHTML = tabContents[tabName];
     }
@@ -158,9 +160,16 @@
         });
     });
 
-    // 초기 탭 설정
-    switchTab('deviance');
+    // 페이지 로드 시 첫 번째 탭을 활성화합니다.
+    if(tabButtons.length > 0) {
+        switchTab(tabButtons[0].dataset.tab);
+    }
+}
+
+
+});
 </script>
 
 </body>
 </html>
+
