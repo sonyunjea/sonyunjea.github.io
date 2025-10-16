@@ -6,6 +6,8 @@
     <title>킬러 문항 정복 - 사회·문화 공략집</title>
     <!-- Tailwind CSS CDN 스크립트 -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN 스크립트 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,63 +46,202 @@
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-    <section id="killer-question-analysis" class="fade-in-up" style="opacity:0;">
+    <section id="killer-questions" class="fade-in-up" style="opacity:0;">
         <!-- Page Title -->
         <div class="text-center mb-12">
             <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">킬러 문항 정복</h2>
-            <p class="mt-4 text-lg text-gray-600">최고난도 문항의 논리를 파악하고 시간 내에 해결하는 전략을 익힙니다.</p>
+            <p class="mt-4 text-lg text-gray-600">최고난도 도표 문항을 데이터 시각화와 함께 완벽 분석합니다.</p>
         </div>
 
-        <!-- Main Content Card -->
-        <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xl">
-            <h3 class="text-3xl font-bold mb-4 text-center text-gray-800">📊 2024학년도 수능 15번 (계층 이동) 유형 분석</h3>
-            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">부모 세대와 자녀 세대의 계층 구성 및 이동 비율을 통해 사회 구조의 변화를 추론하는 대표적인 킬러 문항입니다. 정확한 계산과 논리적 추론이 관건입니다.</p>
-            
-            <div class="space-y-8">
-                <!-- 1. 문제 분석 -->
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                    <h4 class="text-2xl font-bold mb-3 text-gray-800">1. 문제의 핵심 조건 파악</h4>
-                    <p class="text-gray-600">주어진 표는 '계층 구성 비율'이 아닌 '전체 인구 대비 계층별 인구 비율'임을 명심해야 합니다. 자녀 세대의 계층 대물림 비율이 주어졌을 때, 이를 통해 부모 세대의 계층 구조를 역으로 추론하는 것이 첫 단계입니다.</p>
+        <!-- 계층 이동 분석 -->
+        <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xl mb-12">
+            <h3 class="text-3xl font-bold mb-4 text-center text-gray-800">📊 유형 1: 세대 간 계층 이동 분석</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">버튼을 클릭하여 특정 유형의 계층 이동 데이터를 시각적으로 확인하고, 그 의미를 분석하는 훈련을 합니다.</p>
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="h-80 md:h-96">
+                    <canvas id="mobilityChart"></canvas>
                 </div>
-                
-                <!-- 2. 자료 분석 -->
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                    <h4 class="text-2xl font-bold mb-3 text-gray-800">2. 표 해석 및 계산 전략</h4>
-                     <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li><strong>자녀 세대 계층 대물림 인구 계산:</strong> 자녀 세대의 상/중/하 계층 인구에 각각의 대물림 비율을 곱하여, 세대 간 계층이 일치하는 인구수를 구합니다.</li>
-                        <li><strong>부모 세대 계층 인구 추론:</strong> 위에서 구한 값은 부모 세대와 자녀 세대의 계층이 일치하는 인구입니다. 이 값은 곧 부모 세대의 각 계층 인원이기도 합니다.</li>
-                        <li><strong>세대 간 이동 분석:</strong> 전체 인구에서 계층 대물림 인구를 제외하여 세대 간 이동 인구를 파악하고, 상승 이동과 하강 이동을 구분합니다.</li>
-                    </ul>
-                </div>
-
-                <!-- 3. 선지 판단 -->
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                    <h4 class="text-2xl font-bold mb-3 text-gray-800">3. 함정 선지 피하기</h4>
-                    <p class="text-gray-600">"자녀 세대 중 부모와 계층이 일치하는 사람의 비율"과 "부모 세대 중 자녀와 계층이 일치하는 사람의 비율"은 분모가 다르므로 값이 다를 수 있음을 항상 유의해야 합니다. 선지에서 주어를 정확히 파악하는 것이 중요합니다.</p>
+                <div>
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button onclick="updateMobilityChart('all')" class="px-4 py-2 text-sm font-semibold rounded-full bg-slate-200 hover:bg-slate-300 transition">전체</button>
+                        <button onclick="updateMobilityChart('inheritance')" class="px-4 py-2 text-sm font-semibold rounded-full bg-slate-200 hover:bg-slate-300 transition">계층 대물림</button>
+                        <button onclick="updateMobilityChart('upward')" class="px-4 py-2 text-sm font-semibold rounded-full bg-slate-200 hover:bg-slate-300 transition">상승 이동</button>
+                        <button onclick="updateMobilityChart('downward')" class="px-4 py-2 text-sm font-semibold rounded-full bg-slate-200 hover:bg-slate-300 transition">하강 이동</button>
+                    </div>
+                    <div id="mobility-explanation" class="bg-slate-50 p-6 rounded-lg border border-slate-200 min-h-[120px]">
+                        <!-- Explanation will be inserted here -->
+                    </div>
                 </div>
             </div>
-             
-             <!-- 만점 공략 Tip -->
-             <div class="mt-12 bg-gradient-to-r from-emerald-50 to-purple-50 p-6 rounded-xl border border-gray-200">
-                <h4 class="font-bold text-xl flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-purple-600">만점 공략 Tip!</span>
-                </h4>
-                <p class="text-gray-700 mt-3 pl-8">
-                    지현 학생, 이런 유형의 문제를 풀 때 표 옆에 <strong class="text-gray-800">3x3 계층 이동표</strong>를 직접 그려보는 습관을 들이세요. 각 칸에 해당하는 인구수를 채워 넣으면 복잡한 선지라도 시각적으로 명확하게 판단할 수 있어 실수를 획기적으로 줄일 수 있습니다.
-                </p>
+        </div>
+
+        <!-- 인구 구조 분석 -->
+        <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xl">
+            <h3 class="text-3xl font-bold mb-4 text-center text-gray-800">📈 유형 2: 인구 구조와 부양비 분석</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">연도별 인구 구조 변화를 확인하고, 그에 따른 노령화 지수와 부양비의 변화를 직접 계산하며 추이를 분석합니다.</p>
+             <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="h-80 md:h-96 flex justify-center">
+                    <div class="relative w-full max-w-xs">
+                        <canvas id="populationChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button onclick="updatePopulationData(0)" class="px-4 py-2 font-semibold rounded-full transition">1990년</button>
+                        <button onclick="updatePopulationData(1)" class="px-4 py-2 font-semibold rounded-full transition">2020년</button>
+                        <button onclick="updatePopulationData(2)" class="px-4 py-2 font-semibold rounded-full transition">2050년</button>
+                    </div>
+                    <div id="population-explanation" class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <h4 class="font-semibold text-lg mb-3"></h4>
+                        <ul class="space-y-2 text-slate-700">
+                            <li><strong>유소년 부양비:</strong> <span id="youth-ratio" class="font-bold text-blue-600"></span></li>
+                            <li><strong>노년 부양비:</strong> <span id="elderly-ratio" class="font-bold text-red-600"></span></li>
+                            <li class="border-t pt-2 mt-2"><strong>총 부양비:</strong> <span id="total-ratio" class="font-bold text-emerald-600"></span></li>
+                        </ul>
+                         <p class="text-xs text-slate-500 mt-4">*부양비 = (부양 인구 / 생산가능인구) × 100</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 </main>
 
 <!-- Footer Section -->
-<footer class="bg-gray-900 text-white py-10">
+<footer class="bg-gray-900 text-white py-10 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p class="text-lg">&copy; 2025 허지현 학생 맞춤형 공략집</p>
         <p class="text-base text-gray-400 mt-2">만점을 진심으로 응원합니다!</p>
     </div>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+// 이 페이지에 차트 캔버스가 있을 때만 스크립트를 실행합니다.
+if (document.getElementById('mobilityChart') && document.getElementById('populationChart')) {
+
+    // --- 사회 이동표 차트 로직 ---
+    const mobilityData = {
+        labels: ['부모: 상', '부모: 중', '부모: 하'],
+        datasets: [
+            { label: '자녀: 상', data: [15, 5, 2], backgroundColor: 'rgba(52, 211, 153, 0.7)' },
+            { label: '자녀: 중', data: [5, 30, 10], backgroundColor: 'rgba(59, 130, 246, 0.7)' },
+            { label: '자녀: 하', data: [3, 8, 17], backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+        ]
+    };
+    const mobilityCtx = document.getElementById('mobilityChart').getContext('2d');
+    const mobilityChart = new Chart(mobilityCtx, {
+        type: 'bar',
+        data: mobilityData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true, title: { display: true, text: '인원 (가상 수치)' } }
+            },
+            plugins: {
+                title: { display: true, text: '세대 간 사회 이동 (부모 → 자녀)', font: { size: 16 } },
+                tooltip: { mode: 'index' }
+            }
+        }
+    });
+
+    window.updateMobilityChart = (type) => {
+        const explanationEl = document.getElementById('mobility-explanation');
+        let explanationHTML = '';
+        const baseColors = ['rgba(52, 211, 153, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(239, 68, 68, 0.7)'];
+        const highlightColor = 'rgba(251, 191, 36, 1)';
+        const mutedColor = 'rgba(200, 200, 200, 0.5)';
+
+        mobilityChart.data.datasets.forEach((dataset, i) => {
+            dataset.backgroundColor = dataset.data.map((_, j) => {
+                if (type === 'all') return baseColors[i];
+                if (type === 'inheritance' && i === j) return highlightColor;
+                if (type === 'upward' && i < j) return highlightColor;
+                if (type === 'downward' && i > j) return highlightColor;
+                return mutedColor;
+            });
+        });
+        mobilityChart.update();
+        
+        switch(type) {
+            case 'all':
+                explanationHTML = `<h4 class="font-semibold text-lg mb-2">전체 보기</h4><p class="text-slate-700">부모 세대의 계층이 자녀 세대에서 어떻게 분포되는지 전체적으로 보여줍니다. 총 100명의 데이터를 기반으로 분석합니다.</p>`;
+                break;
+            case 'inheritance':
+                explanationHTML = `<h4 class="font-semibold text-lg mb-2">계층 대물림 (15+30+17 = 62명)</h4><p class="text-slate-700">부모와 자녀의 계층이 동일한 경우입니다. (상→상, 중→중, 하→하) 전체의 62%가 계층을 대물림했습니다.</p>`;
+                break;
+            case 'upward':
+                explanationHTML = `<h4 class="font-semibold text-lg mb-2">상승 이동 (5+2+10 = 17명)</h4><p class="text-slate-700">자녀의 계층이 부모보다 높아진 경우입니다. (중→상, 하→상, 하→중) 세대 간 이동이 발생한 38명 중 약 45%가 상승 이동을 경험했습니다.</p>`;
+                break;
+            case 'downward':
+                explanationHTML = `<h4 class="font-semibold text-lg mb-2">하강 이동 (5+3+8 = 16명)</h4><p class="text-slate-700">자녀의 계층이 부모보다 낮아진 경우입니다. (상→중, 상→하, 중→하) 하강 이동 비율은 전체의 16%입니다.</p>`;
+                break;
+        }
+        explanationEl.innerHTML = explanationHTML;
+    };
+    updateMobilityChart('all');
+
+    // --- 인구 구조 차트 로직 ---
+    const populationRawData = [
+        { year: 1990, youth: 25, working: 60, elderly: 5 },
+        { year: 2020, youth: 15, working: 65, elderly: 20 },
+        { year: 2050, youth: 10, working: 50, elderly: 40 },
+    ];
+    
+    const populationData = {
+        labels: ['유소년 인구(0-14세)', '생산가능인구(15-64세)', '노년 인구(65세 이상)'],
+        datasets: [{
+            label: '인구 비율 (%)',
+            data: [25, 60, 5],
+            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)', 'rgba(239, 68, 68, 0.7)']
+        }]
+    };
+
+    const populationCtx = document.getElementById('populationChart').getContext('2d');
+    const populationChart = new Chart(populationCtx, {
+        type: 'doughnut',
+        data: populationData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: '1990년 인구 구조', font: { size: 16 } },
+                legend: { position: 'top' }
+            }
+        }
+    });
+    
+    const populationButtons = document.querySelectorAll('#killer-questions button[onclick^="updatePopulationData"]');
+    window.updatePopulationData = (index) => {
+        const data = populationRawData[index];
+        populationChart.data.datasets[0].data = [data.youth, data.working, data.elderly];
+        populationChart.options.plugins.title.text = `${data.year}년 인구 구조` + (data.year === 2050 ? ' (전망)' : '');
+        populationChart.update();
+        
+        const youthRatio = ((data.youth / data.working) * 100).toFixed(1);
+        const elderlyRatio = ((data.elderly / data.working) * 100).toFixed(1);
+        const totalRatio = (parseFloat(youthRatio) + parseFloat(elderlyRatio)).toFixed(1);
+
+        document.getElementById('population-explanation').querySelector('h4').textContent = `${data.year}년 인구 구조 분석` + (data.year === 2050 ? ' (전망)' : '');
+        document.getElementById('youth-ratio').textContent = youthRatio;
+        document.getElementById('elderly-ratio').textContent = elderlyRatio;
+        document.getElementById('total-ratio').textContent = totalRatio;
+
+        populationButtons.forEach((btn, i) => {
+            btn.classList.toggle('bg-emerald-500', i === index);
+            btn.classList.toggle('text-white', i === index);
+            btn.classList.toggle('bg-slate-200', i !== index);
+            btn.classList.toggle('text-slate-800', i !== index);
+            btn.classList.toggle('hover:bg-emerald-600', !btn.classList.contains('bg-emerald-500'));
+            btn.classList.toggle('hover:bg-slate-300', btn.classList.contains('bg-slate-200'));
+        });
+    };
+    updatePopulationData(0);
+}
+});
+</script>
+
 </body>
 </html>
+
