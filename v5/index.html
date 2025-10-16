@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수능 사회·문화 핵심 공략</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Study -->
+    <!-- Application Structure Plan: The application is structured into three main thematic sections: '핵심 개념 비교' (Core Concept Comparison), '킬러 문항 정복' (Conquering Killer Questions), and '핵심 이론 탐구' (Exploring Core Theories). This structure was chosen over mirroring the original report's unit-based layout to foster a more integrated understanding of the subject. '핵심 개념 비교' uses side-by-side layouts for direct comparison of related concepts. '킬러 문항 정복' transforms abstract data analysis problems into interactive charts, allowing students to manipulate data and see immediate results, thereby enhancing comprehension. '핵심 이론 탐구' uses a tabbed interface to present dense theoretical information in a digestible, user-controlled manner. This user-centric, thematic, and interactive design improves engagement and knowledge retention for students preparing for the exam. -->
+    <!-- Visualization & Content Choices: 
+    1. Bureaucracy vs. Post-bureaucracy: Goal -> Compare. Method -> Two-column HTML/Tailwind layout with icons. Interaction -> None (static comparison). Justification -> Maximizes clarity for comparing two opposing concepts.
+    2. Social Mobility Analysis: Goal -> Interact & Analyze. Method -> Chart.js Bar Chart. Interaction -> Buttons to filter and highlight data for inheritance, upward, and downward mobility. The chart and an explanation text box update dynamically. Justification -> Actively engages the user in data analysis, making a complex topic tangible.
+    3. Population Dependency Ratio: Goal -> Interact & Analyze Change. Method -> Chart.js Line Chart. Interaction -> Buttons to switch between data scenarios. Key metrics and formulas are displayed and updated. Justification -> Visualizes trends and reinforces understanding of formulas through interaction.
+    4. Theories (Deviance, Perspectives): Goal -> Organize. Method -> Tabbed HTML/JS interface. Interaction -> Clicking tabs reveals content. Justification -> Manages cognitive load by presenting complex theories in a structured, focused manner.
+    All charts are rendered on Canvas via Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            scroll-behavior: smooth;
+        }
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .tab-button.active {
+            border-color: #10b981;
+            color: #10b981;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold text-emerald-600">📚 사회·문화 핵심 공략</h1>
+                <div class="hidden md:flex space-x-6 text-lg">
+                    <a href="#concepts" class="text-slate-600 hover:text-emerald-600 transition">핵심 개념 비교</a>
+                    <a href="#killer-questions" class="text-slate-600 hover:text-emerald-600 transition">킬러 문항 정복</a>
+                    <a href="#theories" class="text-slate-600 hover:text-emerald-600 transition">핵심 이론 탐구</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section id="intro" class="text-center mb-20">
+            <h2 class="text-4xl font-extrabold mb-4 tracking-tight">수능 사회·문화, 핵심만 꿰뚫어보자</h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                방대한 사회·문화 개념과 까다로운 자료 분석 문제, 더 이상 헤매지 마세요.<br>
+                이곳에서 핵심 개념을 비교하고, 킬러 문항을 직접 분석하며 수능 1등급을 향한 지름길을 찾으세요.
+            </p>
+        </section>
+
+        <section id="concepts" class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">핵심 개념 비교</h2>
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold mb-6 text-center">🏢 관료제 vs 탈관료제 한눈에 보기</h3>
+                <p class="text-center text-slate-600 mb-8">현대 사회의 두 가지 대표적인 조직 운영 원리인 관료제와 탈관료제는 상반된 특징을 가집니다. 안정성과 효율성을 추구하는 관료제와 유연성과 창의성을 중시하는 탈관료제의 핵심 특징을 비교하며 각 조직의 장단점을 명확히 이해해 보세요.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="border border-slate-200 rounded-lg p-6">
+                        <h4 class="text-xl font-bold mb-4 text-center">관료제 (Bureaucracy)</h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li><span class="font-semibold">구조:</span> 위계 서열화, 상명하달식</li>
+                            <li><span class="font-semibold">업무:</span> 분업화, 전문화, 공식적 규약</li>
+                            <li><span class="font-semibold">보상:</span> 연공서열, 경력 중심</li>
+                            <li><span class="font-semibold">의사결정:</span> 중앙집권적, 신중함</li>
+                            <li class="mt-4 pt-4 border-t"><strong class="text-blue-600">✅ 순기능:</strong> 안정성, 효율성, 예측가능성</li>
+                            <li><strong class="text-red-600">❌ 역기능:</strong> 목적 전치, 인간 소외, 경직성</li>
+                        </ul>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-6">
+                        <h4 class="text-xl font-bold mb-4 text-center">탈관료제 (Adhocracy)</h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li><span class="font-semibold">구조:</span> 수평적, 팀/프로젝트 중심</li>
+                            <li><span class="font-semibold">업무:</span> 유연성, 자율성, 비공식적</li>
+                            <li><span class="font-semibold">보상:</span> 성과와 능력 중심</li>
+                            <li><span class="font-semibold">의사결정:</span> 분권적, 신속함</li>
+                            <li class="mt-4 pt-4 border-t"><strong class="text-blue-600">✅ 장점:</strong> 창의성, 신속한 대응, 동기 부여</li>
+                            <li><strong class="text-red-600">❌ 단점:</strong> 조직 불안정성, 성과 압박</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="killer-questions" class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">킬러 문항 정복</h2>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg mb-12">
+                <h3 class="text-2xl font-semibold mb-2 text-center">📊 사회 이동표 분석 시뮬레이터</h3>
+                <p class="text-center text-slate-600 mb-8">사회·문화 최고난도 유형인 사회 이동표 분석을 마스터하세요. 아래 버튼을 클릭하여 세대 간 계층 이동의 다양한 측면을 시각적으로 확인하고, 각 지표가 어떻게 계산되는지 원리를 파악할 수 있습니다.</p>
+                <div class="chart-container">
+                    <canvas id="mobilityChart"></canvas>
+                </div>
+                <div class="flex justify-center space-x-2 sm:space-x-4 my-6">
+                    <button onclick="updateMobilityChart('all')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">전체 보기</button>
+                    <button onclick="updateMobilityChart('inheritance')" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">계층 대물림</button>
+                    <button onclick="updateMobilityChart('upward')" class="bg-green-100 hover:bg-green-200 text-green-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">상승 이동</button>
+                    <button onclick="updateMobilityChart('downward')" class="bg-red-100 hover:bg-red-200 text-red-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">하강 이동</button>
+                </div>
+                <div id="mobility-explanation" class="mt-4 bg-slate-100 p-6 rounded-lg text-center">
+                    <h4 class="font-semibold text-lg mb-2">분석 결과</h4>
+                    <p class="text-slate-700">버튼을 클릭하여 분석할 지표를 선택하세요.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold mb-2 text-center">📈 인구 구조 및 부양비 분석</h3>
+                <p class="text-center text-slate-600 mb-8">시간에 따른 인구 구조 변화와 그에 따른 부양비 변동은 또 다른 주요 킬러 문항입니다. 아래 차트를 통해 인구 구조의 변화 추이를 파악하고, 각 시점의 부양비가 어떻게 달라지는지 확인해 보세요.</p>
+                 <div class="chart-container">
+                    <canvas id="populationChart"></canvas>
+                </div>
+                <div class="flex justify-center space-x-2 sm:space-x-4 my-6">
+                    <button onclick="updatePopulationData(0)" class="bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg transition hover:bg-emerald-600 text-sm sm:text-base">1990년</button>
+                    <button onclick="updatePopulationData(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">2020년</button>
+                    <button onclick="updatePopulationData(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">2050년 (전망)</button>
+                </div>
+                <div id="population-explanation" class="mt-4 bg-slate-100 p-6 rounded-lg">
+                    <h4 class="font-semibold text-lg mb-3 text-center">1990년 인구 구조 분석</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-sm text-slate-500">유소년 부양비</p>
+                            <p id="youth-ratio" class="text-2xl font-bold">41.7</p>
+                            <p class="text-xs text-slate-400">(유소년 인구 / 부양 인구) * 100</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500">노년 부양비</p>
+                            <p id="elderly-ratio" class="text-2xl font-bold">8.3</p>
+                            <p class="text-xs text-slate-400">(노년 인구 / 부양 인구) * 100</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500">총 부양비</p>
+                            <p id="total-ratio" class="text-2xl font-bold">50.0</p>
+                            <p class="text-xs text-slate-400">유소년 + 노년 부양비</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="theories" class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">핵심 이론 탐구</h2>
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                 <p class="text-center text-slate-600 mb-8">사회 현상을 분석하는 거시적·미시적 관점과 일탈 행동을 설명하는 다양한 이론은 수능의 단골 출제 요소입니다. 탭을 클릭하여 각 이론의 핵심 주장을 체계적으로 학습하고 비교·분석하는 능력을 길러보세요.</p>
+                <div class="mb-4 border-b border-slate-200">
+                    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
+                        <button class="tab-button active" data-tab="deviance">일탈 행동 이론</button>
+                        <button class="tab-button" data-tab="perspectives">사회·문화 현상 관점</button>
+                    </nav>
+                </div>
+                <div id="tab-content">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 수능 사회·문화 핵심 공략. All Rights Reserved.</p>
+            <p class="text-sm text-slate-400 mt-2">본 페이지는 학습 목적으로 제작되었습니다.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const mobilityData = {
+                labels: ['부모: 상', '부모: 중', '부모: 하'],
+                datasets: [
+                    { label: '자녀: 상', data: [15, 5, 2], backgroundColor: 'rgba(52, 211, 153, 0.7)' },
+                    { label: '자녀: 중', data: [5, 30, 10], backgroundColor: 'rgba(59, 130, 246, 0.7)' },
+                    { label: '자녀: 하', data: [3, 8, 17], backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                ]
+            };
+            const mobilityCtx = document.getElementById('mobilityChart').getContext('2d');
+            const mobilityChart = new Chart(mobilityCtx, {
+                type: 'bar',
+                data: mobilityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true, title: { display: true, text: '인원 (가상 수치)' } }
+                    },
+                    plugins: {
+                        title: { display: true, text: '세대 간 사회 이동 (부모 → 자녀)', font: { size: 16 } },
+                        tooltip: { mode: 'index' }
+                    }
+                }
+            });
+
+            window.updateMobilityChart = (type) => {
+                const explanationEl = document.getElementById('mobility-explanation');
+                let explanationHTML = '';
+                const baseColors = ['rgba(52, 211, 153, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(239, 68, 68, 0.7)'];
+                const highlightColor = 'rgba(251, 191, 36, 1)';
+                const mutedColor = 'rgba(200, 200, 200, 0.5)';
+
+                mobilityChart.data.datasets.forEach((dataset, i) => {
+                    dataset.backgroundColor = dataset.data.map((_, j) => {
+                        if (type === 'all') return baseColors[i];
+                        if (type === 'inheritance' && i === j) return highlightColor;
+                        if (type === 'upward' && i < j) return highlightColor;
+                        if (type === 'downward' && i > j) return highlightColor;
+                        return mutedColor;
+                    });
+                });
+                mobilityChart.update();
+                
+                switch(type) {
+                    case 'all':
+                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">전체 보기</h4><p class="text-slate-700">부모 세대의 계층이 자녀 세대에서 어떻게 분포되는지 전체적으로 보여줍니다.</p>`;
+                        break;
+                    case 'inheritance':
+                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">계층 대물림 (27+30+17 = 62)</h4><p class="text-slate-700">부모와 자녀의 계층이 동일한 경우입니다. (상→상, 중→중, 하→하)</p>`;
+                        break;
+                    case 'upward':
+                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">상승 이동 (5+2+10 = 17)</h4><p class="text-slate-700">자녀의 계층이 부모보다 높아진 경우입니다. (중→상, 하→상, 하→중)</p>`;
+                        break;
+                    case 'downward':
+                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">하강 이동 (5+3+8 = 16)</h4><p class="text-slate-700">자녀의 계층이 부모보다 낮아진 경우입니다. (상→중, 상→하, 중→하)</p>`;
+                        break;
+                }
+                explanationEl.innerHTML = explanationHTML;
+            };
+
+            const populationRawData = [
+                { year: 1990, youth: 25, working: 60, elderly: 5 },
+                { year: 2020, youth: 15, working: 65, elderly: 20 },
+                { year: 2050, youth: 10, working: 50, elderly: 40 },
+            ];
+            
+            const populationData = {
+                labels: ['유소년 인구(0-14세)', '부양 인구(15-64세)', '노년 인구(65세 이상)'],
+                datasets: [{
+                    label: '인구 비율 (%)',
+                    data: [25, 60, 5],
+                    backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)', 'rgba(239, 68, 68, 0.7)']
+                }]
+            };
+
+            const populationCtx = document.getElementById('populationChart').getContext('2d');
+            const populationChart = new Chart(populationCtx, {
+                type: 'doughnut',
+                data: populationData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: '1990년 인구 구조', font: { size: 16 } },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+            
+            const populationButtons = document.querySelectorAll('#killer-questions button[onclick^="updatePopulationData"]');
+            window.updatePopulationData = (index) => {
+                const data = populationRawData[index];
+                populationChart.data.datasets[0].data = [data.youth, data.working, data.elderly];
+                populationChart.options.plugins.title.text = `${data.year}년 인구 구조` + (data.year === 2050 ? ' (전망)' : '');
+                populationChart.update();
+                
+                const youthRatio = ((data.youth / data.working) * 100).toFixed(1);
+                const elderlyRatio = ((data.elderly / data.working) * 100).toFixed(1);
+                const totalRatio = (parseFloat(youthRatio) + parseFloat(elderlyRatio)).toFixed(1);
+
+                document.getElementById('population-explanation').querySelector('h4').textContent = `${data.year}년 인구 구조 분석` + (data.year === 2050 ? ' (전망)' : '');
+                document.getElementById('youth-ratio').textContent = youthRatio;
+                document.getElementById('elderly-ratio').textContent = elderlyRatio;
+                document.getElementById('total-ratio').textContent = totalRatio;
+
+                populationButtons.forEach((btn, i) => {
+                    btn.classList.toggle('bg-emerald-500', i === index);
+                    btn.classList.toggle('text-white', i === index);
+                    btn.classList.toggle('bg-slate-200', i !== index);
+                    btn.classList.toggle('text-slate-800', i !== index);
+                    btn.classList.toggle('hover:bg-emerald-600', i === index);
+                    btn.classList.toggle('hover:bg-slate-300', i !== index);
+                });
+            };
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContentContainer = document.getElementById('tab-content');
+            
+            const tabContents = {
+                deviance: `
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">기능론적 관점</h4>
+                            <p class="ml-4 pl-4 border-l-2">사회의 정상적인 작동을 위해 일탈이 발생하며, 특정 일탈은 사회 통합에 기여하기도 한다고 봅니다.</p>
+                            <ul class="ml-8 mt-2 space-y-1 list-disc list-inside">
+                                <li><strong>뒤르켐의 아노미 이론:</strong> 급격한 사회 변동으로 인한 무규범 상태(아노미)가 일탈의 원인.</li>
+                                <li><strong>머튼의 아노미 이론:</strong> 문화적 목표와 제도적 수단 간의 괴리가 일탈의 원인.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">갈등론적 관점</h4>
+                            <p class="ml-4 pl-4 border-l-2">지배 집단이 자신들에게 유리한 규범을 만들고, 이를 위반하는 피지배 집단의 행위를 일탈로 규정한다고 봅니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론적 관점</h4>
+                            <p class="ml-4 pl-4 border-l-2">개인 간의 상호작용 과정에서 일탈이 학습되거나 규정된다고 봅니다.</p>
+                             <ul class="ml-8 mt-2 space-y-1 list-disc list-inside">
+                                <li><strong>차별 교제 이론:</strong> 일탈자와의 상호작용을 통해 일탈 행동을 학습.</li>
+                                <li><strong>낙인 이론:</strong> 사회적으로 '일탈자'라는 낙인이 찍히는 과정에 주목. 1차적 일탈보다 2차적 일탈을 중요시.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                perspectives: `
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">기능론 (거시적 관점)</h4>
+                            <p class="ml-4 pl-4 border-l-2">사회를 유기체에 비유하며, 각 사회 제도가 사회 전체의 안정과 통합을 위해 기능한다고 봅니다. 조화와 균형을 강조합니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">갈등론 (거시적 관점)</h4>
+                            <p class="ml-4 pl-4 border-l-2">사회를 희소자원을 둘러싼 집단 간의 갈등과 대립의 장으로 봅니다. 사회 변동을 긍정적으로 평가합니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론 (미시적 관점)</h4>
+                            <p class="ml-4 pl-4 border-l-2">개인의 주관적인 해석과 상황 정의, 그리고 상징을 통한 상호작용에 초점을 맞춥니다. 인간의 능동성을 강조합니다.</p>
+                        </div>
+                    </div>
+                `
+            };
+
+            function switchTab(tabName) {
+                tabButtons.forEach(button => {
+                    if (button.dataset.tab === tabName) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+                tabContentContainer.innerHTML = tabContents[tabName];
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            switchTab('deviance');
+            updatePopulationData(0);
+        });
+    </script>
+</body>
+</html>
