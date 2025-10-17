@@ -3,372 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수능 사회·문화 핵심 공략 (허지현 학생 맞춤형)</title>
+    <title>사회·문화 대화형 학습 앱</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Calm Study -->
-    <!-- Application Structure Plan: The application is structured into three main thematic sections: '핵심 개념 비교' (Core Concept Comparison), '킬러 문항 정복' (Conquering Killer Questions), and '핵심 이론 탐구' (Exploring Core Theories). This structure was chosen over mirroring the original report's unit-based layout to foster a more integrated understanding of the subject. '핵심 개념 비교' uses side-by-side layouts for direct comparison of related concepts. '킬러 문항 정복' transforms abstract data analysis problems into interactive charts, allowing students to manipulate data and see immediate results, thereby enhancing comprehension. '핵심 이론 탐구' uses a tabbed interface to present dense theoretical information in a digestible, user-controlled manner. This user-centric, thematic, and interactive design improves engagement and knowledge retention for students preparing for the exam. -->
+    <!-- Chosen Palette: Calm Study Palette -->
+    <!-- Application Structure Plan: 이 애플리케이션은 기존의 선형적인 문서 구조에서 벗어나, 학습 효과를 극대화하기 위한 대화형 구조로 설계되었습니다. 좌측의 단원별 내비게이션을 통해 원하는 단원으로 즉시 이동할 수 있으며, 각 개념은 '질문-답변 확인' 방식의 카드 형태로 제공됩니다. 이 구조는 사용자가 스스로 답을 생각하게 유도하는 '능동적 회상' 학습법을 적용한 것으로, 단순 암기보다 깊이 있는 이해와 장기 기억에 효과적입니다. 또한, 복잡한 데이터는 시각적 차트로, 비교 개념은 병렬 구조로 재구성하여 직관성을 높였습니다. 전체적으로 사용자가 주도하는 비선형적 학습 경로를 제공하여 효율적인 복습과 심화 학습을 지원하는 것을 목표로 합니다. -->
     <!-- Visualization & Content Choices: 
-    1. Bureaucracy vs. Post-bureaucracy: Goal -> Compare. Method -> Two-column HTML/Tailwind layout with icons. Interaction -> None (static comparison). Justification -> Maximizes clarity for comparing two opposing concepts.
-    2. Social Mobility Analysis: Goal -> Interact & Analyze. Method -> Chart.js Bar Chart. Interaction -> Buttons to filter and highlight data for inheritance, upward, and downward mobility. The chart and an explanation text box update dynamically. Justification -> Actively engages the user in data analysis, making a complex topic tangible.
-    3. Population Dependency Ratio: Goal -> Interact & Analyze Change. Method -> Chart.js Line Chart. Interaction -> Buttons to switch between data scenarios. Key metrics and formulas are displayed and updated. Justification -> Visualizes trends and reinforces understanding of formulas through interaction.
-    4. Theories (Deviance, Perspectives): Goal -> Organize. Method -> Tabbed HTML/JS interface. Interaction -> Clicking tabs reveals content. Justification -> Manages cognitive load by presenting complex theories in a structured, focused manner.
-    All charts are rendered on Canvas via Chart.js. -->
+        - [보고서 정보] Q&A 텍스트 -> [목표] 능동적 학습 유도 -> [표현 방식] 토글형 퀴즈 카드 -> [상호작용] '정답 확인' 버튼 클릭 시 해설 표시 -> [근거] 사용자의 적극적인 사고를 촉진하고 학습 참여도를 높임 -> [라이브러리/방법] Vanilla JS.
+        - [보고서 정보] 사회 이동 통계표 (문제 8-2) -> [목표] 데이터의 직관적 비교 -> [표현 방식] 세대 간 계층 비교 누적 막대 차트 -> [상호작용] 차트 막대 호버 시 상세 데이터 툴팁 표시 -> [근거] 복잡한 수치 데이터를 시각화하여 세대 간 이동의 흐름과 비율을 한눈에 파악하게 함 -> [라이브러리/방법] Chart.js (Canvas).
+        - [보고서 정보] 기능론 vs 갈등론 비교 (문제 7-1) -> [목표] 두 개념의 핵심 차이 명확화 -> [표현 방식] 2단 그리드 병렬 배치 -> [상호작용] 없음 (정적 비교) -> [근거] 텍스트를 나란히 배치하여 사용자가 두 관점을 실시간으로 비교하며 차이점을 명확히 인지하게 함 -> [라이브러리/방법] HTML/Tailwind CSS.
+        - [보고서 정보] 문화 유형 관계 (문제 2-2) -> [목표] 위계 관계 시각화 -> [표현 방식] 중첩된 박스 다이어그램 -> [상호작용] 없음 (정적 다이어그램) -> [근거] 전체문화 > 하위문화 > 반문화의 포함 관계를 시각적으로 표현하여 개념의 구조적 이해를 도움 -> [라이브러리/방법] HTML/Tailwind CSS.
+    -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
-            scroll-behavior: smooth;
-        }
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 450px;
-            }
-        }
-        .tab-button.active {
-            border-color: #10b981;
-            color: #10b981;
-            font-weight: 600;
-        }
+        body { font-family: 'Inter', 'Pretendard', sans-serif; background-color: #fdfcf9; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link.active { background-color: #4a5568; color: #ffffff; }
+        .nav-link:hover { background-color: #2d3748; color: #ffffff; }
+        .answer-toggle-btn { transition: background-color 0.2s; }
+        .answer-content { display: none; }
+        .answer-content.visible { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto; height: 350px; max-height: 50vh; }
+        @media (min-width: 768px) { .chart-container { height: 450px; } }
     </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-gray-50 text-gray-800">
 
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <h1 class="text-2xl font-bold text-emerald-600">✨ 허지현 학생을 위한 사회·문화 공략집</h1>
-                <div class="hidden md:flex space-x-6 text-lg">
-                    <a href="#concepts" class="text-slate-600 hover:text-emerald-600 transition">심화 개념 다지기</a>
-                    <a href="#killer-questions" class="text-slate-600 hover:text-emerald-600 transition">킬러 문항 정복</a>
-                    <a href="#theories" class="text-slate-600 hover:text-emerald-600 transition">이론 적용 훈련</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-gray-800 text-white p-4 md:p-6 shadow-lg">
+            <h1 class="text-2xl font-bold mb-6 text-center">사회·문화 핵심정리</h1>
+            <nav id="navigation" class="flex flex-row md:flex-col gap-2">
+                <button class="nav-link text-left w-full p-3 rounded-lg font-semibold active" data-target="unit-1">1단원. 문화 이해</button>
+                <button class="nav-link text-left w-full p-3 rounded-lg font-semibold" data-target="unit-2">2단원. 개인과 사회</button>
+                <button class="nav-link text-left w-full p-3 rounded-lg font-semibold" data-target="unit-3">3단원. 불평등과 정의</button>
+                <button class="nav-link text-left w-full p-3 rounded-lg font-semibold" data-target="unit-4">4단원. 사회 변화와 미래</button>
+            </nav>
+        </aside>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-        <section id="intro" class="text-center mb-20">
-            <h2 class="text-4xl font-extrabold mb-4 tracking-tight">허지현 학생, 만점을 향한 마지막 한 걸음</h2>
-            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
-                현재 기본 개념은 탄탄하니, 이제 까다로운 킬러 문항을 정복하고 사소한 실수를 줄여 안정적인 1등급과 50점 만점을 향해 나아갈 시간입니다.<br>
-                지현 학생의 약점을 보완하고 최상위권으로 도약하기 위한 맞춤형 심화 학습을 시작해 보세요.
-            </p>
-        </section>
-
-        <section id="concepts" class="mb-20">
-            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">심화 개념 다지기</h2>
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-                <h3 class="text-2xl font-semibold mb-6 text-center">🏢 관료제 vs 탈관료제 심층 분석</h3>
-                <p class="text-center text-slate-600 mb-8">두 제도의 특징 비교는 기본이죠. 이제 한 단계 더 나아가, 특정 사례에 어떤 조직 원리가 더 적합할지 판단하고 그 근거를 설명하는 연습이 필요합니다. 이것이 바로 만점을 가르는 사고력입니다.</p>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="border border-slate-200 rounded-lg p-6">
-                        <h4 class="text-xl font-bold mb-4 text-center">관료제 (Bureaucracy)</h4>
-                        <ul class="space-y-3 text-slate-700">
-                            <li><span class="font-semibold">구조:</span> 위계 서열화, 상명하달식</li>
-                            <li><span class="font-semibold">업무:</span> 분업화, 전문화, 공식적 규약</li>
-                            <li><span class="font-semibold">보상:</span> 연공서열, 경력 중심</li>
-                            <li><span class="font-semibold">의사결정:</span> 중앙집권적, 신중함</li>
-                            <li class="mt-4 pt-4 border-t"><strong class="text-blue-600">✅ 순기능:</strong> 안정성, 효율성, 예측가능성</li>
-                            <li><strong class="text-red-600">❌ 역기능:</strong> 목적 전치, 인간 소외, 경직성</li>
-                        </ul>
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-6 md:p-10">
+            <!-- Unit 1 Content -->
+            <section id="unit-1" class="content-section active">
+                <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-gray-700">1단원: 사회적 삶의 의미와 문화 이해</h2>
+                <div class="space-y-6">
+                    <!-- Question 1-1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 1-1: 사회·문화 현상의 탐구 관점</h3>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="mb-4">"여러분, 청소년의 일탈 행동을 이해하기 위해서는 그들이 사용하는 은어, 그들 사이의 상징이나 제스처의 의미를 파악하는 것이 중요합니다. 왜냐하면 청소년들은 이러한 상호작용을 통해 자신들의 정체성을 형성하고 특정 행동에 의미를 부여하기 때문이죠."</p>
+                            <p class="font-semibold">Q. 다음 글에서 교사가 설명하는 사회·문화 현상의 탐구 관점은 무엇이며, 이 관점의 특징으로 옳은 것을 &lt;보기&gt;에서 고르시오.</p>
+                            <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                <strong>&lt;보기&gt;</strong><br>
+                                ㄱ. 사회 구조나 제도가 개인에게 미치는 영향력을 강조한다.<br>
+                                ㄴ. 인간의 능동성과 주체적인 사고를 전제로 한다.<br>
+                                ㄷ. 거시적 관점보다 미시적 관점에 해당한다.<br>
+                                ㄹ. 사회는 유기체처럼 상호 의존적인 부분들로 구성되어 있다고 본다.
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                            <p><strong>정답 관점:</strong> 상징적 상호작용론</p>
+                            <p><strong>정답 보기:</strong> ㄴ, ㄷ</p>
+                            <p class="mt-2"><strong>해설:</strong> 제시문은 개인 간의 '상징', '의미 부여', '상호작용'을 통해 사회 현상을 이해해야 한다고 설명합니다. 이는 개인의 주체적인 행위를 강조하는 <strong>상징적 상호작용론</strong>에 해당합니다. 상징적 상호작용론은 개인이 상황을 어떻게 해석하고 의미를 부여하는지에 초점을 맞추는 <strong>미시적 관점</strong>이므로, 인간의 <strong>능동성(ㄴ)</strong>을 전제로 하며 <strong>미시적 관점(ㄷ)</strong>에 속합니다. (ㄱ)과 (ㄹ)은 사회 전체의 구조를 먼저 보는 거시적 관점(기능론, 갈등론)의 특징입니다.</p>
+                        </div>
                     </div>
-                    <div class="border border-slate-200 rounded-lg p-6">
-                        <h4 class="text-xl font-bold mb-4 text-center">탈관료제 (Adhocracy)</h4>
-                        <ul class="space-y-3 text-slate-700">
-                            <li><span class="font-semibold">구조:</span> 수평적, 팀/프로젝트 중심</li>
-                            <li><span class="font-semibold">업무:</span> 유연성, 자율성, 비공식적</li>
-                            <li><span class="font-semibold">보상:</span> 성과와 능력 중심</li>
-                            <li><span class="font-semibold">의사결정:</span> 분권적, 신속함</li>
-                            <li class="mt-4 pt-4 border-t"><strong class="text-blue-600">✅ 장점:</strong> 창의성, 신속한 대응, 동기 부여</li>
-                            <li><strong class="text-red-600">❌ 단점:</strong> 조직 불안정성, 성과 압박</li>
-                        </ul>
+                     <!-- Question 2-2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 2-2: 다양한 문화의 유형 구분</h3>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. (가)~(다)에 해당하는 문화의 유형을 각각 쓰고, 그 관계를 설명하시오.</p>
+                             <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                (가) 20세기 후반, 기성세대의 권위주의에 저항하며 등장한 '히피 문화'<br>
+                                (나) 의사들 사이에서만 통용되는 전문 용어나 그들만의 행동 양식<br>
+                                (다) 대한민국 사회 구성원 대다수가 공유하는 보편적인 생활 양식
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                            <p><strong>정답:</strong> (가) <strong>반문화(대항문화)</strong>, (나) <strong>하위문화</strong>, (다) <strong>전체문화(주류문화)</strong></p>
+                            <div class="mt-4">
+                                <strong class="block mb-2">관계 설명:</strong>
+                                <div class="p-4 border-2 border-gray-300 rounded-lg text-center font-bold">
+                                    (다) 전체문화
+                                    <div class="m-4 p-4 border-2 border-blue-300 rounded-lg">
+                                        (나) 하위문화
+                                        <div class="m-4 p-4 border-2 border-red-300 bg-red-50 rounded-lg">
+                                            (가) 반문화
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-sm text-center">전체문화(다) 속에 특정 집단만 공유하는 하위문화(나)가 존재하며, 하위문화 중 일부는 주류 문화에 저항하는 반문화(가)의 성격을 띱니다.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                 <div class="mt-8 bg-emerald-50 p-6 rounded-lg">
-                    <h4 class="font-bold text-lg text-emerald-800">🧠 1등급 Level Up Tip!</h4>
-                    <p class="text-emerald-700 mt-2">지현 학생, 'IT 스타트업'과 '대규모 자동차 공장'이라는 두 가지 상황을 떠올려 보세요. 각각 어떤 조직 원리가 더 적합할까요? 그 이유를 '업무의 성격'과 '환경 변화의 속도'와 연결지어 설명하는 연습을 해보면 개념 이해가 훨씬 깊어질 거예요.</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="killer-questions" class="mb-20">
-            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">킬러 문항 정복</h2>
+            <!-- Unit 2 Content -->
+            <section id="unit-2" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-gray-700">2단원: 개인의 성장과 사회 관계</h2>
+                <div class="space-y-6">
+                    <!-- Question 5-1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 5-1: 사회 집단의 유형 종합 분석 (⭐핵심 문제⭐)</h3>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                             <p class="font-semibold">Q. A~D 집단에 대한 설명으로 옳은 것을 &lt;보기&gt;에서 고른 것은?</p>
+                             <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                A: ○○대학교 동문회, B: 가족, C: 시민 단체, D: 군대<br><br>
+                                <strong>&lt;보기&gt;</strong><br>
+                                ㄱ. A, C는 모두 이익 사회이면서 2차 집단이다.<br>
+                                ㄴ. B는 1차 집단이면서 공동 사회이다.<br>
+                                ㄷ. D는 공식 조직이면서 2차 집단이다.<br>
+                                ㄹ. 가입과 탈퇴가 본인의 의사에 따라 자유로운 것은 B뿐이다.
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                             <p><strong>정답:</strong> ㄱ, ㄴ, ㄷ</p>
+                             <p class="mt-2"><strong>해설:</strong><br>
+                             <strong>ㄱ (O):</strong> 동문회(A)와 시민 단체(C)는 특정 목적을 위해 '자발적으로' 결성한 <strong>이익 사회</strong>이며, 관계가 수단적이므로 <strong>2차 집단</strong>입니다.<br>
+                             <strong>ㄴ (O):</strong> 가족(B)은 혈연을 바탕으로 한 친밀한 <strong>1차 집단</strong>이며, 의지와 상관없이 소속되는 <strong>공동 사회</strong>입니다.<br>
+                             <strong>ㄷ (O):</strong> 군대(D)는 명확한 규약에 따라 운영되는 <strong>공식 조직</strong>이며, 국방이라는 목적을 위한 <strong>2차 집단</strong>입니다.<br>
+                             <strong>ㄹ (X):</strong> 가입과 탈퇴가 자유로운 것은 자발적 결사체인 A, C입니다. B(가족)는 본인의 의사로 가입/탈퇴가 불가능합니다.</p>
+                        </div>
+                    </div>
+                    <!-- Question 6-2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 6-2: 역할 갈등의 유형 구분</h3>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. 다음 (가), (나)에 나타난 역할 갈등의 유형을 구분하여 서술하시오.</p>
+                             <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                (가) 판사인 A는 법정에서 재판 중인 피고인이 자신의 친한 친구임을 알게 되었다. 판사로서는 공정한 판결을 내려야 하지만, 친구로서는 우정을 지키고 싶어 괴로워했다.<br>
+                                (나) 교사인 B는 담임을 맡은 반 학생의 성적이 크게 떨어져 고민이다. 교사로서 학생의 학업 성취도를 엄격하게 관리해야 한다는 책임감과, 힘들어하는 학생을 따뜻하게 위로해주고 싶다는 마음이 충돌했다.
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                            <p><strong>(가) 역할 모순:</strong> 개인이 가진 <strong>두 가지 이상의 지위</strong>('판사'라는 지위와 '친구'라는 지위)에서 기대되는 역할들이 서로 충돌하는 경우입니다.</p>
+                            <p class="mt-2"><strong>(나) 역할 긴장:</strong> 개인이 가진 <strong>하나의 지위</strong>('교사'라는 지위) 내에서 서로 다른 역할 기대(엄격한 관리자 vs 따뜻한 상담자)가 충돌하는 경우입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unit 3 Content -->
+            <section id="unit-3" class="content-section">
+                 <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-gray-700">3단원: 사회 불평등과 정의</h2>
+                 <div class="space-y-6">
+                    <!-- Question 7-1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 7-1: 사회 불평등을 보는 관점</h3>
+                         <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. 사회 불평등 현상에 대한 두 가지 관점 (가), (나)를 비교하여 서술하시오.</p>
+                             <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                (가) 사회 불평등은 사회의 희소 가치를 공정하게 배분하는 과정에서 발생한 자연스러운 결과이다. 능력과 노력에 따라 차등적으로 보상하는 것은 사회 발전을 위한 필수적인 장치이다.<br>
+                                (나) 사회 불평등은 권력과 자본을 독점한 지배 집단이 자신들의 이익을 유지하기 위해 만들어낸 인위적인 산물이다. 이는 피지배 집단에 대한 착취의 결과일 뿐이다.
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-bold text-lg text-green-800"> (가) 기능론</h4>
+                                <p>사회 불평등의 <strong>순기능</strong>을 강조합니다. 개인의 성취 동기를 자극하여 사회 전체의 유지와 발전에 기여한다고 봅니다.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-red-800">(나) 갈등론</h4>
+                                <p>사회 불평등의 <strong>역기능</strong>을 강조합니다. 기득권층에게만 유리한 불공정한 사회 구조의 문제점이며, 집단 간의 갈등과 대립을 유발한다고 봅니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Question 8-2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 8-2: 사회 이동과 계층 구조</h3>
+                         <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. 다음 표는 A국의 세대 간 계층 이동 현황(단위: %)을 보여준다. 이 데이터를 시각적으로 분석해보자.</p>
+                            <p class="text-sm mt-2">이 표는 부모 세대의 계층이 자녀 세대에서 어떻게 변화했는지를 보여줍니다. 예를 들어, 부모가 상층인 자녀 중 10%는 상층에 머물렀고, 5%는 중층으로 이동했습니다.</p>
+                         </div>
+                        <div class="mt-6">
+                            <p class="text-center font-semibold mb-2">A국 세대 간 계층 이동 분포</p>
+                            <div class="chart-container">
+                                <canvas id="mobilityChart"></canvas>
+                            </div>
+                        </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 표 분석 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                            <p><strong>해설:</strong></p>
+                             <ul class="list-disc list-inside space-y-1">
+                                <li><strong>상승 이동:</strong> 부모보다 자녀 계층이 높아진 경우로, (중층부모→상층자녀 15%) + (하층부모→상층자녀 5%) + (하층부모→중층자녀 10%) = <strong>30%</strong> 입니다.</li>
+                                <li><strong>하강 이동:</strong> 부모보다 자녀 계층이 낮아진 경우로, (상층부모→중층자녀 5%) + (상층부모→하층자녀 0%) + (중층부모→하층자녀 15%) = <strong>20%</strong> 입니다.</li>
+                                <li><strong>계층 대물림(유지):</strong> 부모와 자녀의 계층이 같은 경우로, (10% + 20% + 20%) = <strong>50%</strong> 입니다.</li>
+                                <li><strong>결론:</strong> 차트에서 볼 수 있듯이, A국에서는 세대 간 계층 이동(상승/하강)이 활발하게 나타나고 있습니다. 이는 개인의 노력에 따라 지위가 변할 수 있는 <strong>개방형 계층 구조</strong>의 특징을 명확히 보여줍니다.</li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
             
-            <div class="bg-white p-8 rounded-xl shadow-lg mb-12">
-                <h3 class="text-2xl font-semibold mb-2 text-center">📊 사회 이동표 완벽 분석 시뮬레이터</h3>
-                <p class="text-center text-slate-600 mb-8">사회 이동표 분석은 자료를 정확히 해석하는 능력이 관건입니다. 각 버튼을 눌러보며 '비율'을 묻는지 '사람 수'를 묻는지, '부모 세대 대비'인지 '자녀 세대 대비'인지 구분하는 훈련을 집중적으로 해봅시다.</p>
-                <div class="chart-container">
-                    <canvas id="mobilityChart"></canvas>
-                </div>
-                <div class="flex justify-center space-x-2 sm:space-x-4 my-6">
-                    <button onclick="updateMobilityChart('all')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">전체 보기</button>
-                    <button onclick="updateMobilityChart('inheritance')" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">계층 대물림</button>
-                    <button onclick="updateMobilityChart('upward')" class="bg-green-100 hover:bg-green-200 text-green-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">상승 이동</button>
-                    <button onclick="updateMobilityChart('downward')" class="bg-red-100 hover:bg-red-200 text-red-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">하강 이동</button>
-                </div>
-                <div id="mobility-explanation" class="mt-4 bg-slate-100 p-6 rounded-lg text-center">
-                    <h4 class="font-semibold text-lg mb-2">분석 결과</h4>
-                    <p class="text-slate-700">버튼을 클릭하여 분석할 지표를 선택하세요.</p>
-                </div>
-            </div>
-
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-                <h3 class="text-2xl font-semibold mb-2 text-center">📈 인구 구조 및 부양비 정밀 분석</h3>
-                <p class="text-center text-slate-600 mb-8">부양비 계산 실수는 최상위권 학생들이 가장 안타깝게 틀리는 부분 중 하나입니다. 모든 부양비 계산의 분모는 '부양 인구'라는 점을 항상 명심하고, 노령화 지수의 분모는 '유소년 인구'라는 차이점을 확실히 인지해야 합니다.</p>
-                 <div class="chart-container">
-                    <canvas id="populationChart"></canvas>
-                </div>
-                <div class="flex justify-center space-x-2 sm:space-x-4 my-6">
-                    <button onclick="updatePopulationData(0)" class="bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg transition hover:bg-emerald-600 text-sm sm:text-base">1990년</button>
-                    <button onclick="updatePopulationData(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">2020년</button>
-                    <button onclick="updatePopulationData(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded-lg transition text-sm sm:text-base">2050년 (전망)</button>
-                </div>
-                <div id="population-explanation" class="mt-4 bg-slate-100 p-6 rounded-lg">
-                    <h4 class="font-semibold text-lg mb-3 text-center">1990년 인구 구조 분석</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                        <div>
-                            <p class="text-sm text-slate-500">유소년 부양비</p>
-                            <p id="youth-ratio" class="text-2xl font-bold">41.7</p>
-                            <p class="text-xs text-slate-400">(유소년 인구 / <strong class="text-red-500">부양 인구</strong>) * 100</p>
+            <!-- Unit 4 Content -->
+            <section id="unit-4" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 border-b pb-3 text-gray-700">4단원: 사회 변화와 미래 사회</h2>
+                 <div class="space-y-6">
+                    <!-- Question 10-1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 10-1: 사회 변동을 보는 관점</h3>
+                         <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. 사회 변동을 바라보는 (가), (나) 관점에 대한 설명으로 옳은 것을 &lt;보기&gt;에서 고르시오.</p>
+                             <div class="mt-2 p-3 bg-white border rounded-md text-sm">
+                                (가) 국가는 흥망성쇠를 거듭하고, 유행은 돌고 돈다. 사회도 생성, 성장, 쇠퇴, 해체의 과정을 반복한다.<br>
+                                (나) 사회는 미개한 농경 사회에서 합리적인 산업 사회로, 더 나아가 고도로 발전된 정보 사회로 나아간다.<br><br>
+                                <strong>&lt;보기&gt;</strong><br>
+                                ㄱ. (가)는 사회 변동이 일정한 방향성을 갖는다고 본다.<br>
+                                ㄴ. (나)는 서구 중심적 시각이라는 비판을 받기도 한다.<br>
+                                ㄷ. (가)와 (나)는 모두 거시적 관점에서 사회 변동을 설명한다.
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-sm text-slate-500">노년 부양비</p>
-                            <p id="elderly-ratio" class="text-2xl font-bold">8.3</p>
-                            <p class="text-xs text-slate-400">(노년 인구 / <strong class="text-red-500">부양 인구</strong>) * 100</p>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                            <p><strong>(가) 순환론, (나) 진화론</strong></p>
+                            <p><strong>정답:</strong> ㄴ, ㄷ</p>
+                            <p class="mt-2"><strong>해설:</strong><br>
+                            <strong>ㄱ (X):</strong> (가) 순환론은 사회가 특정 패턴을 반복할 뿐, 정해진 방향으로 발전한다고 보지 않습니다. 일정한 방향성을 전제하는 것은 (나) 진화론입니다.<br>
+                            <strong>ㄴ (O):</strong> (나) 진화론은 서구 사회의 발전 과정을 보편적인 모델로 삼아 다른 사회를 평가하는 <strong>서구 중심주의(자문화 중심주의)</strong>로 흐를 수 있다는 비판을 받습니다.<br>
+                            <strong>ㄷ (O):</strong> 두 관점 모두 개인이 아닌 사회 전체의 장기적인 변화 패턴을 설명하므로 <strong>거시적 관점</strong>에 해당합니다.</p>
                         </div>
-                        <div>
-                            <p class="text-sm text-slate-500">총 부양비</p>
-                            <p id="total-ratio" class="text-2xl font-bold">50.0</p>
-                            <p class="text-xs text-slate-400">유소년 + 노년 부양비</p>
+                    </div>
+                     <!-- Question 12-2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">🧩 문제 12-2: 미래 사회 문제에 대한 대응</h3>
+                         <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="font-semibold">Q. 저출산·고령화 현상이 심화될 때 발생할 수 있는 사회 문제 2가지를 서술하고, 이에 대한 사회·문화적 차원의 해결 방안을 1가지 제시하시오.</p>
+                         </div>
+                        <button class="answer-toggle-btn mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">👇 풀이 및 개념 정리</button>
+                        <div class="answer-content mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                             <p><strong>예상되는 사회 문제:</strong>
+                                <ul class="list-disc list-inside mt-1">
+                                    <li><strong>생산 가능 인구 감소:</strong> 일할 사람이 줄어들어 국가의 경제 성장 잠재력이 약화됩니다.</li>
+                                    <li><strong>사회 보장 비용 증가:</strong> 노인 인구를 부양하기 위한 연금, 의료비 등 사회적 부담이 급증합니다.</li>
+                                    <li><strong>세대 갈등 심화:</strong> 청년층의 노인 부양 부담이 커지면서 세대 간 갈등이 발생할 수 있습니다. (2가지 이상 서술 가능)</li>
+                                </ul>
+                            </p>
+                            <p class="mt-4"><strong>사회·문화적 차원의 해결 방안:</strong>
+                                <ul class="list-disc list-inside mt-1">
+                                    <li><strong>가족 친화적 가치관 확산:</strong> '일과 가정의 양립'을 중시하는 사회적 분위기를 조성하고, 남성의 육아 참여를 당연하게 여기는 문화를 정착시킵니다.</li>
+                                    <li><strong>노인에 대한 긍정적 인식 제고:</strong> 노인을 부양의 대상이 아닌, 경험과 지혜를 갖춘 사회의 중요한 구성원으로 존중하는 문화를 만듭니다. (1가지 이상 서술 가능)</li>
+                                </ul>
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="theories" class="mb-20">
-            <h2 class="text-3xl font-bold mb-8 border-l-4 border-emerald-500 pl-4">이론 적용 훈련</h2>
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-                 <p class="text-center text-slate-600 mb-8">개별 이론 암기를 넘어, 실제 사회 현상에 각 이론을 '적용'하는 능력이 중요합니다. 특정 사례를 보고 어떤 이론으로 분석할 수 있을지 빠르게 연결하는 연습을 해보세요.</p>
-                <div class="mb-4 border-b border-slate-200">
-                    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-                        <button class="tab-button active" data-tab="deviance">일탈 행동 이론 적용</button>
-                        <button class="tab-button" data-tab="perspectives">사회 현상 관점 적용</button>
-                    </nav>
-                </div>
-                <div id="tab-content">
-                </div>
-                 <div class="mt-8 bg-emerald-50 p-6 rounded-lg">
-                    <h4 class="font-bold text-lg text-emerald-800">🧠 1등급 Level Up Tip!</h4>
-                    <p class="text-emerald-700 mt-2">지현 학생, '청소년의 스마트폰 과의존' 현상을 떠올려 보세요. 머튼의 아노미 이론으로는 어떻게 설명할 수 있을까요? (힌트: 문화적 목표와 수단 간의 괴리) 그렇다면 낙인 이론으로는 어떤 부분에 초점을 맞춰 분석할 수 있을까요? 이렇게 하나의 사례를 여러 관점으로 분석하는 연습이 실전에서 큰 도움이 될 거예요.</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-slate-800 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2025 허지현 학생 맞춤형 공략집. 만점을 응원합니다!</p>
-            <p class="text-sm text-slate-400 mt-2">본 페이지는 학습 목적으로 제작되었습니다.</p>
-        </div>
-    </footer>
+        </main>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Navigation Logic
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
 
-            const mobilityData = {
-                labels: ['부모: 상', '부모: 중', '부모: 하'],
-                datasets: [
-                    { label: '자녀: 상', data: [15, 5, 2], backgroundColor: 'rgba(52, 211, 153, 0.7)' },
-                    { label: '자녀: 중', data: [5, 30, 10], backgroundColor: 'rgba(59, 130, 246, 0.7)' },
-                    { label: '자녀: 하', data: [3, 8, 17], backgroundColor: 'rgba(239, 68, 68, 0.7)' }
-                ]
-            };
-            const mobilityCtx = document.getElementById('mobilityChart').getContext('2d');
-            const mobilityChart = new Chart(mobilityCtx, {
-                type: 'bar',
-                data: mobilityData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true },
-                        y: { stacked: true, beginAtZero: true, title: { display: true, text: '인원 (가상 수치)' } }
-                    },
-                    plugins: {
-                        title: { display: true, text: '세대 간 사회 이동 (부모 → 자녀)', font: { size: 16 } },
-                        tooltip: { mode: 'index' }
-                    }
-                }
-            });
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const target = link.dataset.target;
 
-            window.updateMobilityChart = (type) => {
-                const explanationEl = document.getElementById('mobility-explanation');
-                let explanationHTML = '';
-                const baseColors = ['rgba(52, 211, 153, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(239, 68, 68, 0.7)'];
-                const highlightColor = 'rgba(251, 191, 36, 1)';
-                const mutedColor = 'rgba(200, 200, 200, 0.5)';
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    link.classList.add('active');
 
-                mobilityChart.data.datasets.forEach((dataset, i) => {
-                    dataset.backgroundColor = dataset.data.map((_, j) => {
-                        if (type === 'all') return baseColors[i];
-                        if (type === 'inheritance' && i === j) return highlightColor;
-                        if (type === 'upward' && i < j) return highlightColor;
-                        if (type === 'downward' && i > j) return highlightColor;
-                        return mutedColor;
+                    contentSections.forEach(section => {
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
                     });
                 });
-                mobilityChart.update();
-                
-                switch(type) {
-                    case 'all':
-                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">전체 보기</h4><p class="text-slate-700">부모 세대의 계층이 자녀 세대에서 어떻게 분포되는지 전체적으로 보여줍니다. 총 100명의 데이터를 기반으로 분석합니다.</p>`;
-                        break;
-                    case 'inheritance':
-                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">계층 대물림 (15+30+17 = 62명)</h4><p class="text-slate-700">부모와 자녀의 계층이 동일한 경우입니다. (상→상, 중→중, 하→하) 전체의 62%가 계층을 대물림했습니다.</p>`;
-                        break;
-                    case 'upward':
-                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">상승 이동 (5+2+10 = 17명)</h4><p class="text-slate-700">자녀의 계층이 부모보다 높아진 경우입니다. (중→상, 하→상, 하→중) 세대 간 이동이 발생한 38명 중 약 45%가 상승 이동을 경험했습니다.</p>`;
-                        break;
-                    case 'downward':
-                        explanationHTML = `<h4 class="font-semibold text-lg mb-2">하강 이동 (5+3+8 = 16명)</h4><p class="text-slate-700">자녀의 계층이 부모보다 낮아진 경우입니다. (상→중, 상→하, 중→하) 하강 이동 비율은 전체의 16%입니다.</p>`;
-                        break;
-                }
-                explanationEl.innerHTML = explanationHTML;
-            };
-            
-            updateMobilityChart('all');
-
-            const populationRawData = [
-                { year: 1990, youth: 25, working: 60, elderly: 5 },
-                { year: 2020, youth: 15, working: 65, elderly: 20 },
-                { year: 2050, youth: 10, working: 50, elderly: 40 },
-            ];
-            
-            const populationData = {
-                labels: ['유소년 인구(0-14세)', '부양 인구(15-64세)', '노년 인구(65세 이상)'],
-                datasets: [{
-                    label: '인구 비율 (%)',
-                    data: [25, 60, 5],
-                    backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)', 'rgba(239, 68, 68, 0.7)']
-                }]
-            };
-
-            const populationCtx = document.getElementById('populationChart').getContext('2d');
-            const populationChart = new Chart(populationCtx, {
-                type: 'doughnut',
-                data: populationData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: '1990년 인구 구조', font: { size: 16 } },
-                        legend: { position: 'top' }
-                    }
-                }
             });
-            
-            const populationButtons = document.querySelectorAll('#killer-questions button[onclick^="updatePopulationData"]');
-            window.updatePopulationData = (index) => {
-                const data = populationRawData[index];
-                populationChart.data.datasets[0].data = [data.youth, data.working, data.elderly];
-                populationChart.options.plugins.title.text = `${data.year}년 인구 구조` + (data.year === 2050 ? ' (전망)' : '');
-                populationChart.update();
-                
-                const youthRatio = ((data.youth / data.working) * 100).toFixed(1);
-                const elderlyRatio = ((data.elderly / data.working) * 100).toFixed(1);
-                const totalRatio = (parseFloat(youthRatio) + parseFloat(elderlyRatio)).toFixed(1);
 
-                document.getElementById('population-explanation').querySelector('h4').textContent = `${data.year}년 인구 구조 분석` + (data.year === 2050 ? ' (전망)' : '');
-                document.getElementById('youth-ratio').textContent = youthRatio;
-                document.getElementById('elderly-ratio').textContent = elderlyRatio;
-                document.getElementById('total-ratio').textContent = totalRatio;
-
-                populationButtons.forEach((btn, i) => {
-                    btn.classList.toggle('bg-emerald-500', i === index);
-                    btn.classList.toggle('text-white', i === index);
-                    btn.classList.toggle('bg-slate-200', i !== index);
-                    btn.classList.toggle('text-slate-800', i !== index);
-                    btn.classList.toggle('hover:bg-emerald-600', i === index);
-                    btn.classList.toggle('hover:bg-slate-300', i !== index);
-                });
-            };
-
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContentContainer = document.getElementById('tab-content');
-            
-            const tabContents = {
-                deviance: `
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">기능론적 관점</h4>
-                            <p class="ml-4 pl-4 border-l-2">사회의 정상적인 작동을 위해 일탈이 발생하며, 특정 일탈은 사회 통합에 기여하기도 한다고 봅니다.</p>
-                            <ul class="ml-8 mt-2 space-y-1 list-disc list-inside">
-                                <li><strong>뒤르켐의 아노미 이론:</strong> 급격한 사회 변동으로 인한 무규범 상태(아노미)가 일탈의 원인.</li>
-                                <li><strong>머튼의 아노미 이론:</strong> 문화적 목표와 제도적 수단 간의 괴리가 일탈의 원인.</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">갈등론적 관점</h4>
-                            <p class="ml-4 pl-4 border-l-2">지배 집단이 자신들에게 유리한 규범을 만들고, 이를 위반하는 피지배 집단의 행위를 일탈로 규정한다고 봅니다.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론적 관점</h4>
-                            <p class="ml-4 pl-4 border-l-2">개인 간의 상호작용 과정에서 일탈이 학습되거나 규정된다고 봅니다.</p>
-                             <ul class="ml-8 mt-2 space-y-1 list-disc list-inside">
-                                <li><strong>차별 교제 이론:</strong> 일탈자와의 상호작용을 통해 일탈 행동을 학습.</li>
-                                <li><strong>낙인 이론:</strong> 사회적으로 '일탈자'라는 낙인이 찍히는 과정에 주목. 1차적 일탈보다 2차적 일탈을 중요시.</li>
-                            </ul>
-                        </div>
-                    </div>
-                `,
-                perspectives: `
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">기능론 (거시적 관점)</h4>
-                            <p class="ml-4 pl-4 border-l-2">사회를 유기체에 비유하며, 각 사회 제도가 사회 전체의 안정과 통합을 위해 기능한다고 봅니다. 조화와 균형을 강조합니다.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">갈등론 (거시적 관점)</h4>
-                            <p class="ml-4 pl-4 border-l-2">사회를 희소자원을 둘러싼 집단 간의 갈등과 대립의 장으로 봅니다. 사회 변동을 긍정적으로 평가합니다.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-emerald-700">상징적 상호작용론 (미시적 관점)</h4>
-                            <p class="ml-4 pl-4 border-l-2">개인의 주관적인 해석과 상황 정의, 그리고 상징을 통한 상호작용에 초점을 맞춥니다. 인간의 능동성을 강조합니다.</p>
-                        </div>
-                    </div>
-                `
-            };
-
-            function switchTab(tabName) {
-                tabButtons.forEach(button => {
-                    button.dataset.tab === tabName ? button.classList.add('active') : button.classList.remove('active');
-                });
-                tabContentContainer.innerHTML = tabContents[tabName];
-            }
-
-            tabButtons.forEach(button => {
+            // Answer Toggle Logic
+            const toggleButtons = document.querySelectorAll('.answer-toggle-btn');
+            toggleButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    switchTab(button.dataset.tab);
+                    const answerContent = button.nextElementSibling;
+                    answerContent.classList.toggle('visible');
+                    if (answerContent.classList.contains('visible')) {
+                        button.textContent = '👆 풀이 닫기';
+                    } else {
+                        button.textContent = '👇 풀이 및 개념 정리';
+                    }
                 });
             });
 
-            switchTab('deviance');
-            updatePopulationData(0);
+            // Chart.js for Social Mobility
+            const ctx = document.getElementById('mobilityChart');
+            if (ctx) {
+                const mobilityData = {
+                    parent: {
+                        upper: 15,
+                        middle: 50,
+                        lower: 35
+                    },
+                    child: {
+                        upper: 30,
+                        middle: 35,
+                        lower: 35
+                    },
+                    // [상층자녀, 중층자녀, 하층자녀]
+                    fromUpper: [10, 5, 0],
+                    fromMiddle: [15, 20, 15],
+                    fromLower: [5, 10, 20]
+                };
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['부모: 상층', '부모: 중층', '부모: 하층'],
+                        datasets: [
+                            {
+                                label: '자녀: 상층',
+                                data: [mobilityData.fromUpper[0], mobilityData.fromMiddle[0], mobilityData.fromLower[0]],
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: '자녀: 중층',
+                                data: [mobilityData.fromUpper[1], mobilityData.fromMiddle[1], mobilityData.fromLower[1]],
+                                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: '자녀: 하층',
+                                data: [mobilityData.fromUpper[2], mobilityData.fromMiddle[2], mobilityData.fromLower[2]],
+                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                grid: { display: false }
+                            },
+                            y: {
+                                stacked: true,
+                                title: {
+                                    display: true,
+                                    text: '비율 (%)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '부모 계층에 따른 자녀 계층 분포',
+                                font: { size: 16 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         });
     </script>
+
 </body>
 </html>
-
