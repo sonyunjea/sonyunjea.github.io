@@ -1,632 +1,407 @@
 <!DOCTYPE html>
-<html lang="ko" class="scroll-smooth">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인공지능 핵심 개념 탐구</title>
+    <title>회로이론 2 대화형 학습 가이드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Subtle Academia -->
-    <!-- Application Structure Plan: The application is structured as a single-page, vertical-scrolling learning module with six thematic sections, moving from simple to complex concepts. This structure was chosen over the original Q&A format to create a logical and intuitive learning path. 1) Basics (Perceptrons), 2) Depth (Shallow vs. Deep), 3) Learning Mechanism (Backpropagation), 4) Core Tech (CNNs), 5) Application (Digit Recognition), and 6) Challenges (Overfitting). A sticky top navigation allows users to jump between sections, facilitating non-linear exploration. Interactive charts and diagrams are used to visually explain abstract concepts, enhancing comprehension and engagement. -->
-    <!-- Visualization & Content Choices: 
-        - Perceptron Limits (Q1): Goal: Compare. Viz: Interactive Chart.js scatter plot. Interaction: Buttons to switch between AND/OR/XOR problems to visually demonstrate the concept of linear separability. Justification: A static explanation is less impactful than seeing the boundary fail on XOR.
-        - Activation Functions (Q2): Goal: Inform. Viz: HTML/CSS diagram. Interaction: Static visual aid. Justification: A simple diagram is sufficient to explain the role of non-linearity.
-        - Shallow vs. Deep (서술형 Q1): Goal: Compare. Viz: HTML/CSS hierarchical diagram. Interaction: Static visual flow. Justification: Visually represents the abstract concept of hierarchical feature extraction.
-        - Backpropagation (New): Goal: Inform/Organize. Viz: Interactive HTML/CSS flowchart. Interaction: Buttons to toggle between Forward and Backward Pass, highlighting steps and showing explanations. Justification: Decomposes a complex, two-phase algorithm into a simple, step-by-step visual flow, making it easier to grasp the core concepts of error calculation and weight updates.
-        - CNN Components (Q3): Goal: Inform. Viz: HTML/CSS diagrams. Justification: Simplifies complex matrix operations into an understandable visual process.
-        - Digit Recognition (서술형 Q2): Goal: Organize. Viz: Interactive HTML/CSS flowchart. Interaction: Users click on each step to reveal detailed explanations. Justification: Breaks down a complex process into manageable, explorable steps.
-        - Overfitting (서술형 Q3): Goal: Inform/Compare. Viz: Chart.js line chart and interactive cards. Interaction: The chart visually defines overfitting, and clickable cards explain the solutions. Justification: The combination of a clear visual problem statement (the chart) and interactive solutions provides a comprehensive overview. -->
+    <!-- Chosen Palette: Warm Neutral with Muted Green Accent -->
+    <!-- Application Structure Plan: A two-column layout with a fixed sidebar navigation for weekly topics and a main content area. This structure allows users to quickly jump between different sections, which is ideal for a study guide. The core interaction is switching content panes. A special interactive module for 2nd-order circuits is included to provide a dynamic learning experience, allowing users to visualize how parameters affect circuit behavior, which is more effective than static text. -->
+    <!-- Visualization & Content Choices: Most content is text-based and organized into cards for clarity. The key visualization is for the 2nd-order RLC circuit analysis. Goal: Compare different response types (overdamped, critically damped, underdamped). Viz/Presentation Method: An interactive line chart (Chart.js on Canvas) controlled by sliders for R, L, and C values. Interaction: Users manipulate sliders, and the app recalculates alpha, omega, determines the response type, and instantly redraws the chart, providing immediate visual feedback on the mathematical relationships. Justification: This transforms a complex, abstract concept into a tangible, explorable tool, significantly enhancing understanding. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
+        :root {
+            --bg-main: #FDFBF5;
+            --bg-sidebar: #F5F1E8;
+            --text-dark: #3a3a3a;
+            --text-light: #5a5a5a;
+            --accent: #6B8E23;
+            --border-color: #E0D9CB;
+            --card-bg: #FFFFFF;
+        }
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+        }
+        .sidebar-nav a {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-nav a.active {
+            background-color: var(--accent);
+            color: white;
+            border-left-color: #4a6319;
+        }
+        .sidebar-nav a:hover {
+            background-color: #e9e4d9;
+        }
+        .sidebar-nav a.active:hover {
+            background-color: var(--accent);
+        }
+        .content-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+        .formula-box {
+            background-color: #f9f9f9;
+            border-left: 3px solid var(--accent);
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
-            max-height: 350px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
-        }
-        .nav-link.active {
-            color: #0d9488;
-            font-weight: 700;
-        }
-        .step-card {
-            transition: all 0.3s ease-in-out;
-        }
-        .step-card.active {
-            border-color: #0d9488;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-        .solution-card {
-            perspective: 1000px;
-        }
-        .solution-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        .solution-card.flipped .solution-card-inner {
-            transform: rotateY(180deg);
-        }
-        .solution-card-front, .solution-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-        }
-        .solution-card-back {
-            transform: rotateY(180deg);
-        }
-        .bp-step {
-            transition: all 0.3s ease;
-        }
-        .bp-step.active {
-            background-color: #ccfbf1;
-            border-color: #14b8a6;
+            height: 350px;
+            max-height: 50vh;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-
-    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <span class="font-bold text-xl text-teal-700">AI 핵심 탐구</span>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#section1" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">퍼셉트론 기초</a>
-                        <a href="#section2" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">신경망의 깊이</a>
-                        <a href="#section3" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">역전파 알고리즘</a>
-                        <a href="#section4" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">CNN 집중 탐구</a>
-                        <a href="#section5" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">실전 응용</a>
-                        <a href="#section6" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-teal-600">과적합 문제</a>
-                    </div>
-                </div>
+<body class="antialiased">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-sidebar border-r border-border-color flex-shrink-0">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-gray-800">회로이론 2 핵심정리</h1>
+                <p class="text-sm text-text-light mt-1">대화형 학습 가이드</p>
             </div>
-        </nav>
-    </header>
+            <nav class="sidebar-nav flex flex-row md:flex-col">
+                <a href="#week0" data-target="content-week0" class="nav-link active text-left block py-3 px-6 text-sm font-semibold text-text-dark">0주: 필수 정리</a>
+                <a href="#week1" data-target="content-week1" class="nav-link text-left block py-3 px-6 text-sm font-semibold text-text-dark">1주: 회로망 해석법</a>
+                <a href="#week2" data-target="content-week2" class="nav-link text-left block py-3 px-6 text-sm font-semibold text-text-dark">2주: 커패시터</a>
+                <a href="#week3" data-target="content-week3" class="nav-link text-left block py-3 px-6 text-sm font-semibold text-text-dark">3주: 인덕터</a>
+                <a href="#week4" data-target="content-week4" class="nav-link text-left block py-3 px-6 text-sm font-semibold text-text-dark">4주: 1차 회로</a>
+                <a href="#week5" data-target="content-week5" class="nav-link text-left block py-3 px-6 text-sm font-semibold text-text-dark">5주: 2차 회로</a>
+            </nav>
+        </aside>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="flex-1 p-4 sm:p-6 lg:p-10">
+            <div id="content-container">
+                <div id="content-week0" class="content-pane space-y-8">
+                    <h2 class="text-3xl font-bold border-b pb-2">0주: 1, 2차 회로 해석을 위한 필수 정리</h2>
+                    <p class="text-text-light">1, 2차 과도응답 회로를 풀기 위해서는 복잡한 회로를 단순화하는 능력이 필수적입니다. 아래의 정리들은 그 기반이 되는 핵심 도구들입니다.</p>
 
-        <!-- Section 1: 퍼셉트론의 기초 -->
-        <section id="section1" class="scroll-mt-20 mb-16">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">1. 신경망의 시작: 퍼셉트론 기초</h2>
-                <p class="text-slate-600 mb-6">모든 복잡한 신경망은 단순한 계산 모델인 퍼셉트론에서 시작됩니다. 여기서는 단층 퍼셉트론의 명확한 한계와, 그 한계를 극복하기 위한 활성화 함수의 중요성에 대해 알아봅니다.</p>
-                <div class="grid md:grid-cols-2 gap-8 items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-3">단층 퍼셉트론의 한계: XOR 문제</h3>
-                        <p class="text-slate-600 mb-4">단층 퍼셉트론은 직선 하나로 데이터를 구분하는 것과 같습니다. 이 때문에 선형적으로 분리가 불가능한 문제, 대표적으로 XOR 문제는 해결할 수 없습니다. 아래 차트에서 버튼을 눌러 확인해보세요.</p>
-                        <div class="flex space-x-2 mb-4">
-                            <button id="btn-and" class="px-4 py-2 bg-teal-100 text-teal-800 rounded-lg text-sm font-medium hover:bg-teal-200">AND</button>
-                            <button id="btn-or" class="px-4 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-200">OR</button>
-                            <button id="btn-xor" class="px-4 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-200">XOR</button>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="perceptronChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold mb-3">한계 극복의 열쇠: 비선형 활성화 함수</h3>
-                        <p class="text-slate-600 mb-4">다층 퍼셉트론(MLP)이 복잡한 문제를 해결할 수 있는 이유는 은닉층에서 사용하는 비선형 활성화 함수 덕분입니다. 활성화 함수가 선형이라면, 층을 아무리 깊게 쌓아도 결국 하나의 선형 변환과 같아져 깊이의 의미가 사라집니다.</p>
-                        <p class="text-slate-600">신경망에 비선형성(non-linearity)을 부여함으로써, 모델은 복잡하고 비선형적인 데이터 패턴을 학습하고 표현할 수 있게 됩니다.</p>
-                        <div class="mt-6 flex items-center justify-center space-x-4 bg-white p-4 rounded-lg shadow-inner">
-                             <span class="font-mono text-lg">∑(wx+b)</span>
-                             <span class="text-3xl text-teal-600">→</span>
-                             <div class="text-center">
-                                 <div class="w-20 h-12 bg-teal-500 text-white flex items-center justify-center rounded-lg font-bold">f(x)</div>
-                                 <span class="text-xs text-slate-500">활성화 함수</span>
-                             </div>
-                             <span class="text-3xl text-teal-600">→</span>
-                             <span class="font-mono text-lg">Output</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 2: 신경망의 깊이 -->
-        <section id="section2" class="scroll-mt-20 mb-16">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">2. 얕은 신경망에서 딥러닝으로</h2>
-                <p class="text-slate-600 mb-6">신경망의 '깊이'는 왜 중요할까요? 은닉층이 많은 깊은 신경망(딥러닝)은 얕은 신경망과 달리 '계층적 특징 추출'을 통해 복잡한 데이터를 효과적으로 학습합니다.</p>
-                 <div class="bg-slate-50 p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4 text-center">계층적 특징 추출 (Hierarchical Feature Extraction)</h3>
-                    <p class="text-center text-slate-600 mb-6">입력에 가까운 층은 단순한 특징(선, 색)을, 깊은 층으로 갈수록 복잡하고 추상적인 특징(눈, 코, 얼굴)을 학습합니다.</p>
-                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 text-center">
-                        <div class="flex flex-col items-center">
-                            <div class="w-24 h-24 bg-white rounded-lg shadow flex items-center justify-center text-4xl">👤</div>
-                            <span class="mt-2 font-semibold">입력 이미지</span>
-                        </div>
-                        <span class="text-3xl text-slate-400 transform rotate-90 md:rotate-0">→</span>
-                        <div class="flex flex-col items-center">
-                             <div class="w-24 h-24 bg-white rounded-lg shadow flex items-center justify-center text-2xl p-2 font-mono">/ | -</div>
-                             <span class="mt-2 font-semibold">초기 층</span>
-                             <span class="text-sm text-slate-500">(Low-level Features)</span>
-                        </div>
-                        <span class="text-3xl text-slate-400 transform rotate-90 md:rotate-0">→</span>
-                        <div class="flex flex-col items-center">
-                             <div class="w-24 h-24 bg-white rounded-lg shadow flex items-center justify-center text-3xl">👁️👃</div>
-                             <span class="mt-2 font-semibold">중간 층</span>
-                             <span class="text-sm text-slate-500">(Mid-level Features)</span>
-                        </div>
-                        <span class="text-3xl text-slate-400 transform rotate-90 md:rotate-0">→</span>
-                        <div class="flex flex-col items-center">
-                             <div class="w-24 h-24 bg-white rounded-lg shadow flex items-center justify-center text-4xl">😊</div>
-                             <span class="mt-2 font-semibold">상위 층</span>
-                             <span class="text-sm text-slate-500">(High-level Features)</span>
-                        </div>
-                    </div>
-                 </div>
-            </div>
-        </section>
-
-        <!-- Section 3: Backpropagation -->
-        <section id="section3" class="scroll-mt-20 mb-16">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">3. 신경망은 어떻게 학습할까?: 역전파 알고리즘</h2>
-                <p class="text-slate-600 mb-6">신경망 학습의 핵심은 **역전파(Backpropagation)** 알고리즘입니다. 이 알고리즘은 예측값과 실제값의 오차(error)를 계산하고, 이 오차를 출력층에서부터 입력층 방향으로 역으로 전파하면서 각 가중치(weight)를 얼마나 조정해야 할지 계산하여 모델을 점진적으로 개선합니다.</p>
-                <div class="grid md:grid-cols-2 gap-8 items-start">
-                    <div class="bg-slate-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold mb-4 text-center">역전파의 두 단계</h3>
-                        <div class="flex justify-center space-x-2 mb-4">
-                            <button id="btn-forward" class="px-4 py-2 bg-teal-100 text-teal-800 rounded-lg text-sm font-medium hover:bg-teal-200">1. 순전파 (Forward Pass)</button>
-                            <button id="btn-backward" class="px-4 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-200">2. 역전파 (Backward Pass)</button>
-                        </div>
-                        <div class="space-y-2">
-                            <div id="step-input" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Input</span><span class="text-2xl text-slate-400">→</span></div>
-                            <div id="step-predict" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Prediction</span><span class="text-2xl text-slate-400">→</span></div>
-                            <div id="step-loss" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Loss Calculation</span><span id="arrow-loss" class="text-2xl text-slate-400">→</span></div>
-                            <div id="step-gradient" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md flex items-center justify-between"><span>Gradient Calculation</span><span class="text-2xl text-slate-400">→</span></div>
-                            <div id="step-update" class="bp-step border-2 border-slate-200 bg-white p-3 rounded-md"><span>Weight Update</span></div>
-                        </div>
-                    </div>
-                    <div id="bp-explanation" class="pt-2">
-                        <!-- Explanation will be loaded here by JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: CNN 집중 탐구 -->
-        <section id="section4" class="scroll-mt-20 mb-16">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">4. 이미지 인식의 핵심: CNN 집중 탐구</h2>
-                <p class="text-slate-600 mb-6">합성곱 신경망(CNN)은 이미지와 같은 그리드 형태의 데이터를 처리하는 데 특화된 모델입니다. CNN의 핵심 구성 요소와, 효율적인 모델 개발을 돕는 전이 학습에 대해 알아봅니다.</p>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-slate-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold mb-3">CNN의 핵심 구성 요소</h3>
+                    <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">1. 키르히호프의 법칙 (Kirchhoff's Laws)</h3>
                         <div class="space-y-4">
                             <div>
-                                <h4 class="font-semibold text-lg">합성곱 계층 (Convolutional Layer)</h4>
-                                <p class="text-slate-600">필터(커널)를 사용하여 입력 데이터의 지역적 특징(local feature)을 추출합니다. 이미지의 경계선, 질감 등을 감지하는 역할을 합니다.</p>
+                                <h4 class="font-semibold">키르히호프 전류 법칙 (KCL)</h4>
+                                <p class="text-sm text-text-light">회로 내의 어느 한 점(절점)으로 들어오는 전류의 합은 그 점에서 나가는 전류의 합과 같습니다.</p>
+                                <p class="formula-box text-sm p-3 mt-2 font-mono">Σ I_in = Σ I_out</p>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-lg">풀링 계층 (Pooling Layer)</h4>
-                                <p class="text-slate-600">특징 맵(feature map)의 크기를 줄여 계산량을 감소시키고, 객체의 위치 변화에 덜 민감한 특징을 만들어 일반화 성능을 높입니다.</p>
+                                <h4 class="font-semibold">키르히호프 전압 법칙 (KVL)</h4>
+                                <p class="text-sm text-text-light">회로 내의 어떠한 닫힌 루프(폐회로)를 따라 한 방향으로 전압을 측정하면, 전압 상승의 총합은 전압 강하의 총합과 같습니다.</p>
+                                <p class="formula-box text-sm p-3 mt-2 font-mono">Σ V_rise = Σ V_drop</p>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold mb-3">효율적인 학습법: 전이 학습 (Transfer Learning)</h3>
-                        <p class="text-slate-600 mb-4">대규모 데이터로 미리 학습된 모델(Pre-trained model)의 지식을 가져와 새로운 문제에 적용하는 기법입니다.</p>
-                        <p class="text-slate-600 font-medium">장점: 적은 데이터로도 높은 성능을 낼 수 있으며, 학습 시간을 크게 단축시킬 수 있습니다.</p>
-                        <div class="mt-4 border-t pt-4">
-                             <div class="flex items-center space-x-2">
-                                <div class="p-2 bg-blue-100 rounded-md text-center">
-                                    <p class="font-bold">대규모 데이터</p>
-                                    <p class="text-sm">(ImageNet 등)</p>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <div class="content-card rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4">2. 테브난의 정리</h3>
+                             <p class="text-sm text-text-light mb-4">복잡한 회로의 두 단자 사이를 하나의 전압원(V_th)과 직렬 저항(R_th)으로 변환합니다.</p>
+                             <ul class="text-sm list-decimal list-inside space-y-2">
+                                 <li><strong>R_th 구하기:</strong> 모든 독립 전원을 제거하고(전압원→단락, 전류원→개방) 단자에서 본 등가 저항을 구합니다.</li>
+                                 <li><strong>V_th 구하기:</strong> 단자를 개방시켰을 때의 전압(V_oc)을 구합니다.</li>
+                             </ul>
+                        </div>
+                        <div class="content-card rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4">3. 노턴의 정리</h3>
+                            <p class="text-sm text-text-light mb-4">복잡한 회로의 두 단자 사이를 하나의 전류원(I_n)과 병렬 저항(R_n)으로 변환합니다.</p>
+                            <ul class="text-sm list-decimal list-inside space-y-2">
+                                <li><strong>R_n 구하기:</strong> 테브난 저항(R_th)과 동일합니다.</li>
+                                <li><strong>I_n 구하기:</strong> 단자를 단락시켰을 때 흐르는 전류(I_sc)를 구합니다.</li>
+                            </ul>
+                        </div>
+                     </div>
+                    <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">4. 전원 변환 & 5. 중첩의 원리</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold">전원 변환 (Source Transformation)</h4>
+                                <p class="text-sm text-text-light">테브난 등가 회로와 노턴 등가 회로는 상호 변환이 가능하며, V_s = I_s * R 관계를 가집니다.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">중첩의 원리 (Superposition)</h4>
+                                <p class="text-sm text-text-light">여러 전원이 있을 때, 회로의 응답은 각 전원이 단독으로 작용할 때의 응답들의 합과 같습니다. (단, 전력 계산에는 적용 불가)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-week1" class="content-pane space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">1주: 회로망 해석법</h2>
+                    <p class="text-text-light">회로 내의 전압과 전류를 구하는 체계적인 방법들입니다. 회로의 형태에 따라 더 효율적인 방법을 선택할 수 있습니다.</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="content-card rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4">지로 전류법</h3>
+                            <p class="text-sm text-text-light">가장 기본적인 방법으로, 각 지로의 전류를 미지수로 설정하고 KCL과 KVL을 이용해 연립방정식을 풀어 해석합니다.</p>
+                        </div>
+                        <div class="content-card rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4">망 전류법</h3>
+                            <p class="text-sm text-text-light">각 망(mesh)에 가상의 전류를 설정하고 KVL을 적용합니다. 절점보다 망의 개수가 적을 때 유리합니다.</p>
+                        </div>
+                        <div class="content-card rounded-lg shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4">절점 전압법</h3>
+                            <p class="text-sm text-text-light">기준 절점을 정하고 각 절점의 전압을 미지수로 설정하여 KCL을 적용합니다. 망보다 절점의 개수가 적을 때 유리합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-week2" class="content-pane space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">2주: 커패시터 (Capacitor)</h2>
+                    <p class="text-text-light">전하를 저장하는 소자로, 전압의 급격한 변화를 억제하는 특성을 가집니다.</p>
+                     <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">핵심 공식 및 특성</h3>
+                        <div class="grid md:grid-cols-2 gap-6 text-sm">
+                            <p class="formula-box p-3 font-mono">q = C * v</p>
+                            <p class="formula-box p-3 font-mono">i(t) = C * dv(t)/dt</p>
+                            <p class="formula-box p-3 font-mono">W = (1/2) * C * v²</p>
+                            <div class="md:col-span-2 space-y-2">
+                                <p><strong>💡 DC 정상상태:</strong> 개방 회로(open circuit)로 동작합니다.</p>
+                                <p><strong>💡 전압 연속성:</strong> 커패시터의 전압은 순간적으로 변할 수 없습니다. (v(0+) = v(0-))</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-week3" class="content-pane space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">3주: 인덕터 (Inductor)</h2>
+                    <p class="text-text-light">자기장을 이용해 에너지를 저장하는 소자로, 전류의 급격한 변화를 억제하는 특성을 가집니다.</p>
+                    <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">핵심 공식 및 특성</h3>
+                        <div class="grid md:grid-cols-2 gap-6 text-sm">
+                            <p class="formula-box p-3 font-mono">Φ = L * i</p>
+                            <p class="formula-box p-3 font-mono">v(t) = L * di(t)/dt</p>
+                            <p class="formula-box p-3 font-mono">W = (1/2) * L * i²</p>
+                             <div class="md:col-span-2 space-y-2">
+                                <p><strong>💡 DC 정상상태:</strong> 단락 회로(short circuit)로 동작합니다.</p>
+                                <p><strong>💡 전류 연속성:</strong> 인덕터의 전류는 순간적으로 변할 수 없습니다. (i(0+) = i(0-))</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-week4" class="content-pane space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">4주: 1차 회로</h2>
+                    <p class="text-text-light">저항(R)과 커패시터(C) 또는 저항(R)과 인덕터(L)로 구성된 회로입니다. 응답이 1차 미분방정식으로 표현됩니다.</p>
+                     <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">응답의 일반 형태</h3>
+                        <p class="formula-box text-sm p-4 font-mono">x(t) = x(∞) + [x(0+) - x(∞)] * e^(-t/τ)</p>
+                        <ul class="text-sm mt-4 space-y-1">
+                            <li><strong>x(t):</strong> 시간 t에서의 응답 (전압 또는 전류)</li>
+                            <li><strong>x(∞):</strong> 최종값 (DC 정상상태)</li>
+                            <li><strong>x(0+):</strong> 초기값 (스위칭 직후)</li>
+                            <li><strong>τ:</strong> 시정수 (RC 또는 L/R)</li>
+                        </ul>
+                    </div>
+                    <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">계단 응답 풀이 방법</h3>
+                        <ol class="list-decimal list-inside space-y-2 text-sm text-text-light">
+                            <li><strong>초기값 구하기 (t=0-):</strong> 스위칭 전 DC 정상상태에서 v_C(0-), i_L(0-)를 구합니다.</li>
+                            <li><strong>t=0+ 값 결정:</strong> 연속성 특성을 이용해 v_C(0+), i_L(0+)를 결정합니다.</li>
+                            <li><strong>최종값 구하기 (t=∞):</strong> 스위칭 후 DC 정상상태에서 v_C(∞), i_L(∞)를 구합니다.</li>
+                            <li><strong>시정수 구하기 (τ):</strong> 전원을 제거하고 소자 양단에서 본 등가 저항 R_th를 구해 τ를 계산합니다. (τ = R_th*C 또는 τ = L/R_th)</li>
+                            <li><strong>공식 대입:</strong> 구한 값들을 일반 형태 공식에 대입하여 응답을 완성합니다.</li>
+                        </ol>
+                    </div>
+                </div>
+                <div id="content-week5" class="content-pane space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">5주: 2차 회로</h2>
+                    <p class="text-text-light">R, L, C 소자가 모두 포함된 회로로, 2차 미분방정식으로 응답이 표현됩니다. 응답의 형태는 특성방정식의 근에 따라 결정됩니다.</p>
+                     <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">응답의 종류</h3>
+                        <p class="text-sm text-text-light mb-4">응답의 종류는 감쇠비(α)와 공진주파수(ω₀)의 관계에 따라 결정됩니다.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                            <div class="border p-4 rounded-md">
+                                <h4 class="font-bold">과도감쇠 (α > ω₀)</h4>
+                                <p class="text-xs">진동 없이 천천히 수렴</p>
+                            </div>
+                            <div class="border p-4 rounded-md">
+                                <h4 class="font-bold">임계감쇠 (α = ω₀)</h4>
+                                <p class="text-xs">진동 없이 가장 빠르게 수렴</p>
+                            </div>
+                            <div class="border p-4 rounded-md">
+                                <h4 class="font-bold">부족감쇠 (α < ω₀)</h4>
+                                <p class="text-xs">진동하며 점차 수렴</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card rounded-lg shadow-sm p-6">
+                        <h3 class="text-xl font-bold mb-4">RLC 회로 응답 시뮬레이터</h3>
+                        <p class="text-sm text-text-light mb-6">아래 슬라이더를 조절하여 R, L, C 값에 따른 2차 회로의 응답 특성 변화를 직접 확인해보세요. 그래프는 무전원 상태에서의 과도 응답을 시각화합니다.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="circuitType" class="block text-sm font-medium mb-1">회로 종류</label>
+                                    <select id="circuitType" class="w-full p-2 border border-gray-300 rounded-md">
+                                        <option value="series">직렬 RLC</option>
+                                        <option value="parallel">병렬 RLC</option>
+                                    </select>
                                 </div>
-                                <span class="text-xl text-slate-400">→</span>
-                                <div class="p-2 bg-blue-200 rounded-md text-center">
-                                    <p class="font-bold">사전 학습 모델</p>
-                                    <p class="text-sm">(Pre-trained Model)</p>
+                                <div>
+                                    <label for="Rslider" class="block text-sm font-medium mb-1">저항 (R)</label>
+                                    <input id="Rslider" type="range" min="1" max="50" value="5" class="w-full">
+                                    <span id="Rvalue" class="text-xs"></span>
                                 </div>
-                             </div>
-                             <div class="flex items-center space-x-2 mt-2">
-                                <div class="p-2 bg-teal-100 rounded-md text-center">
-                                    <p class="font-bold">소규모 데이터</p>
-                                    <p class="text-sm">(나의 데이터)</p>
+                                <div>
+                                    <label for="Lslider" class="block text-sm font-medium mb-1">인덕턴스 (L)</label>
+                                    <input id="Lslider" type="range" min="1" max="20" value="5" class="w-full">
+                                    <span id="Lvalue" class="text-xs"></span>
                                 </div>
-                                <span class="text-xl text-slate-400">→</span>
-                                <div class="p-2 bg-teal-200 rounded-md text-center">
-                                    <p class="font-bold">새로운 모델</p>
-                                    <p class="text-sm">(미세 조정)</p>
+                                <div>
+                                    <label for="Cslider" class="block text-sm font-medium mb-1">커패시턴스 (C)</label>
+                                    <input id="Cslider" type="range" min="1" max="20" value="10" class="w-full">
+                                    <span id="Cvalue" class="text-xs"></span>
                                 </div>
-                             </div>
+                            </div>
+                            <div class="text-center bg-gray-50 p-4 rounded-lg">
+                                <p class="text-sm">감쇠비 (α): <strong id="alphaValue" class="font-mono"></strong></p>
+                                <p class="text-sm">공진주파수 (ω₀): <strong id="omegaValue" class="font-mono"></strong></p>
+                                <p id="responseType" class="mt-2 text-lg font-bold text-accent"></p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="chart-container">
+                                <canvas id="rlcChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </main>
+    </div>
 
-        <!-- Section 5: 실전 응용 -->
-        <section id="section5" class="scroll-mt-20 mb-16">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">5. 실전 응용: CNN으로 숫자 인식 시스템 설계하기</h2>
-                <p class="text-slate-600 mb-6">이론을 실제 문제에 적용해 봅시다. MNIST와 같은 손글씨 숫자 이미지를 인식하는 CNN 모델을 설계하는 전체 과정을 단계별로 살펴봅니다. 각 단계를 클릭하여 자세한 내용을 확인하세요.</p>
-                <div id="pipeline" class="flex flex-col md:flex-row items-stretch justify-center gap-4 text-center">
-                    <!-- Steps will be inserted here by JS -->
-                </div>
-                <div id="pipeline-details" class="mt-6 bg-slate-50 p-6 rounded-lg min-h-[150px]">
-                    <!-- Details will be shown here -->
-                </div>
-            </div>
-        </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentPanes = document.querySelectorAll('.content-pane');
 
-        <!-- Section 6: 과적합 문제 -->
-        <section id="section6" class="scroll-mt-20">
-            <div class="bg-white rounded-xl shadow-md p-6 lg:p-8">
-                <h2 class="text-2xl font-bold text-teal-700 mb-2">6. 주요 과제: 과적합(Overfitting) 문제와 해결 방안</h2>
-                <p class="text-slate-600 mb-6">딥러닝 모델 훈련 시 가장 흔하게 마주치는 문제는 과적합입니다. 모델이 훈련 데이터에만 과도하게 최적화되어 새로운 데이터에 대한 성능이 떨어지는 현상이죠. 과적합이 무엇인지 시각적으로 확인하고, 해결 방안을 알아보세요.</p>
-                <div class="grid md:grid-cols-2 gap-8 items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-3">과적합의 시각적 이해</h3>
-                        <p class="text-slate-600 mb-4">훈련이 진행될수록 훈련 데이터에 대한 손실(Training Loss)은 계속 감소하지만, 특정 시점부터 검증 데이터에 대한 손실(Validation Loss)은 다시 증가합니다. 이 지점이 과적합이 시작되는 구간입니다.</p>
-                        <div class="chart-container">
-                            <canvas id="overfittingChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold mb-1">과적합 해결 방안</h3>
-                        <div class="solution-card h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
-                            <div class="solution-card-inner">
-                                <div class="solution-card-front bg-teal-50 border border-teal-200">
-                                    <h4 class="text-lg font-bold text-teal-800">1. 데이터 증강</h4>
-                                    <p class="mt-2 text-teal-700">(Data Augmentation)</p>
-                                    <p class="mt-4 text-sm text-slate-500">(클릭하여 자세히 보기)</p>
-                                </div>
-                                <div class="solution-card-back bg-teal-600 text-white">
-                                    <p class="text-sm">기존 데이터에 회전, 반전 등 변형을 가해 데이터 양을 늘려 모델의 일반화 성능을 높입니다.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="solution-card h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
-                            <div class="solution-card-inner">
-                                <div class="solution-card-front bg-slate-100 border border-slate-200">
-                                    <h4 class="text-lg font-bold text-slate-800">2. 드롭아웃</h4>
-                                    <p class="mt-2 text-slate-700">(Dropout)</p>
-                                    <p class="mt-4 text-sm text-slate-500">(클릭하여 자세히 보기)</p>
-                                </div>
-                                <div class="solution-card-back bg-slate-700 text-white">
-                                    <p class="text-sm">훈련 중 무작위로 뉴런을 비활성화시켜 특정 뉴런에 대한 과도한 의존을 막고 모델을 강건하게 만듭니다.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="solution-card h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
-                             <div class="solution-card-inner">
-                                <div class="solution-card-front bg-slate-100 border border-slate-200">
-                                    <h4 class="text-lg font-bold text-slate-800">3. 조기 종료</h4>
-                                    <p class="mt-2 text-slate-700">(Early Stopping)</p>
-                                    <p class="mt-4 text-sm text-slate-500">(클릭하여 자세히 보기)</p>
-                                </div>
-                                <div class="solution-card-back bg-slate-700 text-white">
-                                    <p class="text-sm">검증 손실이 증가하기 시작하는 시점에 훈련을 중단하여 과적합이 진행되기 전에 멈춥니다.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Section 1: Perceptron Chart
-    const perceptronCtx = document.getElementById('perceptronChart').getContext('2d');
-    let perceptronChart;
-    
-    const chartData = {
-        and: {
-            points: [
-                {x: 0, y: 0, label: 0}, {x: 0, y: 1, label: 0},
-                {x: 1, y: 0, label: 0}, {x: 1, y: 1, label: 1}
-            ],
-            line: [{x: -0.2, y: 1.7}, {x: 1.7, y: -0.2}],
-            title: 'AND Gate (Linearly Separable)'
-        },
-        or: {
-            points: [
-                {x: 0, y: 0, label: 0}, {x: 0, y: 1, label: 1},
-                {x: 1, y: 0, label: 1}, {x: 1, y: 1, label: 1}
-            ],
-            line: [{x: -0.2, y: 0.7}, {x: 0.7, y: -0.2}],
-            title: 'OR Gate (Linearly Separable)'
-        },
-        xor: {
-            points: [
-                {x: 0, y: 0, label: 0}, {x: 0, y: 1, label: 1},
-                {x: 1, y: 0, label: 1}, {x: 1, y: 1, label: 0}
-            ],
-            line: [],
-            title: 'XOR Gate (Not Linearly Separable)'
-        }
-    };
-
-    function createPerceptronChart(gate) {
-        const data = chartData[gate];
-        if (perceptronChart) {
-            perceptronChart.destroy();
-        }
-        perceptronChart = new Chart(perceptronCtx, {
-            type: 'scatter',
-            data: {
-                datasets: [
-                    {
-                        label: 'Class 0',
-                        data: data.points.filter(p => p.label === 0),
-                        backgroundColor: 'rgb(244, 63, 94)',
-                        pointRadius: 8,
-                        pointHoverRadius: 10
-                    },
-                    {
-                        label: 'Class 1',
-                        data: data.points.filter(p => p.label === 1),
-                        backgroundColor: 'rgb(59, 130, 246)',
-                        pointRadius: 8,
-                        pointHoverRadius: 10
-                    },
-                    {
-                        type: 'line',
-                        label: 'Decision Boundary',
-                        data: data.line,
-                        borderColor: 'rgb(13, 148, 136)',
-                        borderWidth: 3,
-                        fill: false,
-                        showLine: data.line.length > 0
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: data.title
-                    }
-                },
-                scales: {
-                    x: { min: -0.2, max: 1.2 },
-                    y: { min: -0.2, max: 1.2 }
-                }
-            }
-        });
-    }
-    
-    const andBtn = document.getElementById('btn-and');
-    const orBtn = document.getElementById('btn-or');
-    const xorBtn = document.getElementById('btn-xor');
-    
-    const allBtns = [andBtn, orBtn, xorBtn];
-
-    function updateButtonStyles(activeBtn, buttons) {
-        buttons.forEach(btn => {
-            btn.classList.remove('bg-teal-100', 'text-teal-800');
-            btn.classList.add('bg-slate-100', 'text-slate-800');
-        });
-        activeBtn.classList.add('bg-teal-100', 'text-teal-800');
-        activeBtn.classList.remove('bg-slate-100', 'text-slate-800');
-    }
-
-    andBtn.addEventListener('click', () => { createPerceptronChart('and'); updateButtonStyles(andBtn, allBtns); });
-    orBtn.addEventListener('click', () => { createPerceptronChart('or'); updateButtonStyles(orBtn, allBtns); });
-    xorBtn.addEventListener('click', () => { createPerceptronChart('xor'); updateButtonStyles(xorBtn, allBtns); });
-
-    createPerceptronChart('and');
-
-    // Section 3: Backpropagation
-    const bpExplanations = {
-        forward: `
-            <h4 class="text-lg font-semibold text-teal-700 mb-2">순전파 (Forward Pass)</h4>
-            <p class="text-slate-600">입력 데이터가 신경망을 통과하여 최종 예측값을 만들어내는 과정입니다.</p>
-            <ul class="list-disc list-inside text-slate-600 space-y-1 mt-2">
-                <li><strong>1. 예측 (Prediction):</strong> 입력 데이터와 가중치를 사용하여 각 층을 거쳐 최종 출력(예측값)을 계산합니다.</li>
-                <li><strong>2. 손실 계산 (Loss Calculation):</strong> 모델의 예측값과 실제 정답을 비교하여 오차(손실)를 계산합니다.</li>
-            </ul>
-        `,
-        backward: `
-            <h4 class="text-lg font-semibold text-teal-700 mb-2">역전파 (Backward Pass)</h4>
-            <p class="text-slate-600">계산된 오차를 반대 방향으로 전파하며 모델의 가중치를 업데이트하는 과정입니다.</p>
-            <ul class="list-disc list-inside text-slate-600 space-y-1 mt-2">
-                <li><strong>3. 기울기 계산 (Gradient Calculation):</strong> 오차에 각 가중치가 얼마나 영향을 미쳤는지(기울기)를 연쇄 법칙(chain rule)을 이용해 계산합니다.</li>
-                <li><strong>4. 가중치 업데이트 (Weight Update):</strong> 계산된 기울기를 사용하여 오차를 줄이는 방향으로 모든 가중치를 약간씩 조정합니다. 이 과정을 반복하며 모델이 최적화됩니다.</li>
-            </ul>
-        `
-    };
-
-    const forwardBtn = document.getElementById('btn-forward');
-    const backwardBtn = document.getElementById('btn-backward');
-    const bpButtons = [forwardBtn, backwardBtn];
-    const bpExplanationContainer = document.getElementById('bp-explanation');
-    const bpSteps = {
-        input: document.getElementById('step-input'),
-        predict: document.getElementById('step-predict'),
-        loss: document.getElementById('step-loss'),
-        gradient: document.getElementById('step-gradient'),
-        update: document.getElementById('step-update'),
-    };
-    const arrowLoss = document.getElementById('arrow-loss');
-
-    function showForwardPass() {
-        Object.values(bpSteps).forEach(el => el.classList.remove('active'));
-        bpSteps.input.classList.add('active');
-        bpSteps.predict.classList.add('active');
-        bpSteps.loss.classList.add('active');
-        bpExplanationContainer.innerHTML = bpExplanations.forward;
-        updateButtonStyles(forwardBtn, bpButtons);
-        arrowLoss.innerHTML = '→';
-    }
-
-    function showBackwardPass() {
-        Object.values(bpSteps).forEach(el => el.classList.remove('active'));
-        bpSteps.loss.classList.add('active');
-        bpSteps.gradient.classList.add('active');
-        bpSteps.update.classList.add('active');
-        bpExplanationContainer.innerHTML = bpExplanations.backward;
-        updateButtonStyles(backwardBtn, bpButtons);
-        arrowLoss.innerHTML = '↙';
-    }
-    
-    forwardBtn.addEventListener('click', showForwardPass);
-    backwardBtn.addEventListener('click', showBackwardPass);
-    
-    showForwardPass();
-
-
-    // Section 5: Pipeline
-    const pipelineData = [
-        { 
-            title: '1. 데이터 전처리',
-            details: `
-                <h4 class="font-bold mb-2">데이터 전처리 과정</h4>
-                <ul class="list-disc list-inside text-slate-600 space-y-1">
-                    <li><strong>이미지 크기 통일:</strong> 모든 이미지를 동일한 크기(예: 28x28 픽셀)로 조정합니다.</li>
-                    <li><strong>정규화(Normalization):</strong> 각 픽셀 값을 0~1 사이로 스케일링하여 모델 학습을 안정화합니다.</li>
-                    <li><strong>레이블 인코딩:</strong> 숫자 레이블을 원-핫 인코딩하여 벡터 형태로 변환합니다. (예: 3 → [0,0,0,1,0,0,0,0,0,0])</li>
-                </ul>
-            `
-        },
-        { 
-            title: '2. 특징 추출',
-            details: `
-                <h4 class="font-bold mb-2">모델의 구조 (특징 추출부)</h4>
-                <p class="text-slate-600"><strong>[입력] → [합성곱층 + ReLU] → [최대 풀링층] → [합성곱층 + ReLU] → [최대 풀링층]</strong></p>
-                <p class="text-slate-600 mt-2">합성곱층과 풀링층을 반복적으로 쌓아 이미지의 위치 불변 특징을 효과적으로 추출합니다. ReLU 활성화 함수는 비선형성을 더해줍니다.</p>
-            `
-        },
-        { 
-            title: '3. 분류',
-            details: `
-                <h4 class="font-bold mb-2">모델의 구조 (분류부)</h4>
-                <p class="text-slate-600"><strong>... → [평탄화층] → [완전 연결층 + ReLU] → [출력층]</strong></p>
-                <p class="text-slate-600 mt-2">추출된 2D 특징 맵을 평탄화(Flatten)하여 1D 벡터로 만들고, 완전 연결층을 통해 최종적으로 클래스를 분류합니다.</p>
-            `
-        },
-        { 
-            title: '4. 최종 출력',
-            details: `
-                <h4 class="font-bold mb-2">최종 출력층 설정</h4>
-                <ul class="list-disc list-inside text-slate-600 space-y-1">
-                    <li><strong>활성화 함수 (Softmax):</strong> 출력 노드의 값을 각 클래스(0~9)에 대한 확률 분포로 변환합니다. 모든 출력의 합은 1이 됩니다.</li>
-                    <li><strong>손실 함수 (Categorical Cross-entropy):</strong> 모델의 예측 확률 분포와 실제 레이블(원-핫 벡터) 간의 차이를 측정하여, 이 차이를 최소화하는 방향으로 모델을 학습시킵니다.</li>
-                </ul>
-            `
-        },
-    ];
-
-    const pipelineContainer = document.getElementById('pipeline');
-    const detailsContainer = document.getElementById('pipeline-details');
-
-    pipelineData.forEach((step, index) => {
-        const stepEl = document.createElement('div');
-        stepEl.className = 'step-card flex-1 p-4 border-2 border-slate-200 rounded-lg cursor-pointer bg-white';
-        stepEl.innerHTML = `<h3 class="font-semibold">${step.title}</h3>`;
-        stepEl.addEventListener('click', () => {
-            document.querySelectorAll('.step-card').forEach(el => el.classList.remove('active'));
-            stepEl.classList.add('active');
-            detailsContainer.innerHTML = step.details;
-        });
-        pipelineContainer.appendChild(stepEl);
-
-        if (index < pipelineData.length - 1) {
-            const arrow = document.createElement('div');
-            arrow.className = 'flex items-center justify-center text-2xl text-slate-400 transform md:rotate-0 rotate-90';
-            arrow.textContent = '→';
-            pipelineContainer.appendChild(arrow);
-        }
-    });
-    
-    // Activate first step by default
-    const firstStep = document.querySelector('.step-card');
-    if (firstStep) {
-        firstStep.click();
-    }
-
-
-    // Section 6: Overfitting Chart
-    const overfittingCtx = document.getElementById('overfittingChart').getContext('2d');
-    const overfittingChart = new Chart(overfittingCtx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length: 20}, (_, i) => `Epoch ${i + 1}`),
-            datasets: [{
-                label: 'Training Loss',
-                data: [1.8, 1.2, 0.9, 0.7, 0.55, 0.45, 0.38, 0.32, 0.28, 0.25, 0.22, 0.20, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11],
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                tension: 0.1,
-                fill: true,
-            }, {
-                label: 'Validation Loss',
-                data: [1.9, 1.4, 1.1, 0.9, 0.8, 0.72, 0.68, 0.65, 0.64, 0.63, 0.64, 0.66, 0.68, 0.71, 0.75, 0.79, 0.84, 0.89, 0.95, 1.0],
-                borderColor: 'rgb(244, 63, 94)',
-                backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                tension: 0.1,
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: { display: true, text: 'Training vs. Validation Loss' }
-            },
-            scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Loss' } },
-                x: { title: { display: true, text: 'Epochs' } }
-            }
-        }
-    });
-
-    // Navigation scrollspy
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
+            function switchTab(targetId) {
+                contentPanes.forEach(pane => {
+                    pane.classList.toggle('hidden', pane.id !== targetId);
+                });
                 navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').substring(1) === entry.target.id) {
-                        link.classList.add('active');
-                    }
+                    link.classList.toggle('active', link.dataset.target === targetId);
                 });
             }
-        });
-    }, { rootMargin: '-50% 0px -50% 0px' });
 
-    sections.forEach(section => {
-        observer.observe(section);
-    });
-});
-</script>
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.dataset.target;
+                    switchTab(targetId);
+                    window.location.hash = this.getAttribute('href');
+                });
+            });
+
+            const initialHash = window.location.hash.substring(1);
+            const initialTarget = document.querySelector(`.nav-link[href="#${initialHash}"]`)?.dataset.target || 'content-week0';
+            switchTab(initialTarget);
+            
+            const circuitTypeSelect = document.getElementById('circuitType');
+            const rSlider = document.getElementById('Rslider');
+            const lSlider = document.getElementById('Lslider');
+            const cSlider = document.getElementById('Cslider');
+            const rValueSpan = document.getElementById('Rvalue');
+            const lValueSpan = document.getElementById('Lvalue');
+            const cValueSpan = document.getElementById('Cvalue');
+            const alphaValueSpan = document.getElementById('alphaValue');
+            const omegaValueSpan = document.getElementById('omegaValue');
+            const responseTypeSpan = document.getElementById('responseType');
+            const ctx = document.getElementById('rlcChart').getContext('2d');
+
+            let rlcChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '응답',
+                        data: [],
+                        borderColor: 'rgba(107, 142, 35, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: '시간 (t)' } },
+                        y: { title: { display: true, text: '응답 크기' } }
+                    },
+                    plugins: {
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+            function updateSimulator() {
+                const R = parseFloat(rSlider.value);
+                const L = parseFloat(lSlider.value) / 100; 
+                const C = parseFloat(cSlider.value) / 1000; 
+                const type = circuitTypeSelect.value;
+
+                rValueSpan.textContent = `${R} Ω`;
+                lValueSpan.textContent = `${L * 1000} mH`;
+                cValueSpan.textContent = `${C * 1000000} µF`;
+
+                let alpha, omega0;
+                
+                if (type === 'series') {
+                    alpha = R / (2 * L);
+                    omega0 = 1 / Math.sqrt(L * C);
+                } else {
+                    alpha = 1 / (2 * R * C);
+                    omega0 = 1 / Math.sqrt(L * C);
+                }
+
+                alphaValueSpan.textContent = alpha.toFixed(2);
+                omegaValueSpan.textContent = omega0.toFixed(2);
+
+                let responseType = '';
+                if (alpha > omega0) responseType = '과도감쇠 (Overdamped)';
+                else if (alpha === omega0) responseType = '임계감쇠 (Critically Damped)';
+                else responseType = '부족감쇠 (Underdamped)';
+                responseTypeSpan.textContent = responseType;
+
+                generateChartData(alpha, omega0, responseType);
+            }
+
+            function generateChartData(alpha, omega0, type) {
+                const time = [];
+                const response = [];
+                const dt = 0.01;
+                const maxTime = 5.0;
+
+                for (let t = 0; t <= maxTime; t += dt) {
+                    time.push(t.toFixed(2));
+                    let val = 0;
+                    if (type.includes('Overdamped')) {
+                        const s1 = -alpha + Math.sqrt(alpha * alpha - omega0 * omega0);
+                        const s2 = -alpha - Math.sqrt(alpha * alpha - omega0 * omega0);
+                        val = Math.exp(s1 * t) - Math.exp(s2 * t); 
+                    } else if (type.includes('Critically Damped')) {
+                        val = t * Math.exp(-alpha * t);
+                    } else {
+                        const omega_d = Math.sqrt(omega0 * omega0 - alpha * alpha);
+                        val = Math.exp(-alpha * t) * Math.sin(omega_d * t);
+                    }
+                    response.push(val);
+                }
+
+                rlcChart.data.labels = time;
+                rlcChart.data.datasets[0].data = response;
+                rlcChart.update('none');
+            }
+
+            [circuitTypeSelect, rSlider, lSlider, cSlider].forEach(el => {
+                el.addEventListener('input', updateSimulator);
+            });
+
+            updateSimulator();
+        });
+    </script>
 </body>
 </html>
-
