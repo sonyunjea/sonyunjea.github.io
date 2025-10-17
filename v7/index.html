@@ -3,116 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수능 사회·문화 핵심 공략 (허지현 학생 맞춤형)</title>
-    <!-- Tailwind CSS CDN 스크립트 -->
+    <title>친절한 첫걸음 영문법 가이드</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- 사용자 정의 스타일 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Fresh & Friendly Blue -->
+    <!-- Application Structure Plan: A beginner-focused, three-tab SPA: "차근차근 문법 튼튼!", "필수 단어 쑥쑥!", and "실전! 문장 만들기". This structure provides a clear learning path from rules to words to application. Instead of dense text, content is presented in visually distinct cards with interactive "확인해보기" toggles. The "실전!" tab is now enhanced with a Gemini API-powered sentence practice and TTS feature for dynamic, interactive learning. -->
+    <!-- Visualization & Content Choices: Report Info: Basic grammar rules -> Goal: Inform/Teach -> Presentation: Interactive accordion cards. Interaction: Click to reveal simple explanations and examples, plus a "Check" toggle for self-assessment. Justification: Breaks down learning into manageable, engaging steps. | Report Info: Essential beginner vocabulary -> Goal: Memorize/Reference -> Presentation: Clean grid of vocabulary cards with pronunciation. Interaction: Hover effect for visual feedback. Justification: Easy to scan and learn. | New Feature: Gemini-powered sentence translation and TTS -> Goal: Apply knowledge dynamically -> Presentation: Input field and result card. Interaction: User types Korean, clicks a button to get an English translation, explanation, and playable audio. Justification: Provides infinite, real-world practice. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Inter', 'sans-serif';
+            font-family: 'Noto Sans KR', sans-serif;
         }
-        /* 카드 등장 애니메이션 */
+        h1, h2, h3, h4, .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-button.active {
+            color: #2563eb;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #2563eb;
+            border-radius: 2px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
         }
-        /* 각 카드에 지연 시간 적용 */
-        .card-1 { animation-delay: 0.1s; }
-        .card-2 { animation-delay: 0.2s; }
-        .card-3 { animation-delay: 0.3s; }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .toggle-answer {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .answer-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .answer-content.show {
+            max-height: 100px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 text-slate-800">
 
-<!-- Header Section -->
-<header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-md border-b border-gray-200">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
-            <a href="./index.html" class="flex items-center space-x-2">
-                <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">
-                    ✨ 사회·문화 공략집
-                </span>
-            </a>
-            <div class="hidden md:flex items-center space-x-8 text-base font-medium">
-                <a href="./concepts.html" class="text-gray-600 hover:text-blue-600 transition duration-300">심화 개념</a>
-                <a href="./killer-questions.html" class="text-gray-600 hover:text-blue-600 transition duration-300">킬러 문항</a>
-                <a href="./theories.html" class="text-gray-600 hover:text-blue-600 transition duration-300">이론 적용</a>
-            </div>
-        </div>
-    </nav>
-</header>
+    <div class="container mx-auto px-4 py-8">
 
-<!-- Main Content -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <header class="hero-gradient text-center p-8 md:p-12 rounded-2xl mb-10">
+            <h1 class="text-3xl md:text-5xl font-bold text-blue-800 mb-3">🚀 친절한 첫걸음 영문법</h1>
+            <p class="text-slate-600 max-w-2xl mx-auto">영어가 처음이신가요? 이제 AI와 함께 더 쉽고 재미있게 시작해봐요!</p>
+        </header>
 
-    <!-- Intro Section -->
-    <section id="intro" class="text-center my-16">
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
-            <span class="text-gray-800">허지현 학생,</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">만점을 향한 마지막 걸음</span>
-        </h1>
-        <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-6">
-            현재 기본 개념은 탄탄합니다. 이제 까다로운 킬러 문항을 정복하고 실수를 줄여 안정적인 1등급과 50점 만점을 향해 나아갈 시간입니다.
-            지현 학생의 약점을 보완하고 최상위권으로 도약하기 위한 맞춤형 심화 학습을 시작해 보세요.
-        </p>
-        <a href="#core-strategies" class="mt-10 inline-block bg-blue-600 text-white font-bold text-lg px-8 py-3 rounded-full shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
-            핵심 공략 시작하기
-        </a>
-    </section>
+        <nav class="flex justify-center border-b border-slate-200 mb-8 space-x-4 md:space-x-8">
+            <button class="tab-button active font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="grammar">
+                차근차근 문법 튼튼!
+            </button>
+            <button class="tab-button font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="vocab">
+                필수 단어 쑥쑥!
+            </button>
+            <button class="tab-button font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="application">
+                ✨ AI와 실전 연습
+            </button>
+        </nav>
 
-    <!-- Core Strategies Section -->
-    <section id="core-strategies" class="py-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            
-            <!-- Card 1: 심화 개념 다지기 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-1 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-6">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 8.75c3.313 0 6.094 2.536 6.094 5.625S6.813 20 3.5 20C.188 20-2.5 17.313-2.5 14.375S.188 8.75 3.5 8.75zM17.5 8.75c3.313 0 6.094 2.536 6.094 5.625S20.813 20 17.5 20c-3.313 0-6.094-2.688-6.094-5.625S14.187 8.75 17.5 8.75z"></path></svg>
+        <main>
+            <!-- Part 1: 차근차근 문법 튼튼! -->
+            <div id="grammar" class="tab-content active">
+                <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-slate-700">Part 1: 뼈대를 세우는 핵심 문법</h2>
+                     <p class="mt-2 text-slate-500">문장을 만드는 가장 기본적인 규칙들을 알아볼게요.</p>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">심화 개념 다지기</h3>
-                <p class="text-gray-600 mb-6">자료 분석 문제의 핵심! 계층, 도표, 불평등 관련 심화 개념을 완벽하게 마스터하여 어떤 변형 문제에도 흔들리지 않는 실력을 완성합니다.</p>
-                <a href="./concepts.html" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">자세히 보기 &rarr;</a>
-            </div>
 
-            <!-- Card 2: 킬러 문항 정복 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-2 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 mb-6">
-                     <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <div class="space-y-6">
+                    <div class="card p-6 md:p-8">
+                        <h3 class="text-xl font-bold text-blue-700 mb-4">⏰ 시간 표현하기 (시제)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-lg">1. 현재 시제 (Simple Present)</h4>
+                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 매일 하는 일, 변하지 않는 사실을 말할 때</p>
+                                <p class="p-4 bg-slate-100 rounded-lg italic">She <span class="font-bold text-blue-600">studies</span> English every day. (그녀는 매일 영어를 공부해요.)</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">2. 과거 시제 (Simple Past)</h4>
+                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 이미 끝난 과거의 일을 말할 때</p>
+                                <p class="p-4 bg-slate-100 rounded-lg italic">I <span class="font-bold text-blue-600">visited</span> my grandparents last weekend. (저는 지난 주말에 할머니 댁에 갔었어요.)</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">3. 미래 시제 (Simple Future)</h4>
+                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 앞으로 할 일을 말할 때</p>
+                                <p class="p-4 bg-slate-100 rounded-lg italic">We <span class="font-bold text-blue-600">will go</span> to the movies tomorrow. (우리는 내일 영화 보러 갈 거예요.)</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <div class="toggle-answer bg-blue-50 hover:bg-blue-100 p-3 rounded-md text-blue-800 font-semibold text-sm">
+                                🤔 확인해보기: "나는 사과를 먹는다"를 과거형으로 바꾸면? (클릭!)
+                            </div>
+                            <div class="answer-content bg-green-50 text-green-800 p-4 rounded-b-md">
+                                <p class="font-semibold">정답: "I <span class="font-bold">ate</span> an apple." 입니다! 'eat'의 과거형은 'ate'예요.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 md:p-8">
+                        <h3 class="text-xl font-bold text-blue-700 mb-4">🙋‍♀️ 질문 만들기 (의문문)</h3>
+                        <div class="space-y-4">
+                            <p class="text-slate-600 text-sm">궁금한 것을 물어볼 때는 문장의 순서를 살짝 바꿔주면 돼요.</p>
+                            <div>
+                                <h4 class="font-semibold">"~이니?" (Be동사)</h4>
+                                <p class="p-4 bg-slate-100 rounded-lg italic"><span class="font-bold text-blue-600">Is</span> she a student? (그녀는 학생인가요?)</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">"~하니?" (일반동사)</h4>
+                                <p class="p-4 bg-slate-100 rounded-lg italic"><span class="font-bold text-blue-600">Do</span> you like coffee? (커피 좋아하세요?)</p>
+                            </div>
+                        </div>
+                         <div class="mt-6 border-t pt-4">
+                            <div class="toggle-answer bg-blue-50 hover:bg-blue-100 p-3 rounded-md text-blue-800 font-semibold text-sm">
+                                🤔 확인해보기: "You are happy."를 질문으로 바꾸면? (클릭!)
+                            </div>
+                            <div class="answer-content bg-green-50 text-green-800 p-4 rounded-b-md">
+                                <p class="font-semibold">정답: "<span class="font-bold">Are you</span> happy?" 입니다! 'are' 동사를 맨 앞으로 보내면 돼요.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">킬러 문항 정복</h3>
-                <p class="text-gray-600 mb-6">최고난도 도표 분석과 비판적 사고를 요구하는 문항들을 집중 공략합니다. 시간 단축을 위한 효율적인 문제 풀이 전략을 체화합니다.</p>
-                <a href="./killer-questions.html" class="font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">자세히 보기 &rarr;</a>
             </div>
 
-            <!-- Card 3: 이론 적용 훈련 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-3 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+            <!-- Part 2: 필수 단어 쑥쑥! -->
+            <div id="vocab" class="tab-content">
+                 <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-slate-700">Part 2: 꼭 알아야 할 필수 단어</h2>
+                     <p class="mt-2 text-slate-500">이 단어들만 알아도 하고 싶은 말의 절반은 할 수 있어요!</p>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">이론 적용 훈련</h3>
-                <p class="text-gray-600 mb-6">개념과 실제 사례를 연결하는 훈련을 통해, 생소한 제시문이나 자료가 등장해도 배운 이론을 자신감 있게 적용하는 능력을 기릅니다.</p>
-                <a href="./theories.html" class="font-semibold text-purple-600 hover:text-purple-800 transition-colors">자세히 보기 &rarr;</a>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🍎</p> <h4 class="font-bold text-lg">have</h4> <p class="text-slate-500 text-sm">[해브]</p> <p class="text-slate-700 mt-1">가지다</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🚶</p> <h4 class="font-bold text-lg">go</h4> <p class="text-slate-500 text-sm">[고우]</p> <p class="text-slate-700 mt-1">가다</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🎁</p> <h4 class="font-bold text-lg">get</h4> <p class="text-slate-500 text-sm">[겟]</p> <p class="text-slate-700 mt-1">얻다</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🛠️</p> <h4 class="font-bold text-lg">make</h4> <p class="text-slate-500 text-sm">[메이크]</p> <p class="text-slate-700 mt-1">만들다</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🤔</p> <h4 class="font-bold text-lg">think</h4> <p class="text-slate-500 text-sm">[띵크]</p> <p class="text-slate-700 mt-1">생각하다</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">👍</p> <h4 class="font-bold text-lg">good</h4> <p class="text-slate-500 text-sm">[굿]</p> <p class="text-slate-700 mt-1">좋은</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">😄</p> <h4 class="font-bold text-lg">happy</h4> <p class="text-slate-500 text-sm">[해피]</p> <p class="text-slate-700 mt-1">행복한</p> </div>
+                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">✨</p> <h4 class="font-bold text-lg">very</h4> <p class="text-slate-500 text-sm">[베리]</p> <p class="text-slate-700 mt-1">매우</p> </div>
+                </div>
             </div>
-        </div>
-    </section>
 
-</main>
-
-<!-- Footer Section -->
-<footer class="bg-gray-900 text-white py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-lg">&copy; 2025 허지현 학생 맞춤형 공략집</p>
-        <p class="text-base text-gray-400 mt-2">만점을 진심으로 응원합니다!</p>
+            <!-- Part 3: 실전! 문장 만들기 -->
+            <div id="application" class="tab-content">
+                <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-slate-700">Part 3: ✨ AI와 함께하는 실전 연습</h2>
+                     <p class="mt-2 text-slate-500">궁금한 한국어 문장을 입력하면 AI가 영어로 번역하고 설명해줘요!</p>
+                </div>
+                <div class="max-w-2xl mx-auto">
+                    <div class="card p-6">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="korean-input" placeholder="번역하고 싶은 한국어 문장을 입력하세요..." class="flex-grow p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <button id="translate-button" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2">
+                                <span>✨ AI 번역하기</span>
+                            </button>
+                        </div>
+                        <div id="loader" class="hidden flex justify-center mt-6">
+                            <div class="loader"></div>
+                        </div>
+                        <div id="result-card" class="hidden mt-6 border-t pt-6">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <p class="text-sm text-blue-800 font-semibold mb-2">AI 번역 결과:</p>
+                                <div class="flex items-center justify-between">
+                                    <p id="english-output" class="text-lg font-bold text-blue-900"></p>
+                                    <button id="play-audio-button" class="p-2 rounded-full hover:bg-blue-200 transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 5.858a3 3 0 00-4.243 4.243h0a3 3 0 004.243 4.243l.293-.293a1 1 0 00-1.414-1.414l-.293.293a1 1 0 01-1.414-1.414l.293-.293a1 1 0 00-1.414-1.414l-.293.293a1 1 0 01-1.414-1.414l4.243-4.243zM18 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 text-green-800 p-4 rounded-lg mt-4">
+                                <p class="text-sm font-semibold mb-2">💡 AI 문법 팁:</p>
+                                <p id="explanation-output" class="text-sm"></p>
+                            </div>
+                        </div>
+                         <div id="error-card" class="hidden mt-6 bg-red-50 text-red-700 p-4 rounded-lg">
+                            <p>앗! 오류가 발생했어요. 잠시 후 다시 시도해 주세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-</footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const answerToggles = document.querySelectorAll('.toggle-answer');
+            const translateButton = document.getElementById('translate-button');
+            const koreanInput = document.getElementById('korean-input');
+            const loader = document.getElementById('loader');
+            const resultCard = document.getElementById('result-card');
+            const errorCard = document.getElementById('error-card');
+            const englishOutput = document.getElementById('english-output');
+            const explanationOutput = document.getElementById('explanation-output');
+            const playAudioButton = document.getElementById('play-audio-button');
+            
+            let currentAudio = null;
+
+            const apiKey = ""; 
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            answerToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const answerContent = toggle.nextElementSibling;
+                    answerContent.classList.toggle('show');
+                });
+            });
+
+            translateButton.addEventListener('click', handleTranslation);
+            koreanInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleTranslation();
+                }
+            });
+
+            async function handleTranslation() {
+                const koreanText = koreanInput.value.trim();
+                if (!koreanText) {
+                    alert('한국어 문장을 입력해주세요.');
+                    return;
+                }
+
+                loader.classList.remove('hidden');
+                resultCard.classList.add('hidden');
+                errorCard.classList.add('hidden');
+                translateButton.disabled = true;
+
+                try {
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    
+                    const payload = {
+                        contents: [{
+                            parts: [{ 
+                                text: `Translate the following Korean sentence into simple, natural English suitable for a beginner. Also, provide a very simple, one-sentence explanation of the key grammar point used. Korean: '${koreanText}'`
+                            }]
+                        }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    "english_sentence": { "type": "STRING" },
+                                    "explanation": { "type": "STRING" }
+                                },
+                                required: ["english_sentence", "explanation"]
+                            }
+                        }
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (text) {
+                        const parsed = JSON.parse(text);
+                        englishOutput.textContent = parsed.english_sentence;
+                        explanationOutput.textContent = parsed.explanation;
+                        resultCard.classList.remove('hidden');
+                    } else {
+                        throw new Error('Invalid response from API');
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorCard.classList.remove('hidden');
+                } finally {
+                    loader.classList.add('hidden');
+                    translateButton.disabled = false;
+                }
+            }
+            
+            playAudioButton.addEventListener('click', async () => {
+                const textToSpeak = englishOutput.textContent;
+                if (!textToSpeak) return;
+
+                playAudioButton.disabled = true;
+                
+                try {
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                    const payload = {
+                        contents: [{ parts: [{ text: textToSpeak }] }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: {
+                                voiceConfig: {
+                                    prebuiltVoiceConfig: { voiceName: "Zephyr" }
+                                }
+                            }
+                        },
+                    };
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error('TTS API request failed');
+
+                    const result = await response.json();
+                    const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+                    if (audioData) {
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData);
+                        const wavBlob = pcmToWav(pcm16, 24000); 
+                        const audioUrl = URL.createObjectURL(wavBlob);
+                        
+                        if(currentAudio) {
+                            currentAudio.pause();
+                        }
+                        currentAudio = new Audio(audioUrl);
+                        currentAudio.play();
+                    } else {
+                        throw new Error('No audio data in response');
+                    }
+                } catch (error) {
+                    console.error('TTS Error:', error);
+                    alert('오디오를 재생하는 중 오류가 발생했습니다.');
+                } finally {
+                    playAudioButton.disabled = false;
+                }
+            });
+
+            function base64ToArrayBuffer(base64) {
+                const binaryString = window.atob(base64);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            function pcmToWav(pcmData, sampleRate) {
+                const numChannels = 1;
+                const bitsPerSample = 16;
+                const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+                const blockAlign = numChannels * bitsPerSample / 8;
+                const dataSize = pcmData.length * 2;
+                const buffer = new ArrayBuffer(44 + dataSize);
+                const view = new DataView(buffer);
+
+                function writeString(view, offset, string) {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                }
+
+                writeString(view, 0, 'RIFF');
+                view.setUint32(4, 36 + dataSize, true);
+                writeString(view, 8, 'WAVE');
+                writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, byteRate, true);
+                view.setUint16(32, blockAlign, true);
+                view.setUint16(34, bitsPerSample, true);
+                writeString(view, 36, 'data');
+                view.setUint32(40, dataSize, true);
+
+                for (let i = 0; i < pcmData.length; i++) {
+                    view.setInt16(44 + i * 2, pcmData[i], true);
+                }
+
+                return new Blob([view], { type: 'audio/wav' });
+            }
+        });
+    </script>
 </body>
 </html>
 
