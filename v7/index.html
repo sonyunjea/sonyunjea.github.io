@@ -3,444 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>친절한 첫걸음 영문법 가이드</title>
+    <title>딥러닝 핵심 개념 탐색기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Fresh & Friendly Blue -->
-    <!-- Application Structure Plan: A beginner-focused, three-tab SPA: "차근차근 문법 튼튼!", "필수 단어 쑥쑥!", and "실전! 문장 만들기". This structure provides a clear learning path from rules to words to application. Instead of dense text, content is presented in visually distinct cards with interactive "확인해보기" toggles. The "실전!" tab is now enhanced with a Gemini API-powered sentence practice and TTS feature for dynamic, interactive learning. -->
-    <!-- Visualization & Content Choices: Report Info: Basic grammar rules -> Goal: Inform/Teach -> Presentation: Interactive accordion cards. Interaction: Click to reveal simple explanations and examples, plus a "Check" toggle for self-assessment. Justification: Breaks down learning into manageable, engaging steps. | Report Info: Essential beginner vocabulary -> Goal: Memorize/Reference -> Presentation: Clean grid of vocabulary cards with pronunciation. Interaction: Hover effect for visual feedback. Justification: Easy to scan and learn. | New Feature: Gemini-powered sentence translation and TTS -> Goal: Apply knowledge dynamically -> Presentation: Input field and result card. Interaction: User types Korean, clicks a button to get an English translation, explanation, and playable audio. Justification: Provides infinite, real-world practice. -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The original document is a linear list of 13 concepts. To improve usability and learning flow, I have designed a thematic structure. The application is divided into four logical groups: '신경망의 기초' (Basics), '퍼셉트론의 발전' (Evolution of Perceptrons), '딥러닝 핵심 요소' (Core Components), and '딥러닝과 CNN' (Deep Learning & CNN). This structure helps users build knowledge progressively. A fixed sidebar navigation allows for quick access to each theme, turning a simple glossary into a structured educational tool. The user can either scroll through the content or jump directly to a topic of interest, interacting with visualizations embedded within each relevant concept. -->
+    <!-- Visualization & Content Choices: To make abstract concepts tangible, specific interactive visualizations were chosen. For 'Logic Gates', the goal is to demonstrate linear vs. non-linear separability. A Chart.js scatter plot is used to interactively show that AND/OR are linearly separable while XOR is not, which powerfully justifies the need for multi-layer perceptrons. For 'Activation Functions', the goal is to compare their shapes and outputs. A Chart.js line chart allows users to switch between functions (Sigmoid, Tanh, etc.) to see their characteristics. For complex processes like the 'CNN' workflow or concepts like 'Dropout', diagrams are built using structured HTML and Tailwind CSS for clarity and responsiveness, with simple JS interactions for highlighting. This approach avoids static images and enhances user engagement. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
         }
-        h1, h2, h3, h4, .font-poppins {
-            font-family: 'Poppins', sans-serif;
+        .active-nav {
+            background-color: #e3dcd3;
+            color: #8c7851;
+            font-weight: 700;
         }
-        .tab-button {
-            transition: all 0.3s ease;
-            position: relative;
+        .nav-item {
+            transition: all 0.2s ease-in-out;
         }
-        .tab-button.active {
-            color: #2563eb;
-        }
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background-color: #2563eb;
-            border-radius: 2px;
-        }
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .nav-item:hover {
+            background-color: #ebe6df;
         }
         .card {
-            background-color: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            border: 1px solid #e3dcd3;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .toggle-answer {
-            cursor: pointer;
-            transition: background-color 0.2s;
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
         }
-        .answer-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
-            padding-top: 0;
-            padding-bottom: 0;
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
         }
-        .answer-content.show {
-            max-height: 100px;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
+        .btn-toggle {
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
-        .hero-gradient {
-            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+        .btn-toggle-active {
+            background-color: #8c7851 !important;
+            color: white !important;
         }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        .diagram-box {
+            border: 2px solid #e3dcd3;
+            background-color: #fdfcfb;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .dropout-node {
+            transition: opacity 0.3s ease;
+        }
+        .dropout-node.off {
+            opacity: 0.2;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-[#f8f7f4]">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-[#efebe4] border-r border-[#e3dcd3] p-4 md:fixed md:h-screen">
+            <h1 class="text-2xl font-bold text-[#8c7851] mb-6">딥러닝 탐색기</h1>
+            <nav id="navigation" class="space-y-2">
+                <a href="#basics" class="nav-item block px-4 py-2 rounded-md text-gray-700">신경망의 기초</a>
+                <a href="#perceptrons" class="nav-item block px-4 py-2 rounded-md text-gray-700">퍼셉트론의 발전</a>
+                <a href="#core" class="nav-item block px-4 py-2 rounded-md text-gray-700">딥러닝 핵심 요소</a>
+                <a href="#cnn" class="nav-item block px-4 py-2 rounded-md text-gray-700">딥러닝과 CNN</a>
+            </nav>
+        </aside>
 
-    <div class="container mx-auto px-4 py-8">
-
-        <header class="hero-gradient text-center p-8 md:p-12 rounded-2xl mb-10">
-            <h1 class="text-3xl md:text-5xl font-bold text-blue-800 mb-3">🚀 친절한 첫걸음 영문법</h1>
-            <p class="text-slate-600 max-w-2xl mx-auto">영어가 처음이신가요? 이제 AI와 함께 더 쉽고 재미있게 시작해봐요!</p>
-        </header>
-
-        <nav class="flex justify-center border-b border-slate-200 mb-8 space-x-4 md:space-x-8">
-            <button class="tab-button active font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="grammar">
-                차근차근 문법 튼튼!
-            </button>
-            <button class="tab-button font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="vocab">
-                필수 단어 쑥쑥!
-            </button>
-            <button class="tab-button font-poppins font-semibold text-slate-500 py-3 px-4" data-tab="application">
-                ✨ AI와 실전 연습
-            </button>
-        </nav>
-
-        <main>
-            <!-- Part 1: 차근차근 문법 튼튼! -->
-            <div id="grammar" class="tab-content active">
-                <div class="text-center mb-8">
-                     <h2 class="text-2xl font-bold text-slate-700">Part 1: 뼈대를 세우는 핵심 문법</h2>
-                     <p class="mt-2 text-slate-500">문장을 만드는 가장 기본적인 규칙들을 알아볼게요.</p>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="card p-6 md:p-8">
-                        <h3 class="text-xl font-bold text-blue-700 mb-4">⏰ 시간 표현하기 (시제)</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <h4 class="font-semibold text-lg">1. 현재 시제 (Simple Present)</h4>
-                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 매일 하는 일, 변하지 않는 사실을 말할 때</p>
-                                <p class="p-4 bg-slate-100 rounded-lg italic">She <span class="font-bold text-blue-600">studies</span> English every day. (그녀는 매일 영어를 공부해요.)</p>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">2. 과거 시제 (Simple Past)</h4>
-                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 이미 끝난 과거의 일을 말할 때</p>
-                                <p class="p-4 bg-slate-100 rounded-lg italic">I <span class="font-bold text-blue-600">visited</span> my grandparents last weekend. (저는 지난 주말에 할머니 댁에 갔었어요.)</p>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">3. 미래 시제 (Simple Future)</h4>
-                                <p class="text-slate-600 text-sm mb-2">언제 쓸까요? 👉 앞으로 할 일을 말할 때</p>
-                                <p class="p-4 bg-slate-100 rounded-lg italic">We <span class="font-bold text-blue-600">will go</span> to the movies tomorrow. (우리는 내일 영화 보러 갈 거예요.)</p>
-                            </div>
-                        </div>
-                        <div class="mt-6 border-t pt-4">
-                            <div class="toggle-answer bg-blue-50 hover:bg-blue-100 p-3 rounded-md text-blue-800 font-semibold text-sm">
-                                🤔 확인해보기: "나는 사과를 먹는다"를 과거형으로 바꾸면? (클릭!)
-                            </div>
-                            <div class="answer-content bg-green-50 text-green-800 p-4 rounded-b-md">
-                                <p class="font-semibold">정답: "I <span class="font-bold">ate</span> an apple." 입니다! 'eat'의 과거형은 'ate'예요.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card p-6 md:p-8">
-                        <h3 class="text-xl font-bold text-blue-700 mb-4">🙋‍♀️ 질문 만들기 (의문문)</h3>
-                        <div class="space-y-4">
-                            <p class="text-slate-600 text-sm">궁금한 것을 물어볼 때는 문장의 순서를 살짝 바꿔주면 돼요.</p>
-                            <div>
-                                <h4 class="font-semibold">"~이니?" (Be동사)</h4>
-                                <p class="p-4 bg-slate-100 rounded-lg italic"><span class="font-bold text-blue-600">Is</span> she a student? (그녀는 학생인가요?)</p>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold">"~하니?" (일반동사)</h4>
-                                <p class="p-4 bg-slate-100 rounded-lg italic"><span class="font-bold text-blue-600">Do</span> you like coffee? (커피 좋아하세요?)</p>
-                            </div>
-                        </div>
-                         <div class="mt-6 border-t pt-4">
-                            <div class="toggle-answer bg-blue-50 hover:bg-blue-100 p-3 rounded-md text-blue-800 font-semibold text-sm">
-                                🤔 확인해보기: "You are happy."를 질문으로 바꾸면? (클릭!)
-                            </div>
-                            <div class="answer-content bg-green-50 text-green-800 p-4 rounded-b-md">
-                                <p class="font-semibold">정답: "<span class="font-bold">Are you</span> happy?" 입니다! 'are' 동사를 맨 앞으로 보내면 돼요.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Part 2: 필수 단어 쑥쑥! -->
-            <div id="vocab" class="tab-content">
-                 <div class="text-center mb-8">
-                     <h2 class="text-2xl font-bold text-slate-700">Part 2: 꼭 알아야 할 필수 단어</h2>
-                     <p class="mt-2 text-slate-500">이 단어들만 알아도 하고 싶은 말의 절반은 할 수 있어요!</p>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🍎</p> <h4 class="font-bold text-lg">have</h4> <p class="text-slate-500 text-sm">[해브]</p> <p class="text-slate-700 mt-1">가지다</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🚶</p> <h4 class="font-bold text-lg">go</h4> <p class="text-slate-500 text-sm">[고우]</p> <p class="text-slate-700 mt-1">가다</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🎁</p> <h4 class="font-bold text-lg">get</h4> <p class="text-slate-500 text-sm">[겟]</p> <p class="text-slate-700 mt-1">얻다</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🛠️</p> <h4 class="font-bold text-lg">make</h4> <p class="text-slate-500 text-sm">[메이크]</p> <p class="text-slate-700 mt-1">만들다</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">🤔</p> <h4 class="font-bold text-lg">think</h4> <p class="text-slate-500 text-sm">[띵크]</p> <p class="text-slate-700 mt-1">생각하다</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">👍</p> <h4 class="font-bold text-lg">good</h4> <p class="text-slate-500 text-sm">[굿]</p> <p class="text-slate-700 mt-1">좋은</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">😄</p> <h4 class="font-bold text-lg">happy</h4> <p class="text-slate-500 text-sm">[해피]</p> <p class="text-slate-700 mt-1">행복한</p> </div>
-                    <div class="card p-4 text-center"> <p class="text-2xl mb-2">✨</p> <h4 class="font-bold text-lg">very</h4> <p class="text-slate-500 text-sm">[베리]</p> <p class="text-slate-700 mt-1">매우</p> </div>
-                </div>
-            </div>
-
-            <!-- Part 3: 실전! 문장 만들기 -->
-            <div id="application" class="tab-content">
-                <div class="text-center mb-8">
-                     <h2 class="text-2xl font-bold text-slate-700">Part 3: ✨ AI와 함께하는 실전 연습</h2>
-                     <p class="mt-2 text-slate-500">궁금한 한국어 문장을 입력하면 AI가 영어로 번역하고 설명해줘요!</p>
-                </div>
-                <div class="max-w-2xl mx-auto">
-                    <div class="card p-6">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <input type="text" id="korean-input" placeholder="번역하고 싶은 한국어 문장을 입력하세요..." class="flex-grow p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                            <button id="translate-button" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2">
-                                <span>✨ AI 번역하기</span>
-                            </button>
-                        </div>
-                        <div id="loader" class="hidden flex justify-center mt-6">
-                            <div class="loader"></div>
-                        </div>
-                        <div id="result-card" class="hidden mt-6 border-t pt-6">
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <p class="text-sm text-blue-800 font-semibold mb-2">AI 번역 결과:</p>
-                                <div class="flex items-center justify-between">
-                                    <p id="english-output" class="text-lg font-bold text-blue-900"></p>
-                                    <button id="play-audio-button" class="p-2 rounded-full hover:bg-blue-200 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 5.858a3 3 0 00-4.243 4.243h0a3 3 0 004.243 4.243l.293-.293a1 1 0 00-1.414-1.414l-.293.293a1 1 0 01-1.414-1.414l.293-.293a1 1 0 00-1.414-1.414l-.293.293a1 1 0 01-1.414-1.414l4.243-4.243zM18 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="bg-green-50 text-green-800 p-4 rounded-lg mt-4">
-                                <p class="text-sm font-semibold mb-2">💡 AI 문법 팁:</p>
-                                <p id="explanation-output" class="text-sm"></p>
-                            </div>
-                        </div>
-                         <div id="error-card" class="hidden mt-6 bg-red-50 text-red-700 p-4 rounded-lg">
-                            <p>앗! 오류가 발생했어요. 잠시 후 다시 시도해 주세요.</p>
-                        </div>
-                    </div>
-                </div>
+        <main class="flex-1 md:ml-64 p-4 sm:p-6 lg:p-10">
+            <header class="mb-10">
+                <h2 class="text-4xl font-bold text-gray-800">영상 신호 처리를 위한 딥러닝 핵심 개념</h2>
+                <p class="mt-2 text-lg text-gray-600">주요 딥러닝 개념들을 대화형으로 탐색하며 원리를 이해해보세요.</p>
+            </header>
+            
+            <div id="content" class="space-y-16">
             </div>
         </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const answerToggles = document.querySelectorAll('.toggle-answer');
-            const translateButton = document.getElementById('translate-button');
-            const koreanInput = document.getElementById('korean-input');
-            const loader = document.getElementById('loader');
-            const resultCard = document.getElementById('result-card');
-            const errorCard = document.getElementById('error-card');
-            const englishOutput = document.getElementById('english-output');
-            const explanationOutput = document.getElementById('explanation-output');
-            const playAudioButton = document.getElementById('play-audio-button');
-            
-            let currentAudio = null;
-
-            const apiKey = ""; 
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const tabId = button.getAttribute('data-tab');
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    button.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-
-            answerToggles.forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const answerContent = toggle.nextElementSibling;
-                    answerContent.classList.toggle('show');
-                });
-            });
-
-            translateButton.addEventListener('click', handleTranslation);
-            koreanInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    handleTranslation();
-                }
-            });
-
-            async function handleTranslation() {
-                const koreanText = koreanInput.value.trim();
-                if (!koreanText) {
-                    alert('한국어 문장을 입력해주세요.');
-                    return;
-                }
-
-                loader.classList.remove('hidden');
-                resultCard.classList.add('hidden');
-                errorCard.classList.add('hidden');
-                translateButton.disabled = true;
-
-                try {
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                    
-                    const payload = {
-                        contents: [{
-                            parts: [{ 
-                                text: `Translate the following Korean sentence into simple, natural English suitable for a beginner. Also, provide a very simple, one-sentence explanation of the key grammar point used. Korean: '${koreanText}'`
-                            }]
-                        }],
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "OBJECT",
-                                properties: {
-                                    "english_sentence": { "type": "STRING" },
-                                    "explanation": { "type": "STRING" }
-                                },
-                                required: ["english_sentence", "explanation"]
-                            }
-                        }
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('API request failed');
+        const contentData = {
+            basics: {
+                title: '신경망의 기초',
+                description: '신경망이 무엇인지, 어떻게 구성되고 어떤 데이터로 학습하는지에 대한 기본적인 개념들을 알아봅니다.',
+                concepts: [
+                    {
+                        id: 'neural-network',
+                        title: '신경망 (Neural Network)',
+                        text: "신경망은 인간의 뇌에 있는 신경세포(뉴런)의 연결 구조를 모방하여 만든 인공지능 모델입니다. 수많은 입력 데이터를 받아, 각 데이터의 중요도(가중치)를 계산하고, 그 결과들을 종합하여 최종적인 판단이나 예측을 내리는 방식으로 작동합니다. 입력층, 은닉층, 출력층으로 구성되며, 층이 깊어질수록 더 복잡한 문제를 해결할 수 있습니다."
+                    },
+                    {
+                        id: 'dataset',
+                        title: '데이터 셋 (Dataset)',
+                        text: "데이터 셋은 특정 목적을 위해 컴퓨터가 학습할 수 있는 형태로 모아놓은 데이터의 집합입니다. 예를 들어, '강아지 이미지 데이터 셋'은 수많은 강아지 사진과 각 사진이 '강아지'라는 정답(레이블) 정보로 구성됩니다. 기계는 이 데이터 셋을 보고 패턴을 학습하여, 나중에 새로운 사진이 주어졌을 때 그것이 강아지인지 아닌지 판단하게 됩니다."
+                    },
+                    {
+                        id: 'neural-circuit',
+                        title: '신경회로망 (Neural Circuit Network)',
+                        text: "신경회로망은 '신경망(Neural Network)'과 거의 같은 의미로 사용되는 용어입니다. 인간의 뇌가 신경세포들의 복잡한 회로로 이루어져 있다는 점에서 착안하여, 인공적인 신경망 모델을 회로에 비유한 표현입니다."
                     }
-
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    
-                    if (text) {
-                        const parsed = JSON.parse(text);
-                        englishOutput.textContent = parsed.english_sentence;
-                        explanationOutput.textContent = parsed.explanation;
-                        resultCard.classList.remove('hidden');
-                    } else {
-                        throw new Error('Invalid response from API');
+                ]
+            },
+            perceptrons: {
+                title: '퍼셉트론의 발전',
+                description: '가장 초기 모델인 퍼셉트론부터 다층 퍼셉트론으로 발전하며 어떻게 비선형 문제를 해결하게 되었는지 그 과정을 살펴봅니다.',
+                concepts: [
+                     {
+                        id: 'logic-gates',
+                        title: '신경망을 이용한 AND, OR, XOR 논리 게이트',
+                        text: "초기 인공지능 모델인 단층 퍼셉트론은 AND와 OR 문제처럼 직선 하나로 결과를 나눌 수 있는 '선형 분리' 문제는 해결할 수 있었지만, XOR 문제처럼 직선 하나로는 나눌 수 없는 문제는 해결하지 못했습니다. 아래 버튼을 눌러 각 논리 게이트의 데이터 분포와 결정 경계(선)를 확인해보세요. XOR 문제를 해결하기 위해 다층 퍼셉트론이 등장하게 되었습니다.",
+                        interactive: 'logic-gate-chart'
+                    },
+                    {
+                        id: 'slp-vs-mlp',
+                        title: '단층 퍼셉트론 vs 다층 퍼셉트론',
+                        text: "<b>단층 퍼셉트론:</b> 입력층과 출력층, 단 두 개의 층으로만 이루어진 가장 단순한 형태의 신경망입니다. 선형적으로 분류 가능한 문제만 해결할 수 있다는 명확한 한계가 있습니다.<br><br><b>다층 퍼셉트론 (MLP):</b> 입력층과 출력층 사이에 하나 이상의 숨겨진 층(은닉층)을 추가한 신경망입니다. 여러 개의 층을 쌓음으로써 XOR 문제와 같이 비선형적인 문제를 해결할 수 있게 되었고, 이것이 딥러닝 발전의 중요한 토대가 되었습니다."
+                    },
+                    {
+                        id: 'perceptron-types',
+                        title: '퍼셉트론, 아달라인, 다층 퍼셉트론',
+                        text: "<b>퍼셉트론:</b> 가장 초기의 신경망 모델로, 여러 입력을 받아 하나의 결과를 출력합니다. 정답과 예측값이 다를 경우에만 가중치를 업데이트하여 학습합니다.<br><br><b>아달라인 (Adaline):</b> 퍼셉트론을 개선한 모델입니다. 퍼셉트론과 달리, 정답 여부와 상관없이 항상 실제 정답 값과 예측 값의 오차를 계산하고, 그 오차를 줄이는 방향으로 가중치를 업데이트합니다.<br><br><b>다층 퍼셉트론 (MLP):</b> 위에서 설명한 것처럼, 단층 구조의 한계를 극복하기 위해 은닉층을 추가한 모델입니다. 현대 딥러닝 모델의 기본 구조가 됩니다."
+                    },
+                ]
+            },
+            core: {
+                title: '딥러닝 핵심 요소',
+                description: '신경망이 효과적으로 학습하기 위해 필요한 활성화 함수, 학습률, 과적합 방지 기술 등 주요 구성 요소들을 알아봅니다.',
+                concepts: [
+                    {
+                        id: 'activation-function',
+                        title: '활성화 함수 (Activation Function)',
+                        text: '활성화 함수는 신경망이 계산한 결과를 다음 층으로 어떻게 넘겨줄지 결정하는 함수입니다. 이 함수 덕분에 신경망은 비선형적인 복잡한 문제를 풀 수 있게 됩니다. 아래 버튼을 눌러 대표적인 활성화 함수들의 형태를 확인해보세요.<br><br><b>항등 함수:</b> 입력받은 값을 그대로 출력합니다.<br><b>로지스틱(시그모이드) 함수:</b> 모든 입력 값을 0과 1 사이의 값으로 변환합니다.<br><b>하이퍼볼릭 탄젠트(tanh) 함수:</b> 모든 입력 값을 -1과 1 사이의 값으로 변환합니다.',
+                        interactive: 'activation-chart'
+                    },
+                    {
+                        id: 'learning-rate',
+                        title: '학습률 (Learning Rate)',
+                        text: "학습률은 신경망이 학습 과정에서 틀렸을 때, 정답에 얼마나 '가깝게' 다가갈지를 결정하는 값입니다. 즉, 모델의 가중치를 한 번에 얼마나 업데이트할지를 정하는 보폭(step)의 크기와 같습니다.<br><br><b>학습률이 너무 크면:</b> 정답을 그냥 지나쳐 버려서 학습이 제대로 되지 않고 값이 계속 튈 수 있습니다 (발산).<br><b>학습률이 너무 작으면:</b> 학습 속도가 매우 느려지고, 전체 데이터의 일부 특징에만 과하게 맞춰지는 '지역 최적해'에 빠져 더 좋은 정답을 찾지 못할 수 있습니다.<br><br>따라서 학습률은 모델의 **학습 속도**와 **성능**에 직접적인 인과관계가 있으며, 문제와 데이터에 맞는 적절한 학습률을 찾는 것이 매우 중요합니다."
+                    },
+                    {
+                        id: 'dropout',
+                        title: '드롭아웃 (Dropout)',
+                        text: "드롭아웃은 신경망의 과적합(Overfitting)을 막기 위한 기술 중 하나입니다. 과적합이란 모델이 학습 데이터는 기가 막히게 잘 맞추지만, 새로운 데이터에 대해서는 성능이 떨어지는 현상을 말합니다. 드롭아웃은 학습 과정에서 신경망의 일부 뉴런(노드)을 무작위로 '끄는' 방식입니다. 이렇게 하면 특정 뉴런에 지나치게 의존하지 않고, 전체적으로 여러 뉴런이 균형 있게 학습하게 되어 모델의 일반화 성능이 향상됩니다.",
+                        interactive: 'dropout-diagram'
                     }
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    errorCard.classList.remove('hidden');
-                } finally {
-                    loader.classList.add('hidden');
-                    translateButton.disabled = false;
-                }
+                ]
+            },
+            cnn: {
+                title: '딥러닝과 CNN',
+                description: '딥러닝의 정의와 특히 영상 처리에 강력한 성능을 보이는 CNN의 구조 및 작동 방식, 그리고 고급 기법인 전이 학습에 대해 알아봅니다.',
+                concepts: [
+                    {
+                        id: 'deep-learning',
+                        title: '딥러닝 (Deep Learning)',
+                        text: "딥러닝은 다층 퍼셉트론처럼 여러 개의 은닉층을 가진 심층 신경망(Deep Neural Network, DNN)을 사용하여 기계를 학습시키는 방법입니다.<br><br><b>구조:</b> 기본적으로 입력층, 여러 개의 은닉층, 출력층으로 구성됩니다. 특히 영상 처리에서는 CNN(합성곱 신경망) 구조가 널리 쓰입니다.<br><b>방법:</b> 대량의 데이터로부터 기계가 스스로 데이터의 특징(패턴)을 학습하고, 이를 기반으로 분류나 예측 같은 작업을 수행합니다.<br><b>특징 추출기(CNN) 작동 원리:</b> CNN의 '합성곱 층'과 '풀링 층'이 특징 추출기 역할을 합니다. 이미지 위를 필터가 돌아다니면서 기본적인 특징부터 복잡한 형태의 특징까지 점진적으로 추출해냅니다.<br><b>분류기 작동 원리:</b> 특징 추출기에서 뽑아낸 주요 특징 정보를 입력받아, 최종적으로 이 이미지가 어떤 종류에 속하는지 판단하고 분류하는 역할을 합니다."
+                    },
+                    {
+                        id: 'cnn-process',
+                        title: 'CNN이 이미지를 인식하는 과정',
+                        text: "1. **입력:** 이미지가 픽셀 값들의 행렬(숫자 배열) 형태로 입력됩니다.<br>2. **특징 추출 (Convolution & Pooling):** 필터가 이미지를 훑으며 특징을 뽑아내 '특징 맵'을 만들고(합성곱), 특징 맵의 크기를 줄여 중요한 특징만 남깁니다(풀링). 이 과정을 반복하며 저수준 특징(선, 점)에서 고수준 특징(눈, 코, 입)으로 발전시킵니다.<br>3. **분류 (Fully-Connected Layer):** 추출된 모든 특징들을 1차원 데이터로 평탄화한 후, 완전 연결 계층을 통과시켜 최종적으로 어떤 클래스에 속할 확률이 가장 높은지 계산하여 이미지를 인식합니다."
+                    },
+                    {
+                        id: 'color-image',
+                        title: '컬러 이미지를 처리하는 방법',
+                        text: "흑백 이미지는 밝기 정보만 가진 1개의 채널(channel)로 이루어져 있지만, 컬러 이미지는 보통 빛의 삼원색인 빨강(Red), 초록(Green), 파랑(Blue)의 정보를 담은 3개의 채널로 구성됩니다. CNN은 이 3개의 채널을 각각 별도의 입력으로 받아들여 특징을 추출한 후, 그 결과들을 종합하여 이미지를 처리합니다. 즉, 3개의 흑백 이미지를 동시에 처리하는 것과 유사한 방식으로 작동합니다."
+                    },
+                    {
+                        id: 'transfer-learning',
+                        title: '전이 학습 (Transfer Learning)',
+                        text: "전이 학습은 이미 학습된 모델을 가져와서 새로운 문제에 맞게 조정하여 사용하는 방법입니다. 예를 들어, 수백만 장의 이미지로 사물을 구분하도록 훈련된 모델의 특징 파악 능력을 빌려와, 우리가 풀고 싶은 문제에 적용하는 것입니다. 처음부터 모든 것을 학습시키는 대신, 기존의 지식을 활용하므로 더 적은 데이터로도 더 빠르고 효과적으로 학습할 수 있는 장점이 있습니다."
+                    }
+                ]
             }
-            
-            playAudioButton.addEventListener('click', async () => {
-                const textToSpeak = englishOutput.textContent;
-                if (!textToSpeak) return;
+        };
 
-                playAudioButton.disabled = true;
-                
-                try {
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                    const payload = {
-                        contents: [{ parts: [{ text: textToSpeak }] }],
-                        generationConfig: {
-                            responseModalities: ["AUDIO"],
-                            speechConfig: {
-                                voiceConfig: {
-                                    prebuiltVoiceConfig: { voiceName: "Zephyr" }
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentContainer = document.getElementById('content');
+            
+            for (const sectionKey in contentData) {
+                const sectionData = contentData[sectionKey];
+                const sectionEl = document.createElement('section');
+                sectionEl.id = sectionKey;
+                sectionEl.className = 'scroll-mt-16';
+
+                let conceptsHtml = sectionData.concepts.map(concept => {
+                    let interactiveHtml = '';
+                    if (concept.interactive === 'logic-gate-chart') {
+                        interactiveHtml = `
+                            <div class="mt-6 text-center">
+                                <div class="inline-flex rounded-md shadow-sm mb-4" role="group">
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-[#8c7851]" data-gate="AND">AND</button>
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-[#8c7851]" data-gate="OR">OR</button>
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-[#8c7851]" data-gate="XOR">XOR</button>
+                                </div>
+                                <div class="chart-container"><canvas id="logicGateChart"></canvas></div>
+                            </div>
+                        `;
+                    } else if (concept.interactive === 'activation-chart') {
+                         interactiveHtml = `
+                            <div class="mt-6 text-center">
+                                <div class="inline-flex rounded-md shadow-sm mb-4" role="group">
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100" data-func="sigmoid">Sigmoid</button>
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100" data-func="tanh">Tanh</button>
+                                    <button type="button" class="btn-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100" data-func="identity">Identity</button>
+                                </div>
+                                <div class="chart-container"><canvas id="activationChart"></canvas></div>
+                            </div>
+                        `;
+                    } else if (concept.interactive === 'dropout-diagram') {
+                        interactiveHtml = `
+                        <div class="mt-6 p-4 rounded-lg bg-gray-50 border border-gray-200">
+                            <div class="flex justify-around items-center mb-4">
+                                <div class="text-center">
+                                    <p class="font-bold mb-2">신경망 레이어</p>
+                                    <div id="dropout-nodes" class="flex gap-4">
+                                        ${[...Array(5)].map((_, i) => `<div class="dropout-node w-12 h-12 bg-[#8c7851] rounded-full flex items-center justify-center text-white font-bold text-sm">N${i+1}</div>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="text-center">
+                                <button id="dropout-toggle" class="px-4 py-2 bg-[#8c7851] text-white rounded-md hover:bg-[#a18f6c]">드롭아웃 적용/해제</button>
+                            </div>
+                        </div>
+                        `;
+                    }
+
+                    return `
+                        <div id="${concept.id}" class="card rounded-xl shadow-lg overflow-hidden p-6 md:p-8">
+                            <h4 class="text-2xl font-bold text-gray-800">${concept.title}</h4>
+                            <p class="mt-4 text-base leading-relaxed">${concept.text}</p>
+                            ${interactiveHtml}
+                        </div>
+                    `;
+                }).join('');
+
+                sectionEl.innerHTML = `
+                    <h3 class="text-3xl font-bold mb-2 text-gray-800">${sectionData.title}</h3>
+                    <p class="text-lg text-gray-600 mb-8 max-w-3xl">${sectionData.description}</p>
+                    <div class="space-y-8">${conceptsHtml}</div>
+                `;
+                contentContainer.appendChild(sectionEl);
+            }
+
+            setupInteractiveElements();
+            setupNavigation();
+        });
+        
+        function setupInteractiveElements() {
+            let logicGateChart, activationChart;
+
+            const logicButtons = document.querySelectorAll('[data-gate]');
+            if (logicButtons.length > 0) {
+                const ctx = document.getElementById('logicGateChart').getContext('2d');
+                const datasets = {
+                    AND: {
+                        '0': [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}],
+                        '1': [{x: 1, y: 1}]
+                    },
+                    OR: {
+                        '0': [{x: 0, y: 0}],
+                        '1': [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}]
+                    },
+                    XOR: {
+                        '0': [{x: 0, y: 0}, {x: 1, y: 1}],
+                        '1': [{x: 0, y: 1}, {x: 1, y: 0}]
+                    }
+                };
+                 const lineData = {
+                    AND: [{x: -0.5, y: 1.5}, {x: 1.5, y: -0.5}],
+                    OR: [{x: -0.5, y: 0.5}, {x: 0.5, y: -0.5}]
+                };
+
+                const chartConfig = {
+                    type: 'scatter',
+                    data: { datasets: [] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { min: -0.5, max: 1.5, grid: { color: '#eee' } },
+                            y: { min: -0.5, max: 1.5, grid: { color: '#eee' } }
+                        },
+                        plugins: {
+                            legend: { display: true },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `([${context.raw.x}, ${context.raw.y}]) -> ${context.dataset.label}`
                                 }
                             }
-                        },
-                    };
-                    
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) throw new Error('TTS API request failed');
-
-                    const result = await response.json();
-                    const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-
-                    if (audioData) {
-                        const pcmData = base64ToArrayBuffer(audioData);
-                        const pcm16 = new Int16Array(pcmData);
-                        const wavBlob = pcmToWav(pcm16, 24000); 
-                        const audioUrl = URL.createObjectURL(wavBlob);
-                        
-                        if(currentAudio) {
-                            currentAudio.pause();
                         }
-                        currentAudio = new Audio(audioUrl);
-                        currentAudio.play();
-                    } else {
-                        throw new Error('No audio data in response');
                     }
-                } catch (error) {
-                    console.error('TTS Error:', error);
-                    alert('오디오를 재생하는 중 오류가 발생했습니다.');
-                } finally {
-                    playAudioButton.disabled = false;
+                };
+                logicGateChart = new Chart(ctx, chartConfig);
+                
+                function updateLogicGateChart(gate) {
+                    logicButtons.forEach(b => b.classList.toggle('btn-toggle-active', b.dataset.gate === gate));
+                    const data = datasets[gate];
+                    logicGateChart.data.datasets = [
+                        { label: 'Output: 0', data: data['0'], backgroundColor: 'rgba(239, 68, 68, 0.7)', pointRadius: 8 },
+                        { label: 'Output: 1', data: data['1'], backgroundColor: 'rgba(34, 197, 94, 0.7)', pointRadius: 8 }
+                    ];
+                    if (lineData[gate]) {
+                        logicGateChart.data.datasets.push({
+                            type: 'line',
+                            label: 'Decision Boundary',
+                            data: lineData[gate],
+                            borderColor: '#8c7851',
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        });
+                    }
+                    logicGateChart.update();
                 }
+
+                logicButtons.forEach(button => button.addEventListener('click', () => updateLogicGateChart(button.dataset.gate)));
+                updateLogicGateChart('AND');
+            }
+            
+            const activationButtons = document.querySelectorAll('[data-func]');
+            if (activationButtons.length > 0) {
+                const ctx = document.getElementById('activationChart').getContext('2d');
+                const labels = Array.from({length: 101}, (_, i) => (i - 50) / 10);
+                const functions = {
+                    sigmoid: x => 1 / (1 + Math.exp(-x)),
+                    tanh: x => Math.tanh(x),
+                    identity: x => x
+                };
+                
+                const activationChartConfig = {
+                    type: 'line',
+                    data: { labels: labels, datasets: [] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: false, grid: { color: '#eee' } }, x: { grid: { color: '#eee' } } },
+                        elements: { point: { radius: 0 } },
+                        plugins: { legend: { display: false } }
+                    }
+                };
+                activationChart = new Chart(ctx, activationChartConfig);
+
+                function updateActivationChart(funcName) {
+                    activationButtons.forEach(b => b.classList.toggle('btn-toggle-active', b.dataset.func === funcName));
+                    const data = labels.map(functions[funcName]);
+                    activationChart.data.datasets = [{
+                        label: funcName,
+                        data: data,
+                        borderColor: '#8c7851',
+                        borderWidth: 3,
+                        tension: 0.1
+                    }];
+                    activationChart.update();
+                }
+                
+                activationButtons.forEach(button => button.addEventListener('click', () => updateActivationChart(button.dataset.func)));
+                updateActivationChart('sigmoid');
+            }
+
+            const dropoutToggle = document.getElementById('dropout-toggle');
+            if (dropoutToggle) {
+                const nodes = document.querySelectorAll('#dropout-nodes .dropout-node');
+                let isDropoutActive = false;
+                dropoutToggle.addEventListener('click', () => {
+                    isDropoutActive = !isDropoutActive;
+                    nodes.forEach(node => {
+                        if(isDropoutActive) {
+                            node.classList.toggle('off', Math.random() > 0.5);
+                        } else {
+                            node.classList.remove('off');
+                        }
+                    });
+                });
+            }
+        }
+        
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('#navigation a');
+            const sections = document.querySelectorAll('main section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active-nav', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => observer.observe(section));
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    document.querySelector(link.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
             });
-
-            function base64ToArrayBuffer(base64) {
-                const binaryString = window.atob(base64);
-                const len = binaryString.length;
-                const bytes = new Uint8Array(len);
-                for (let i = 0; i < len; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                return bytes.buffer;
-            }
-
-            function pcmToWav(pcmData, sampleRate) {
-                const numChannels = 1;
-                const bitsPerSample = 16;
-                const byteRate = sampleRate * numChannels * bitsPerSample / 8;
-                const blockAlign = numChannels * bitsPerSample / 8;
-                const dataSize = pcmData.length * 2;
-                const buffer = new ArrayBuffer(44 + dataSize);
-                const view = new DataView(buffer);
-
-                function writeString(view, offset, string) {
-                    for (let i = 0; i < string.length; i++) {
-                        view.setUint8(offset + i, string.charCodeAt(i));
-                    }
-                }
-
-                writeString(view, 0, 'RIFF');
-                view.setUint32(4, 36 + dataSize, true);
-                writeString(view, 8, 'WAVE');
-                writeString(view, 12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, byteRate, true);
-                view.setUint16(32, blockAlign, true);
-                view.setUint16(34, bitsPerSample, true);
-                writeString(view, 36, 'data');
-                view.setUint32(40, dataSize, true);
-
-                for (let i = 0; i < pcmData.length; i++) {
-                    view.setInt16(44 + i * 2, pcmData[i], true);
-                }
-
-                return new Blob([view], { type: 'audio/wav' });
-            }
-        });
+        }
     </script>
 </body>
 </html>
-
