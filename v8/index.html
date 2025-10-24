@@ -1,568 +1,364 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대화형 봇 설계 탐색기 | 알고리즘 2: 풀백 진입</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 400px;
-            max-height: 50vh;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 450px;
-            }
-        }
-        .tab-button.active {
-            border-color: #0d9488;
-            background-color: #f0fdfa;
-            color: #0d9488;
-            font-weight: 600;
-        }
-        .step-button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-        }
-    </style>
-    <!-- Chosen Palette: Warm Teal Stone -->
-    <!-- Application Structure Plan: A single-page, thematic scrolling app following the bot's logic flow. A header provides quick navigation. Key sections: 1. Overview (strategy rules), 2. Interactive Logic Simulator (Chart.js + buttons to demo steps 1-4), 3. Sweet Spot Options (interactive tabs for A, B, C), 4. Risks & Next Steps (cards). This structure was chosen to visually and interactively *teach* the user the bot's complex *process*, which is the report's main goal, rather than just re-stating the text. -->
-    <!-- Visualization & Content Choices: Report's 4-step logic -> Goal: Understand Process -> Viz: Interactive Chart.js "Simulator" -> Interaction: Buttons (Signal, Pullback, TP, SL) update chart annotations & status text -> Justification: Makes the abstract logic of Step 4 (ATR stops, partial TP) tangible and visual. | Report's "Sweet Spot Options" -> Goal: Compare -> Viz: Tabbed content blocks (HTML/JS) -> Interaction: Click tabs A, B, C to show/hide descriptions -> Justification: Directly interactive version of the report's list. | Report's Risks/Next Steps -> Goal: Inform -> Viz: Styled HTML cards -> Interaction: None -> Justification: Clear, scannable presentation of key takeaways. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대화형 봇 설계 탐색기 | 알고리즘 2: 풀백 진입</title>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com" defer></script>
+  <!-- Chart.js & Annotation plugin (v3) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js" defer></script>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; }
+    .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+    @media (min-width: 768px) { .chart-container { height: 450px; } }
+    .tab-button.active { border-color: #0d9488; background-color: #f0fdfa; color: #0d9488; font-weight: 600; }
+    .step-button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+  </style>
 </head>
 <body class="bg-stone-50 text-stone-800">
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    <header class="text-center mb-10 md:mb-16">
+      <h1 class="text-3xl md:text-5xl font-bold text-teal-800 mb-3">🎯 봇 설계 계획서 탐색기</h1>
+      <p class="text-lg md:text-xl text-stone-600">알고리즘 2: 풀백 진입 (Pullback Entry) 전략</p>
+    </header>
 
-    <div class="container mx-auto px-4 py-8 md:py-12">
+    <nav class="sticky top-0 z-10 bg-stone-50/90 backdrop-blur-sm py-3 mb-10 border-b border-stone-200">
+      <div class="max-w-5xl mx-auto flex justify-center space-x-2 md:space-x-6">
+        <a href="#section-overview" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">전략 개요</a>
+        <a href="#section-simulator" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">로직 시뮬레이터</a>
+        <a href="#section-options" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">진입 옵션</a>
+        <a href="#section-risks" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">리스크 및 계획</a>
+      </div>
+    </nav>
 
-        <header class="text-center mb-10 md:mb-16">
-            <h1 class="text-3xl md:text-5xl font-bold text-teal-800 mb-3">🎯 봇 설계 계획서 탐색기</h1>
-            <p class="text-lg md:text-xl text-stone-600">알고리즘 2: 풀백 진입 (Pullback Entry) 전략</p>
-        </header>
+    <main class="max-w-5xl mx-auto space-y-16 md:space-y-24">
+      <!-- 🔴 오류/경고 배너 -->
+      <div id="banner" class="hidden rounded-xl border p-4 text-sm" role="alert" aria-live="polite"></div>
 
-        <nav class="sticky top-0 z-10 bg-stone-50/90 backdrop-blur-sm py-3 mb-10 border-b border-stone-200">
-            <div class="max-w-5xl mx-auto flex justify-center space-x-2 md:space-x-6">
-                <a href="#section-overview" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">전략 개요</a>
-                <a href="#section-simulator" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">로직 시뮬레이터</a>
-                <a href="#section-options" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">진입 옵션</a>
-                <a href="#section-risks" class="text-sm md:text-base text-stone-600 hover:text-teal-700 font-medium px-3 py-2 rounded-md">리스크 및 계획</a>
+      <!-- 1. 개요 -->
+      <section id="section-overview" class="scroll-mt-24">
+        <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">1. 전략 개요</h2>
+        <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
+          이 전략의 핵심 목표는 손익비를 극대화하는 것입니다. 추세 방향 신호가 포착되어도 즉시 진입하지 않고, 일시적인 가격 반등(풀백)을 기다립니다. 이후 미리 정의된 '유리한 가격대'에서 진입하여 리스크는 줄이고 수익은 극대화합니다.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+            <div class="flex items-center space-x-3 mb-3"><span class="text-2xl">📈</span><h3 class="text-lg font-semibold text-stone-800">핵심 아이디어</h3></div>
+            <p class="text-stone-600">추세 확인 후, '유리한 가격' (풀백)에서 진입하여 손익비 극대화.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+            <div class="flex items-center space-x-3 mb-3"><span class="text-2xl">⚙️</span><h3 class="text-lg font-semibold text-stone-800">핵심 규칙: 레버리지</h3></div>
+            <p class="text-stone-600">모든 진입은 2배 레버리지 (고정)로 실행.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+            <div class="flex items-center space-x-3 mb-3"><span class="text-2xl">🚫</span><h3 class="text-lg font-semibold text-stone-800">핵심 규칙: 포지션</h3></div>
+            <p class="text-stone-600">동일 코인에 대한 중복 포지션 진입 금지.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 시뮬레이터 -->
+      <section id="section-simulator" class="scroll-mt-24">
+        <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">2. 실행 로직 시뮬레이터</h2>
+        <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
+          봇의 4단계 실행 로직을 시각적으로 탐색해 보세요. 봇이 '강력 매도(숏)' 신호를 감지했다고 가정한 시나리오입니다. 아래 버튼을 순서대로 클릭하여 봇이 각 상황에서 어떻게 반응하는지 확인해 보세요.
+        </p>
+        <div class="bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden">
+          <div class="p-6 md:p-8">
+            <div class="chart-container">
+              <canvas id="botLogicChart" aria-label="로직 차트" role="img"></canvas>
             </div>
-        </nav>
-
-        <main class="max-w-5xl mx-auto space-y-16 md:space-y-24">
-
-            <section id="section-overview" class="scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">1. 전략 개요</h2>
-                <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
-                    이 전략의 핵심 목표는 손익비를 극대화하는 것입니다. 추세 방향 신호가 포착되어도 즉시 진입하지 않고, 일시적인 가격 반등(풀백)을 기다립니다. 이후 미리 정의된 '유리한 가격대'에서 진입하여 리스크는 줄이고 수익은 극대화합니다.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <span class="text-2xl">📈</span>
-                            <h3 class="text-lg font-semibold text-stone-800">핵심 아이디어</h3>
-                        </div>
-                        <p class="text-stone-600">추세 확인 후, '유리한 가격' (풀백)에서 진입하여 손익비 극대화.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <span class="text-2xl">⚙️</span>
-                            <h3 class="text-lg font-semibold text-stone-800">핵심 규칙: 레버리지</h3>
-                        </div>
-                        <p class="text-stone-600">모든 진입은 2배 레버리지 (고정)로 실행.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <span class="text-2xl">🚫</span>
-                            <h3 class="text-lg font-semibold text-stone-800">핵심 규칙: 포지션</h3>
-                        </div>
-                        <p class="text-stone-600">동일 코인에 대한 중복 포지션 진입 금지.</p>
-                    </div>
+          </div>
+          <div class="bg-stone-50 p-6 border-t border-stone-200">
+            <div class="flex flex-col md:flex-row gap-6">
+              <div class="flex-1 space-y-4">
+                <h3 class="text-lg font-semibold text-stone-800">시뮬레이션 제어판</h3>
+                <div class="grid grid-cols-2 gap-3">
+                  <button id="btn-step-1" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all">① 숏 신호 감지</button>
+                  <button id="btn-step-2" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>② 풀백 진입</button>
+                  <button id="btn-step-3" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>③ 1차 익절 (TP1)</button>
+                  <button id="btn-step-4" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>④ 동적 손절 (SL)</button>
                 </div>
-            </section>
+                <button id="btn-reset" class="w-full bg-stone-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-stone-600 transition-all mt-2">초기화</button>
 
-            <section id="section-simulator" class="scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">2. 실행 로직 시뮬레이터</h2>
-                <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
-                    봇의 4단계 실행 로직을 시각적으로 탐색해 보세요. 봇이 '강력 매도(숏)' 신호를 감지했다고 가정한 시나리오입니다. 아래 버튼을 순서대로 클릭하여 봇이 각 상황에서 어떻게 반응하는지 확인해 보세요.
-                </p>
-
-                <div class="bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden">
-                    <div class="p-6 md:p-8">
-                        <div class="chart-container">
-                            <canvas id="botLogicChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-stone-50 p-6 border-t border-stone-200">
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="flex-1 space-y-4">
-                                <h3 class="text-lg font-semibold text-stone-800">시뮬레이션 제어판</h3>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <button id="btn-step-1" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all">① 숏 신호 감지</button>
-                                    <button id="btn-step-2" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>② 풀백 진입</button>
-                                    <button id="btn-step-3" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>③ 1차 익절 (TP1)</button>
-                                    <button id="btn-step-4" class="step-button w-full bg-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-teal-700 transition-all" disabled>④ 동적 손절 (SL)</button>
-                                </div>
-                                <button id="btn-reset" class="w-full bg-stone-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-stone-600 transition-all mt-2">초기화</button>
-                            </div>
-                            <div class="flex-1 bg-stone-100 rounded-lg p-4 border border-stone-200">
-                                <h3 class="text-lg font-semibold text-stone-800 mb-3">봇 상태</h3>
-                                <div id="bot-status-panel" class="space-y-2">
-                                    <p class="text-stone-600" data-status="0">대기 중...</p>
-                                    <p class="text-stone-500 hidden" data-status="1">
-                                        <span class="font-medium text-red-600">📉 [신호 감지]</span><br>
-                                        강력 매도 신호 포착. 포지션 없음 확인. '유리한 가격' (EMA 20)까지 풀백 대기 시작.
-                                    </p>
-                                    <p class="text-stone-500 hidden" data-status="2">
-                                        <span class="font-medium text-red-700">🚨 [진입 실행]</span><br>
-                                        가격이 EMA 20 ($105) 도달. 2배 레버리지 숏 포지션 진입. 초기 ATR($2) 기준 SL($109) 및 TP1($100) 설정.
-                                    </p>
-                                    <p class="text-stone-500 hidden" data-status="3">
-                                        <span class="font-medium text-green-600">💰 [1차 익절]</span><br>
-                                        가격이 TP1 ($100) 도달. 50% 물량 익절. 남은 50% 물량의 SL을 본절($105)로 이동.
-                                    </p>
-                                    <p class="text-stone-500 hidden" data-status="4">
-                                        <span class="font-medium text-blue-600">🛡️ [최종 청산]</span><br>
-                                        가격 반등하여 동적 손절선($102) 도달. 남은 50% 물량 전량 청산. 사이클 종료.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- ✅ 간이 테스트 패널 -->
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button id="btn-test-plugin" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700">테스트: 플러그인 감지</button>
+                  <button id="btn-test-annotation" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700" disabled>테스트: 어노테이션 생성</button>
                 </div>
-            </section>
-
-            <section id="section-options" class="scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">3. '유리한 가격' 정의 옵션</h2>
-                <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
-                    설계서 2단계의 '유리한 가격 (Sweet Spot)'을 정의하는 방법은 전략의 성패를 좌우합니다. 봇이 어떤 기준(옵션)으로 진입 시점을 기다릴 수 있는지 비교해 보세요.
-                </p>
-
-                <div class="bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden">
-                    <div class="flex border-b border-stone-200">
-                        <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all active" data-tab="A">
-                            옵션 A: 이평선 (MA)
-                        </button>
-                        <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all" data-tab="B">
-                            옵션 B: 피보나치
-                        </button>
-                        <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all" data-tab="C">
-                            옵션 C: 매물대 (S/R)
-                        </button>
-                    </div>
-                    <div class="p-6 md:p-8">
-                        <div id="tab-content-A" class="tab-content space-y-3">
-                            <h3 class="text-xl font-semibold text-stone-800">옵션 A: 이평선(MA) 기준 (구현 용이)</h3>
-                            <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "숏 신호가 떴으니, 가격이 일시적으로 반등하여 20시간 이평선(EMA 20)에 닿으면 진입한다."</p>
-                            <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "롱 신호가 떴으니, 가격이 일시적으로 하락하여 20시간 이평선(EMA 20)에 닿으면 진입한다."</p>
-                            <p class="text-stone-500 text-sm mt-2">이 방법은 구현이 가장 용이하며, 설계서에서 1차 백테스팅용으로 권장된 방식입니다.</p>
-                        </div>
-                        <div id="tab-content-B" class="tab-content space-y-3 hidden">
-                            <h3 class="text-xl font-semibold text-stone-800">옵션 B: 피보나치 되돌림 기준 (정교함)</h3>
-                            <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "최근 하락 파동을 기준으로, 0.382 또는 0.5 되돌림 구간까지 가격이 반등하면 진입한다."</p>
-                            <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "최근 상승 파동을 기준으로, 0.382 또는 0.5 되돌림 구간까지 가격이 하락하면 진입한다."</p>
-                            <p class="text-stone-500 text-sm mt-2">최근 고점/저점을 식별하는 로직이 추가로 필요하여 다소 복잡하지만, 더 정교한 진입점을 제공할 수 있습니다.</p>
-                        </div>
-                        <div id="tab-content-C" class="tab-content space-y-3 hidden">
-                            <h3 class="text-xl font-semibold text-stone-800">옵션 C: 이전 매물대(S/R) 기준 (가장 정교함)</h3>
-                            <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "이전에 강력했던 지지선이 무너졌다면, 이제 그 선은 저항선이다. 그 저항선까지 가격이 반등하면 진입한다."</p>
-                            <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "이전에 강력했던 저항선이 뚫렸다면, 이제 그 선은 지지선이다. 그 지지선까지 가격이 하락하면 진입한다."</p>
-                            <p class="text-stone-500 text-sm mt-2">의미 있는 수평 매물대를 자동으로 식별하는 것은 매우 복잡하지만, 가장 강력한 진입 근거를 제공할 수 있습니다.</p>
-                        </div>
-                    </div>
+              </div>
+              <div class="flex-1 bg-stone-100 rounded-lg p-4 border border-stone-200">
+                <h3 class="text-lg font-semibold text-stone-800 mb-3">봇 상태</h3>
+                <div id="bot-status-panel" class="space-y-2">
+                  <p class="text-stone-600" data-status="0">대기 중...</p>
+                  <p class="text-stone-500 hidden" data-status="1"><span class="font-medium text-red-600">📉 [신호 감지]</span><br>강력 매도 신호 포착. 포지션 없음 확인. '유리한 가격' (EMA 20)까지 풀백 대기 시작.</p>
+                  <p class="text-stone-500 hidden" data-status="2"><span class="font-medium text-red-700">🚨 [진입 실행]</span><br>가격이 EMA 20 ($105) 도달. 2배 레버리지 숏 포지션 진입. 초기 ATR($2) 기준 SL($109) 및 TP1($100) 설정.</p>
+                  <p class="text-stone-500 hidden" data-status="3"><span class="font-medium text-green-600">💰 [1차 익절]</span><br>가격이 TP1 ($100) 도달. 50% 물량 익절. 남은 50% 물량의 SL을 본절($105)로 이동.</p>
+                  <p class="text-stone-500 hidden" data-status="4"><span class="font-medium text-blue-600">🛡️ [최종 청산]</span><br>가격 반등하여 동적 손절선($102) 도달. 남은 50% 물량 전량 청산. 사이클 종료.</p>
                 </div>
-            </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <section id="section-risks" class="scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">4. 주요 리스크 및 다음 단계</h2>
-                <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">
-                    이 전략은 잠재력이 높지만, 명확한 리스크를 인지하고 체계적인 검증(백테스팅)을 진행해야 합니다.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                        <h3 class="text-xl font-semibold text-stone-800 mb-4">⚠️ 주요 리스크</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-start space-x-3">
-                                <span class="text-lg pt-1">🚌</span>
-                                <div>
-                                    <h4 class="font-semibold">기회 상실 (The Bus Left)</h4>
-                                    <p class="text-stone-600 text-sm">알고리즘 2의 가장 큰 단점. '유리한 가격대'까지 풀백을 주지 않고 추세가 터져버리면, 봇은 영원히 진입하지 못합니다.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start space-x-3">
-                                <span class="text-lg pt-1">🎯</span>
-                                <div>
-                                    <h4 class="font-semibold">'유리한 가격'의 정의</h4>
-                                    <p class="text-stone-600 text-sm">전략의 성패는 '유리한 가격'을 얼마나 잘 정의하느냐에 달려있습니다. 시장, 코인마다 최적의 값이 다릅니다.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start space-x-3">
-                                <span class="text-lg pt-1">🎛️</span>
-                                <div>
-                                    <h4 class="font-semibold">ATR 배수 최적화</h4>
-                                    <p class="text-stone-600 text-sm">손절(SL)과 1차 익절(TP1)의 ATR 배수는 손익비를 결정하는 핵심 변수이며, 지속적인 최적화가 필요합니다.</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                        <h3 class="text-xl font-semibold text-stone-800 mb-4">🛠️ 다음 단계: 백테스팅 계획</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-start space-x-3">
-                                <span class="text-lg pt-1">1️⃣</span>
-                                <div>
-                                    <h4 class="font-semibold">1차 백테스팅 (구현)</h4>
-                                    <p class="text-stone-600 text-sm">설계서의 1~4단계를 `backtrader` 또는 유사 툴로 코드를 구현합니다. (옵션 A: EMA 20 기준)</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start space-x-3">
-                                <span class="text-lg pt-1">2️⃣</span>
-                                <div>
-                                    <h4 class="font-semibold">핵심 변수 최적화</h4>
-                                    <p class="text-stone-600 text-sm">아래 3가지 핵심 변수에 대해 최적의 값을 찾기 위한 파라미터 최적화를 수행합니다.</p>
-                                    <ul class="list-disc list-inside text-stone-500 text-sm mt-2 ml-2">
-                                        <li><code>Sweet_Spot</code> 정의 (EMA 20 vs 60 등)</li>
-                                        <li><code>ATR SL 배수</code> (1.5 ~ 3.0)</li>
-                                        <li><code>ATR TP1 배수</code> (2.0 ~ 5.0)</li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-        </main>
+      <!-- 3. 옵션 -->
+      <section id="section-options" class="scroll-mt-24">
+        <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">3. '유리한 가격' 정의 옵션</h2>
+        <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">설계서 2단계의 '유리한 가격 (Sweet Spot)'을 정의하는 방법은 전략의 성패를 좌우합니다. 봇이 어떤 기준(옵션)으로 진입 시점을 기다릴 수 있는지 비교해 보세요.</p>
+        <div class="bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden">
+          <div class="flex border-b border-stone-200">
+            <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all active" data-tab="A">옵션 A: 이평선 (MA)</button>
+            <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all" data-tab="B">옵션 B: 피보나치</button>
+            <button class="tab-button flex-1 p-4 md:p-5 text-center font-medium text-stone-600 border-b-2 border-transparent transition-all" data-tab="C">옵션 C: 매물대 (S/R)</button>
+          </div>
+          <div class="p-6 md:p-8">
+            <div id="tab-content-A" class="tab-content space-y-3">
+              <h3 class="text-xl font-semibold text-stone-800">옵션 A: 이평선(MA) 기준 (구현 용이)</h3>
+              <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "숏 신호가 떴으니, 가격이 일시적으로 반등하여 20시간 이평선(EMA 20)에 닿으면 진입한다."</p>
+              <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "롱 신호가 떴으니, 가격이 일시적으로 하락하여 20시간 이평선(EMA 20)에 닿으면 진입한다."</p>
+              <p class="text-stone-500 text-sm mt-2">이 방법은 구현이 가장 용이하며, 설계서에서 1차 백테스팅용으로 권장된 방식입니다.</p>
+            </div>
+            <div id="tab-content-B" class="tab-content space-y-3 hidden">
+              <h3 class="text-xl font-semibold text-stone-800">옵션 B: 피보나치 되돌림 기준 (정교함)</h3>
+              <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "최근 하락 파동을 기준으로, 0.382 또는 0.5 되돌림 구간까지 가격이 반등하면 진입한다."</p>
+              <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "최근 상승 파동을 기준으로, 0.382 또는 0.5 되돌림 구간까지 가격이 하락하면 진입한다."</p>
+              <p class="text-stone-500 text-sm mt-2">최근 고점/저점을 식별하는 로직이 추가로 필요하여 다소 복잡하지만, 더 정교한 진입점을 제공할 수 있습니다.</p>
+            </div>
+            <div id="tab-content-C" class="tab-content space-y-3 hidden">
+              <h3 class="text-xl font-semibold text-stone-800">옵션 C: 이전 매물대(S/R) 기준 (가장 정교함)</h3>
+              <p class="text-stone-600"><span class="font-semibold text-red-600">[숏 시나리오]</span> "이전에 강력했던 지지선이 무너졌다면, 이제 그 선은 저항선이다. 그 저항선까지 가격이 반등하면 진입한다."</p>
+              <p class="text-stone-600"><span class="font-semibold text-green-600">[롱 시나리오]</span> "이전에 강력했던 저항선이 뚫렸다면, 이제 그 선은 지지선이다. 그 지지선까지 가격이 하락하면 진입한다."</p>
+              <p class="text-stone-500 text-sm mt-2">의미 있는 수평 매물대를 자동으로 식별하는 것은 매우 복잡하지만, 가장 강력한 진입 근거를 제공할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <footer class="mt-16 md:mt-24 pt-8 border-t border-stone-200 text-center">
-            <p class="text-sm text-stone-500">본 문서는 '자동 트레이딩 봇 설계 계획서 (알고리즘 2)' 문서를 기반으로 생성된 대화형 웹 애플리케이션입니다.</p>
-        </footer>
+      <!-- 4. 리스크 & 계획 -->
+      <section id="section-risks" class="scroll-mt-24">
+        <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">4. 주요 리스크 및 다음 단계</h2>
+        <p class="text-center text-stone-600 max-w-3xl mx-auto mb-8">이 전략은 잠재력이 높지만, 명확한 리스크를 인지하고 체계적인 검증(백테스팅)을 진행해야 합니다.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+            <h3 class="text-xl font-semibold text-stone-800 mb-4">⚠️ 주요 리스크</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start space-x-3"><span class="text-lg pt-1">🚌</span><div><h4 class="font-semibold">기회 상실 (The Bus Left)</h4><p class="text-stone-600 text-sm">알고리즘 2의 가장 큰 단점. '유리한 가격대'까지 풀백을 주지 않고 추세가 터져버리면, 봇은 영원히 진입하지 못합니다.</p></div></li>
+              <li class="flex items-start space-x-3"><span class="text-lg pt-1">🎯</span><div><h4 class="font-semibold">'유리한 가격'의 정의</h4><p class="text-stone-600 text-sm">전략의 성패는 '유리한 가격'을 얼마나 잘 정의하느냐에 달려있습니다. 시장, 코인마다 최적의 값이 다릅니다.</p></div></li>
+              <li class="flex items-start space-x-3"><span class="text-lg pt-1">🎛️</span><div><h4 class="font-semibold">ATR 배수 최적화</h4><p class="text-stone-600 text-sm">손절(SL)과 1차 익절(TP1)의 ATR 배수는 손익비를 결정하는 핵심 변수이며, 지속적인 최적화가 필요합니다.</p></div></li>
+            </ul>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+            <h3 class="text-xl font-semibold text-stone-800 mb-4">🛠️ 다음 단계: 백테스팅 계획</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start space-x-3"><span class="text-lg pt-1">1️⃣</span><div><h4 class="font-semibold">1차 백테스팅 (구현)</h4><p class="text-stone-600 text-sm">설계서의 1~4단계를 <code>backtrader</code> 또는 유사 툴로 코드를 구현합니다. (옵션 A: EMA 20 기준)</p></div></li>
+              <li class="flex items-start space-x-3"><span class="text-lg pt-1">2️⃣</span><div><h4 class="font-semibold">핵심 변수 최적화</h4><p class="text-stone-600 text-sm">아래 3가지 핵심 변수에 대해 최적의 값을 찾기 위한 파라미터 최적화를 수행합니다.</p><ul class="list-disc list-inside text-stone-500 text-sm mt-2 ml-2"><li><code>Sweet_Spot</code> 정의 (EMA 20 vs 60 등)</li><li><code>ATR SL 배수</code> (1.5 ~ 3.0)</li><li><code>ATR TP1 배수</code> (2.0 ~ 5.0)</li></ul></div></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
 
-    </div>
+    <footer class="mt-16 md:mt-24 pt-8 border-t border-stone-200 text-center">
+      <p class="text-sm text-stone-500">본 문서는 '자동 트레이딩 봇 설계 계획서 (알고리즘 2)' 문서를 기반으로 생성된 대화형 웹 애플리케이션입니다.</p>
+    </footer>
+  </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            Chart.register(ChartAnnotation);
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- 안전한 플러그인 등록 (v3 호환): 가능한 전역 네임 모두 탐색
+      const annoCandidateNames = [
+        'chartjs-plugin-annotation', // 일부 UMD 빌드 이름
+        'ChartAnnotation',           // 공식 예제에서 쓰는 이름
+        'chartjsPluginAnnotation'    // 또 다른 번들 이름
+      ];
+      let AnnotationPlugin = null;
+      for (const n of annoCandidateNames) {
+        if (window[n]) { AnnotationPlugin = window[n]; break; }
+      }
+      const annotationAvailable = !!AnnotationPlugin;
+      if (annotationAvailable) {
+        try { Chart.register(AnnotationPlugin); } catch (_) {}
+      }
 
-            const ctx = document.getElementById('botLogicChart').getContext('2d');
-            let botLogicChart;
+      // 배너 유틸
+      const banner = document.getElementById('banner');
+      function showBanner(type, msg) {
+        const base = 'mb-6';
+        if (type === 'error') {
+          banner.className = `${base} block border-red-300 bg-red-50 text-red-800`;
+        } else if (type === 'warn') {
+          banner.className = `${base} block border-amber-300 bg-amber-50 text-amber-800`;
+        } else {
+          banner.className = `${base} block border-emerald-300 bg-emerald-50 text-emerald-800`;
+        }
+        banner.textContent = msg;
+      }
 
-            const baseData = [
-                110, 109, 108, 106, 104, 102, 101, 103, 102, 104, 105, 103, 101, 100, 
-                99, 98, 100, 101, 102, 101, 100, 99
-            ];
-            const ema20Data = [
-                null, null, null, null, 106, 105, 104.5, 104, 103.8, 104, 104.5, 104.2, 
-                103.5, 102.8, 102, 101, 100.8, 100.9, 101.2, 101.1, 100.8, 100.5
-            ];
-            const baseLabels = Array(baseData.length).fill(0).map((_, i) => `T+${i}`);
+      if (!annotationAvailable) {
+        showBanner('warn', '경고: chartjs-plugin-annotation v3를 감지하지 못했습니다. 어노테이션 없이 차트가 표시됩니다. (CDN 차단 여부 확인)');
+      }
 
-            const chartConfig = {
-                type: 'line',
-                data: {
-                    labels: baseLabels,
-                    datasets: [
-                        {
-                            label: '가격 (Price)',
-                            data: baseData,
-                            borderColor: 'rgba(107, 114, 128, 0.8)',
-                            backgroundColor: 'rgba(107, 114, 128, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            tension: 0.1,
-                            fill: true
-                        },
-                        {
-                            label: 'EMA 20 (Sweet Spot)',
-                            data: ema20Data,
-                            borderColor: 'rgba(217, 119, 6, 0.8)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            pointRadius: 0,
-                            tension: 0.1
-                        },
-                        {
-                            label: '동적 손절 (Trailing SL)',
-                            data: [],
-                            borderColor: 'rgba(220, 38, 38, 0.8)',
-                            borderWidth: 2,
-                            borderDash: [3, 3],
-                            pointRadius: 0,
-                            tension: 0.1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        annotation: {
-                            annotations: {}
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: false,
-                                text: 'Time'
-                            }
-                        },
-                        y: {
-                            display: true,
-                            title: {
-                                display: false,
-                                text: 'Price'
-                            },
-                            suggestedMin: 95,
-                            suggestedMax: 115
-                        }
-                    }
-                }
-            };
+      // 차트 기본 데이터
+      const ctx = document.getElementById('botLogicChart').getContext('2d');
+      let botLogicChart;
+      const baseData = [110,109,108,106,104,102,101,103,102,104,105,103,101,100,99,98,100,101,102,101,100,99];
+      const ema20Data = [null,null,null,null,106,105,104.5,104,103.8,104,104.5,104.2,103.5,102.8,102,101,100.8,100.9,101.2,101.1,100.8,100.5];
+      const baseLabels = Array.from({ length: baseData.length }, (_, i) => `T+${i}`);
 
-            function createChart() {
-                if (botLogicChart) {
-                    botLogicChart.destroy();
-                }
-                botLogicChart = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
-            }
-            
-            createChart();
+      const chartConfig = {
+        type: 'line',
+        data: {
+          labels: baseLabels,
+          datasets: [
+            { label: '가격 (Price)', data: baseData, borderColor: 'rgba(107,114,128,0.8)', backgroundColor: 'rgba(107,114,128,0.1)', borderWidth: 2, pointRadius: 0, tension: 0.1, fill: true },
+            { label: 'EMA 20 (Sweet Spot)', data: ema20Data, borderColor: 'rgba(217,119,6,0.8)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, tension: 0.1 },
+            { label: '동적 손절 (Trailing SL)', data: [], borderColor: 'rgba(220,38,38,0.8)', borderWidth: 2, borderDash: [3,3], pointRadius: 0, tension: 0.1 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { mode: 'index', intersect: false },
+            // 어노테이션 설정은 플러그인이 있을 때만 적용
+            annotation: annotationAvailable ? { annotations: {} } : undefined
+          },
+          scales: { x: { display: true }, y: { display: true, suggestedMin: 95, suggestedMax: 115 } }
+        }
+      };
 
-            const statusPanel = document.getElementById('bot-status-panel');
-            const stepButtons = {
-                1: document.getElementById('btn-step-1'),
-                2: document.getElementById('btn-step-2'),
-                3: document.getElementById('btn-step-3'),
-                4: document.getElementById('btn-step-4')
-            };
-            const btnReset = document.getElementById('btn-reset');
-            
-            let currentState = 0;
+      function createChart() {
+        if (botLogicChart) botLogicChart.destroy();
+        botLogicChart = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
+      }
+      createChart();
 
-            function updateBotStatus(state) {
-                currentState = state;
-                Object.values(statusPanel.children).forEach(p => {
-                    if (parseInt(p.dataset.status) === state) {
-                        p.classList.remove('hidden');
-                    } else {
-                        p.classList.add('hidden');
-                    }
-                });
+      const statusPanel = document.getElementById('bot-status-panel');
+      const stepButtons = {
+        1: document.getElementById('btn-step-1'),
+        2: document.getElementById('btn-step-2'),
+        3: document.getElementById('btn-step-3'),
+        4: document.getElementById('btn-step-4')
+      };
+      const btnReset = document.getElementById('btn-reset');
+      const btnTestPlugin = document.getElementById('btn-test-plugin');
+      const btnTestAnnot = document.getElementById('btn-test-annotation');
 
-                Object.keys(stepButtons).forEach(key => {
-                    const buttonState = parseInt(key);
-                    if (buttonState === state + 1) {
-                        stepButtons[key].disabled = false;
-                    } else {
-                        stepButtons[key].disabled = true;
-                    }
-                });
-                
-                if (state === 0) {
-                     stepButtons[1].disabled = false;
-                }
-            }
+      // 초기 테스트 버튼 상태
+      btnTestAnnot.disabled = !annotationAvailable;
 
-            function updateChartAnnotations(annotations) {
-                botLogicChart.options.plugins.annotation.annotations = annotations;
-                botLogicChart.update();
-            }
-
-            stepButtons[1].addEventListener('click', () => {
-                updateBotStatus(1);
-                updateChartAnnotations({
-                    signalBox: {
-                        type: 'box',
-                        xMin: 0, xMax: 3,
-                        yMin: 105, yMax: 111,
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        borderColor: 'rgba(239, 68, 68, 0.3)',
-                        borderWidth: 1,
-                    },
-                    signalLabel: {
-                        type: 'label',
-                        xValue: 1.5,
-                        yValue: 110.5,
-                        content: ['📉 숏 신호 감지'],
-                        color: 'red',
-                        font: { size: 12, weight: 'bold' }
-                    },
-                    pullbackArrow: {
-                        type: 'arrow',
-                        xMin: 5,
-                        xMax: 10,
-                        yMin: 102,
-                        yMax: 105,
-                        endHandle: true,
-                        borderColor: 'orange',
-                        borderWidth: 2
-                    },
-                    pullbackLabel: {
-                        type: 'label',
-                        xValue: 7.5,
-                        yValue: 103.5,
-                        content: ['풀백 대기 중...'],
-                        color: 'orange',
-                        font: { size: 12, weight: 'bold' }
-                    }
-                });
-            });
-
-            stepButtons[2].addEventListener('click', () => {
-                updateBotStatus(2);
-                const annotations = botLogicChart.options.plugins.annotation.annotations;
-                delete annotations.pullbackArrow;
-                delete annotations.pullbackLabel;
-                
-                annotations.entryLine = {
-                    type: 'line',
-                    yMin: 105, yMax: 105,
-                    borderColor: 'rgb(220, 38, 38)',
-                    borderWidth: 2,
-                    label: {
-                        content: '🚨 숏 진입 @ $105 (EMA 20)',
-                        enabled: true,
-                        position: 'start',
-                        backgroundColor: 'rgb(220, 38, 38)',
-                        color: 'white',
-                        font: { size: 12, weight: 'bold' }
-                    }
-                };
-                annotations.slLine = {
-                    type: 'line',
-                    yMin: 109, yMax: 109,
-                    borderColor: 'rgb(239, 68, 68)',
-                    borderWidth: 2,
-                    borderDash: [6, 6],
-                    label: {
-                        content: '초기 SL @ $109 (ATR x2.0)',
-                        enabled: true,
-                        position: 'start',
-                        backgroundColor: 'rgb(239, 68, 68)',
-                        color: 'white',
-                        font: { size: 12 }
-                    }
-                };
-                annotations.tp1Line = {
-                    type: 'line',
-                    yMin: 100, yMax: 100,
-                    borderColor: 'rgb(22, 163, 74)',
-                    borderWidth: 2,
-                    borderDash: [6, 6],
-                    label: {
-                        content: '1차 TP @ $100 (ATR x2.5)',
-                        enabled: true,
-                        position: 'end',
-                        backgroundColor: 'rgb(22, 163, 74)',
-                        color: 'white',
-                        font: { size: 12 }
-                    }
-                };
-                updateChartAnnotations(annotations);
-            });
-
-            stepButtons[3].addEventListener('click', () => {
-                updateBotStatus(3);
-                const annotations = botLogicChart.options.plugins.annotation.annotations;
-                
-                annotations.tp1Line.label.content = '💰 1차 익절! (50% 청산)';
-                annotations.tp1Line.borderColor = 'rgb(22, 163, 74)';
-                annotations.tp1Line.borderWidth = 3;
-
-                annotations.slLine.label.content = 'SL 본절로 이동 @ $105';
-                annotations.slLine.yMin = 105;
-                annotations.slLine.yMax = 105;
-                annotations.slLine.borderColor = 'rgb(59, 130, 246)';
-                annotations.slLine.backgroundColor = 'rgb(59, 130, 246)';
-
-                updateChartAnnotations(annotations);
-
-                botLogicChart.data.datasets[2].data = [
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, 105, 104, 103, 103.5, 104, 104.5, 104, 103.5, 103
-                ];
-                botLogicChart.update();
-            });
-
-            stepButtons[4].addEventListener('click', () => {
-                updateBotStatus(4);
-                const annotations = botLogicChart.options.plugins.annotation.annotations;
-
-                annotations.slLine.label.content = '🛡️ 동적 SL 청산 @ $102';
-                annotations.slLine.yMin = 102;
-                annotations.slLine.yMax = 102;
-                annotations.slLine.borderColor = 'rgb(59, 130, 246)';
-                annotations.slLine.borderWidth = 3;
-
-                annotations.exitCircle = {
-                    type: 'point',
-                    xValue: 'T+18',
-                    yValue: 102,
-                    radius: 8,
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                    borderColor: 'white'
-                };
-                updateChartAnnotations(annotations);
-            });
-
-            btnReset.addEventListener('click', () => {
-                updateBotStatus(0);
-                createChart();
-                botLogicChart.data.datasets[2].data = [];
-                botLogicChart.update();
-            });
-
-
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const tabId = button.dataset.tab;
-
-                    tabButtons.forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    button.classList.add('active');
-
-                    tabContents.forEach(content => {
-                        if (content.id === `tab-content-${tabId}`) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
-                    });
-                });
-            });
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-
+      function updateBotStatus(state) {
+        Array.from(statusPanel.children).forEach(p => {
+          const s = parseInt(p.dataset.status, 10);
+          p.classList.toggle('hidden', s !== state);
         });
-    </script>
+        Object.keys(stepButtons).forEach(k => {
+          const n = parseInt(k, 10);
+          stepButtons[k].disabled = !(n === state + 1 || (state === 0 && n === 1));
+        });
+      }
+      updateBotStatus(0);
+
+      function setAnnotations(ann) {
+        if (!annotationAvailable) return;
+        if (!botLogicChart.options.plugins.annotation) botLogicChart.options.plugins.annotation = { annotations: {} };
+        botLogicChart.options.plugins.annotation.annotations = ann || {};
+        botLogicChart.update();
+      }
+
+      // ✅ v3 호환: 화살표 타입/arrowHeads 미사용. line + label 조합으로 대체.
+      function pullbackGuide() {
+        return {
+          guideLine: { type: 'line', xMin: 5, xMax: 10, yMin: 102, yMax: 105, borderColor: 'orange', borderWidth: 2 },
+          guideLabel: { type: 'label', xValue: 10, yValue: 105, content: ['풀백 대기 →'], color: 'orange', font: { size: 12, weight: 'bold' }, backgroundColor: 'rgba(0,0,0,0)' }
+        };
+      }
+
+      stepButtons[1].addEventListener('click', () => {
+        updateBotStatus(1);
+        const ann = {
+          signalBox: { type: 'box', xMin: 0, xMax: 3, yMin: 105, yMax: 111, backgroundColor: 'rgba(239,68,68,0.1)', borderColor: 'rgba(239,68,68,0.3)', borderWidth: 1 },
+          signalLabel: { type: 'label', xValue: 1.5, yValue: 110.5, content: ['📉 숏 신호 감지'], color: 'red', font: { size: 12, weight: 'bold' } },
+          ...pullbackGuide()
+        };
+        setAnnotations(ann);
+      });
+
+      stepButtons[2].addEventListener('click', () => {
+        updateBotStatus(2);
+        const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
+        delete ann.guideLine; delete ann.guideLabel;
+        ann.entryLine = { type: 'line', yMin: 105, yMax: 105, borderColor: 'rgb(220,38,38)', borderWidth: 2, label: { content: '🚨 숏 진입 @ $105 (EMA 20)', enabled: true, position: 'start', backgroundColor: 'rgb(220,38,38)', color: '#fff', font: { size: 12, weight: 'bold' } } };
+        ann.slLine = { type: 'line', yMin: 109, yMax: 109, borderColor: 'rgb(239,68,68)', borderWidth: 2, borderDash: [6,6], label: { content: '초기 SL @ $109 (ATR x2.0)', enabled: true, position: 'start', backgroundColor: 'rgb(239,68,68)', color: '#fff', font: { size: 12 } } };
+        ann.tp1Line = { type: 'line', yMin: 100, yMax: 100, borderColor: 'rgb(22,163,74)', borderWidth: 2, borderDash: [6,6], label: { content: '1차 TP @ $100 (ATR x2.5)', enabled: true, position: 'end', backgroundColor: 'rgb(22,163,74)', color: '#fff', font: { size: 12 } } };
+        setAnnotations(ann);
+      });
+
+      stepButtons[3].addEventListener('click', () => {
+        updateBotStatus(3);
+        const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
+        if (ann.tp1Line) { ann.tp1Line.label.content = '💰 1차 익절! (50% 청산)'; ann.tp1Line.borderWidth = 3; }
+        if (ann.slLine) {
+          ann.slLine.label.content = 'SL 본절로 이동 @ $105';
+          ann.slLine.yMin = 105; ann.slLine.yMax = 105; ann.slLine.borderColor = 'rgb(59,130,246)';
+        }
+        setAnnotations(ann);
+        // 동적 SL 시각화를 단순 라인 데이터로 표현
+        botLogicChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,null,null,null,null,105,104,103,103.5,104,104.5,104,103.5,103];
+        botLogicChart.update();
+      });
+
+      stepButtons[4].addEventListener('click', () => {
+        updateBotStatus(4);
+        const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
+        if (ann.slLine) {
+          ann.slLine.label.content = '🛡️ 동적 SL 청산 @ $102';
+          ann.slLine.yMin = 102; ann.slLine.yMax = 102; ann.slLine.borderWidth = 3;
+        }
+        // v3 호환: point 타입 미사용 → label로 대체
+        ann.exitLabel = { type: 'label', xValue: 'T+18', yValue: 102, content: ['● Exit'], color: 'rgb(59,130,246)', font: { weight: 'bold' }, backgroundColor: 'rgba(59,130,246,0.08)', padding: 6, borderWidth: 1, borderColor: 'rgb(59,130,246)', cornerRadius: 6 };
+        setAnnotations(ann);
+      });
+
+      btnReset.addEventListener('click', () => {
+        updateBotStatus(0);
+        createChart();
+        botLogicChart.data.datasets[2].data = [];
+        botLogicChart.update();
+      });
+
+      // --- 간이 테스트들 ---
+      btnTestPlugin.addEventListener('click', () => {
+        if (annotationAvailable) showBanner('success', '성공: Annotation 플러그인을 감지했고 정상 등록했습니다.');
+        else showBanner('warn', '경고: Annotation 플러그인을 감지하지 못했습니다. (어노테이션 없이 동작)');
+      });
+
+      btnTestAnnot.addEventListener('click', () => {
+        try {
+          const testAnn = {
+            testBox: { type: 'box', xMin: 2, xMax: 4, yMin: 99, yMax: 104, backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.8)' },
+            testLine: { type: 'line', yMin: 101, yMax: 101, borderColor: 'rgba(16,185,129,0.8)', borderDash: [4,4], label: { enabled: true, content: '테스트 어노테이션', backgroundColor: 'rgba(16,185,129,0.8)', color: '#fff' } }
+          };
+          setAnnotations(testAnn);
+          showBanner('success', '성공: 어노테이션 테스트가 정상적으로 차트에 표시되었습니다.');
+        } catch (e) {
+          console.error(e);
+          showBanner('error', '오류: 어노테이션 적용 중 문제가 발생했습니다. (v3 호환 설정을 사용 중인지 확인)');
+        }
+      });
+
+      // 부드러운 스크롤
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', e => {
+          e.preventDefault();
+          document.querySelector(anchor.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    });
+  </script>
 </body>
 </html>
