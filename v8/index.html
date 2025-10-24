@@ -83,10 +83,11 @@
                 </div>
                 <button id="btn-reset" class="w-full bg-stone-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-stone-600 transition-all mt-2">초기화</button>
 
-                <!-- ✅ 간이 테스트 패널 -->
-                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <button id="btn-test-plugin" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700">테스트: 플러그인 감지</button>
-                  <button id="btn-test-annotation" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700" disabled>테스트: 어노테이션 생성</button>
+                <!-- ✅ 테스트 패널: 플러그인/어노테이션/화살표 지원 확인 -->
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button id="btn-test-plugin" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700">플러그인 감지</button>
+                  <button id="btn-test-annotation" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700" disabled>어노테이션 생성</button>
+                  <button id="btn-test-arrow" class="w-full bg-amber-600 text-white px-3 py-2 rounded-md hover:bg-amber-700" disabled>화살표 지원</button>
                 </div>
               </div>
               <div class="flex-1 bg-stone-100 rounded-lg p-4 border border-stone-200">
@@ -247,9 +248,11 @@
       const btnReset = document.getElementById('btn-reset');
       const btnTestPlugin = document.getElementById('btn-test-plugin');
       const btnTestAnnot = document.getElementById('btn-test-annotation');
+      const btnTestArrow = document.getElementById('btn-test-arrow');
 
       // 초기 테스트 버튼 상태
       btnTestAnnot.disabled = !annotationAvailable;
+      btnTestArrow.disabled = !annotationAvailable;
 
       function updateBotStatus(state) {
         Array.from(statusPanel.children).forEach(p => {
@@ -263,27 +266,63 @@
       }
       updateBotStatus(0);
 
-      function setAnnotations(ann) {
-        if (!annotationAvailable) return;
-        if (!botLogicChart.options.plugins.annotation) botLogicChart.options.plugins.annotation = { annotations: {} };
-        botLogicChart.options.plugins.annotation.annotations = ann || {};
-        botLogicChart.update();
+      // --- 어노테이션 안전 적용 (arrowHeads 호환성 자동 폴백 포함) ---
+      function stripArrowHeads(o) {
+        if (!o || typeof o !== 'object') return o;
+        const out = Array.isArray(o) ? [] : {};
+        for (const k in o) {
+          if (k === 'arrowHeads') continue; // 제거
+          out[k] = stripArrowHeads(o[k]);
+        }
+        return out;
       }
 
-      // ✅ v3 호환: 화살표 타입/arrowHeads 미사용. line + label 조합으로 대체.
-      function pullbackGuide() {
+      function safeSetAnnotations(ann) {
+        if (!annotationAvailable) return;
+        try {
+          if (!botLogicChart.options.plugins.annotation) botLogicChart.options.plugins.annotation = { annotations: {} };
+          botLogicChart.options.plugins.annotation.annotations = ann || {};
+          botLogicChart.update();
+        } catch (e) {
+          // arrowHeads 등 미지원 옵션 폴백
+          console.warn('[Annotation fallback]', e);
+          const cleaned = stripArrowHeads(ann);
+          try {
+            botLogicChart.options.plugins.annotation.annotations = cleaned;
+            botLogicChart.update();
+            showBanner('warn', '경고: 화살표 옵션 일부가 브라우저/플러그인에서 미지원이라 제거하고 표시했습니다.');
+          } catch (e2) {
+            console.error('[Annotation failed after fallback]', e2);
+            showBanner('error', '오류: 어노테이션 적용 중 문제가 발생했습니다. (플러그인 버전/네트워크 확인)');
+          }
+        }
+      }
+
+      // 화살표 가이드 (v3: line + arrowHeads 사용)
+      function pullbackGuideWithArrow() {
         return {
-          guideLine: { type: 'line', xMin: 5, xMax: 10, yMin: 102, yMax: 105, borderColor: 'orange', borderWidth: 2 },
-          guideLabel: { type: 'label', xValue: 10, yValue: 105, content: ['풀백 대기 →'], color: 'orange', font: { size: 12, weight: 'bold' }, backgroundColor: 'rgba(0,0,0,0)' }
+          pullGuide: {
+            type: 'line', xMin: 5, xMax: 10, yMin: 102, yMax: 105,
+            borderColor: 'orange', borderWidth: 2,
+            arrowHeads: { end: { display: true, length: 10, width: 8 } }
+          },
+          pullLabel: {
+            type: 'label', xValue: 10, yValue: 105,
+            content: ['풀백 대기'], color: 'orange', font: { size: 12, weight: 'bold' }, backgroundColor: 'rgba(0,0,0,0)'
+          }
         };
       }
 
+      // 기존: annotation 세터 (이제 safeSetAnnotations 사용)
+      function setAnnotations(ann) { safeSetAnnotations(ann); }
+
+      // --- 단계 이벤트 ---
       stepButtons[1].addEventListener('click', () => {
         updateBotStatus(1);
         const ann = {
           signalBox: { type: 'box', xMin: 0, xMax: 3, yMin: 105, yMax: 111, backgroundColor: 'rgba(239,68,68,0.1)', borderColor: 'rgba(239,68,68,0.3)', borderWidth: 1 },
           signalLabel: { type: 'label', xValue: 1.5, yValue: 110.5, content: ['📉 숏 신호 감지'], color: 'red', font: { size: 12, weight: 'bold' } },
-          ...pullbackGuide()
+          ...pullbackGuideWithArrow()
         };
         setAnnotations(ann);
       });
@@ -291,7 +330,7 @@
       stepButtons[2].addEventListener('click', () => {
         updateBotStatus(2);
         const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
-        delete ann.guideLine; delete ann.guideLabel;
+        delete ann.pullGuide; delete ann.pullLabel; // 가이드 제거
         ann.entryLine = { type: 'line', yMin: 105, yMax: 105, borderColor: 'rgb(220,38,38)', borderWidth: 2, label: { content: '🚨 숏 진입 @ $105 (EMA 20)', enabled: true, position: 'start', backgroundColor: 'rgb(220,38,38)', color: '#fff', font: { size: 12, weight: 'bold' } } };
         ann.slLine = { type: 'line', yMin: 109, yMax: 109, borderColor: 'rgb(239,68,68)', borderWidth: 2, borderDash: [6,6], label: { content: '초기 SL @ $109 (ATR x2.0)', enabled: true, position: 'start', backgroundColor: 'rgb(239,68,68)', color: '#fff', font: { size: 12 } } };
         ann.tp1Line = { type: 'line', yMin: 100, yMax: 100, borderColor: 'rgb(22,163,74)', borderWidth: 2, borderDash: [6,6], label: { content: '1차 TP @ $100 (ATR x2.5)', enabled: true, position: 'end', backgroundColor: 'rgb(22,163,74)', color: '#fff', font: { size: 12 } } };
@@ -302,10 +341,7 @@
         updateBotStatus(3);
         const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
         if (ann.tp1Line) { ann.tp1Line.label.content = '💰 1차 익절! (50% 청산)'; ann.tp1Line.borderWidth = 3; }
-        if (ann.slLine) {
-          ann.slLine.label.content = 'SL 본절로 이동 @ $105';
-          ann.slLine.yMin = 105; ann.slLine.yMax = 105; ann.slLine.borderColor = 'rgb(59,130,246)';
-        }
+        if (ann.slLine) { ann.slLine.label.content = 'SL 본절로 이동 @ $105'; ann.slLine.yMin = 105; ann.slLine.yMax = 105; ann.slLine.borderColor = 'rgb(59,130,246)'; }
         setAnnotations(ann);
         // 동적 SL 시각화를 단순 라인 데이터로 표현
         botLogicChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,null,null,null,null,105,104,103,103.5,104,104.5,104,103.5,103];
@@ -315,11 +351,7 @@
       stepButtons[4].addEventListener('click', () => {
         updateBotStatus(4);
         const ann = (botLogicChart.options.plugins.annotation && botLogicChart.options.plugins.annotation.annotations) ? botLogicChart.options.plugins.annotation.annotations : {};
-        if (ann.slLine) {
-          ann.slLine.label.content = '🛡️ 동적 SL 청산 @ $102';
-          ann.slLine.yMin = 102; ann.slLine.yMax = 102; ann.slLine.borderWidth = 3;
-        }
-        // v3 호환: point 타입 미사용 → label로 대체
+        if (ann.slLine) { ann.slLine.label.content = '🛡️ 동적 SL 청산 @ $102'; ann.slLine.yMin = 102; ann.slLine.yMax = 102; ann.slLine.borderWidth = 3; }
         ann.exitLabel = { type: 'label', xValue: 'T+18', yValue: 102, content: ['● Exit'], color: 'rgb(59,130,246)', font: { weight: 'bold' }, backgroundColor: 'rgba(59,130,246,0.08)', padding: 6, borderWidth: 1, borderColor: 'rgb(59,130,246)', cornerRadius: 6 };
         setAnnotations(ann);
       });
@@ -331,7 +363,7 @@
         botLogicChart.update();
       });
 
-      // --- 간이 테스트들 ---
+      // --- 테스트들 ---
       btnTestPlugin.addEventListener('click', () => {
         if (annotationAvailable) showBanner('success', '성공: Annotation 플러그인을 감지했고 정상 등록했습니다.');
         else showBanner('warn', '경고: Annotation 플러그인을 감지하지 못했습니다. (어노테이션 없이 동작)');
@@ -343,11 +375,25 @@
             testBox: { type: 'box', xMin: 2, xMax: 4, yMin: 99, yMax: 104, backgroundColor: 'rgba(16,185,129,0.10)', borderColor: 'rgba(16,185,129,0.8)' },
             testLine: { type: 'line', yMin: 101, yMax: 101, borderColor: 'rgba(16,185,129,0.8)', borderDash: [4,4], label: { enabled: true, content: '테스트 어노테이션', backgroundColor: 'rgba(16,185,129,0.8)', color: '#fff' } }
           };
-          setAnnotations(testAnn);
+          safeSetAnnotations(testAnn);
           showBanner('success', '성공: 어노테이션 테스트가 정상적으로 차트에 표시되었습니다.');
         } catch (e) {
           console.error(e);
           showBanner('error', '오류: 어노테이션 적용 중 문제가 발생했습니다. (v3 호환 설정을 사용 중인지 확인)');
+        }
+      });
+
+      btnTestArrow.addEventListener('click', () => {
+        try {
+          const testAnn = {
+            arrowLine: { type: 'line', xMin: 8, xMax: 12, yMin: 100, yMax: 102, borderColor: 'rgba(234,88,12,0.9)', borderWidth: 2, arrowHeads: { end: { display: true, length: 12, width: 10 } } },
+            arrowLabel: { type: 'label', xValue: 'T+12', yValue: 102, content: ['→ 화살표 테스트'], color: 'rgba(234,88,12,1)', backgroundColor: 'rgba(0,0,0,0)' }
+          };
+          safeSetAnnotations(testAnn);
+          showBanner('success', '성공: 화살표(arrowHeads) 어노테이션을 표시했습니다. (미표시 시 자동 폴백됨)');
+        } catch (e) {
+          console.error(e);
+          showBanner('error', '오류: 화살표 어노테이션 적용 중 문제가 발생했습니다.');
         }
       });
 
