@@ -1,169 +1,346 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캡스톤 디자인 II - 10주차 진도 보고</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans KR', sans-serif; }
-        h2 { border-bottom: 2px solid #3B82F6; padding-bottom: 8px; margin-bottom: 20px; }
-        .gallery-item { border: 1px solid #E5E7EB; border-radius: 0.5rem; overflow: hidden; }
-        .gallery-item img { display: block; width: 100%; height: 200px; object-fit: cover; }
-        .gallery-item p { background-color: #F3F4F6; padding: 8px 12px; font-size: 0.875rem; text-align: center; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #E5E7EB; padding: 12px; text-align: left; }
-        th { background-color: #F3F4F6; font-weight: 500; }
-        td:first-child { width: 15%; text-align: center; font-weight: 500;}
-        td:nth-child(2) { width: 20%; text-align: center;}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>캡스톤 디자인 II - 10주차 진도 보고 · 스마트 우산꽂이</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    html, body { font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+    /* 프린트 최적화 */
+    @media print {
+      .no-print { display: none !important; }
+      .page { box-shadow: none !important; }
+      a[href]::after { content: " (" attr(href) ")"; font-size: 10px; color: #6b7280; }
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
-
-    <div class="container mx-auto px-4 py-12 max-w-4xl">
-
-        <header class="text-center mb-16">
-            <h1 class="text-4xl font-bold text-blue-600 mb-2">캡스톤 디자인 II - 10주차 진도 보고</h1>
-            <p class="text-xl text-gray-600">프로젝트명: 스마트 우산꽂이 시스템</p>
-            <p class="mt-4 text-lg">발표자: 손윤제 (하드웨어 외관 조립 및 일정 계획 담당)</p>
-            <p class="text-sm text-gray-500">발표일: 2025년 10월 31일</p>
-        </header>
-
-        <!-- 팀원 작업 사진 -->
-        <section class="mb-12">
-             <h2 class="text-2xl font-bold text-gray-700">팀 활동</h2>
-             <div class="flex justify-center">
-                 <img src="https://i.postimg.cc/vTq6YHJ1/timwon-sajin1.jpg" alt="팀원 작업 사진" class="max-w-md w-full rounded-lg shadow-md border">
-             </div>
-             <p class="text-center text-sm text-gray-500 mt-2">팀원 작업 모습</p>
-        </section>
-
-        <!-- 하드웨어 외관 조립 진행 상황 -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-700">하드웨어 외관 조립 진행 상황</h2>
-
-            <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">목표</h3>
-            <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
-                <li>설계된 디자인을 바탕으로 실제 우산꽂이 외형 제작</li>
-                <li>내부 부품(센서, 팬, LED 등) 배치 공간 확보 및 고정 구조 마련</li>
-                <li>사용 편의성 및 심미성을 고려한 최종 마감</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">진행 내용</h3>
-            <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
-                <li><strong class="text-gray-700">주요 자재 선정 및 구매 완료:</strong> 아크릴 재료 구매 및 제작에 필요한 공구(드릴비트, 아크릴본드 등) 확보</li>
-                <li><strong class="text-gray-700">기본 골격 조립 완료:</strong> 우산 수납부, 제어부 외형 프레임 완성</li>
-                <li><strong class="text-gray-700">내부 부품 배치 검토:</strong> 설계 도면에 맞춰 주요 부품(팬, 수위 센서 등)의 위치 및 고정 방식 검토 완료</li>
-                <li><strong class="text-gray-700">(예정) 추가 부품 부착:</strong> 문 경첩, 문 손잡이, 우산꽂이 고리 등 부착 예정</li>
-                <li><strong class="text-gray-700">(예정) 물받이통 제작:</strong> 내부 누수 방지 및 물 배출을 위한 물받이통 제작 예정</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">외관 조립 현황</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="gallery-item">
-                    <img src="https://i.postimg.cc/tTzxczDv/hadeuweeoteseuteu6.jpg" alt="우산꽂이 외관 1">
-                    <p>외관 조립 1</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://i.postimg.cc/L4NPBNJm/usankkojioegwan1.jpg" alt="우산꽂이 외관 2">
-                    <p>외관 조립 2</p>
-                </div>
-                <div class="gallery-item">
-                     <!-- GIF 표시 -->
-                    <img src="https://i.postimg.cc/dVdDXBVF/dongyeongsang-usankkojioegwan2.gif" alt="우산꽂이 외관 조립 동영상 GIF">
-                    <p>외관 조립 (GIF)</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-500 mt-4">* 참고: 문 손잡이 및 경첩 등 일부 부품은 배송 중입니다.</p>
-             <div class="flex space-x-4 mt-2">
-                 <img src="https://i.postimg.cc/KjqgGv63/golijaseog.png" alt="경첩 배송 중" class="h-16 border rounded">
-                 <img src="https://i.postimg.cc/ryQ4CQKB/sonjabi-doeomunjaseog.png" alt="손잡이 배송 중" class="h-16 border rounded">
-             </div>
-        </section>
-
-        <!-- 하드웨어 작동 시각 자료 -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-700">주요 하드웨어 작동 확인</h2>
-             <p class="text-gray-600 mb-6">앱 연동 전, 개별 하드웨어 컴포넌트의 정상 작동을 확인했습니다.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="gallery-item">
-                    <img src="https://i.postimg.cc/pdz8fvF8/hadeuweeoteseuteu10.jpg" alt="쿨러 작동">
-                    <p>쿨링 팬 작동 테스트</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://i.postimg.cc/FH23kz7G/hadeuweeoteseuteu11.jpg" alt="UV 라이트 작동">
-                    <p>UV-C 라이트 작동 테스트</p>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://i.postimg.cc/sx6ZjDkr/hadeuweeoteseuteu2.jpg" alt="수위 센서 작동">
-                    <p>수위 센서 작동 테스트</p>
-                </div>
-                 <div class="gallery-item">
-                    <img src="https://i.postimg.cc/V6FChF40/hadeuweeoteseuteu4.jpg" alt="도어 센서 작동">
-                    <p>도어 센서 작동 테스트</p>
-                </div>
-                 <div class="gallery-item">
-                    <img src="https://i.postimg.cc/63hvPhzM/hadeuweeoteseuteu5.jpg" alt="LED 작동">
-                    <p>LED 스트립 작동 테스트</p>
-                </div>
-                 <div class="gallery-item">
-                    <img src="https://i.postimg.cc/TwxbQsjR/hadeuweeoteseuteu8.jpg" alt="DC-DC 컨버터 5V 작동">
-                    <p>DC-DC 컨버터 (5V) 작동 확인</p>
-                </div>
-                 <div class="gallery-item">
-                    <img src="https://i.postimg.cc/g08RVpZ8/hadeuweeoteseuteu9.jpg" alt="DC-DC 컨버터 12V 작동">
-                    <p>DC-DC 컨버터 (12V) 작동 확인</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 향후 일정 계획 -->
-        <section>
-            <h2 class="text-2xl font-bold text-gray-700">향후 일정 계획</h2>
-            <p class="text-gray-600 mb-6">프로젝트 완료까지 남은 기간 동안의 주요 계획입니다.</p>
-            <div class="overflow-x-auto bg-white rounded-lg shadow border">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>주차</th>
-                            <th>기간</th>
-                            <th>주요 활동 내용 (담당자)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>11주차</td>
-                            <td>11/3 ~ 11/7</td>
-                            <td>- 내부 전자 부품 최종 배치 및 고정 (하드웨어 전체)<br>- 서버-하드웨어 간 통신 테스트 시작 (백엔드, 하드웨어)</td>
-                        </tr>
-                        <tr>
-                            <td>12주차</td>
-                            <td>11/10 ~ 11/14</td>
-                            <td>- 외관 최종 마감 및 도색/필름 작업 (손윤제)<br>- 앱-서버-하드웨어 전체 시스템 연동 테스트 (전체)</td>
-                        </tr>
-                         <tr>
-                            <td>13주차</td>
-                            <td>11/17 ~ 11/21</td>
-                            <td>- 통합 테스트 기반 시스템 안정화 및 오류 수정 (전체)<br>- 발표 자료 및 최종 보고서 작성 시작 (전체)</td>
-                        </tr>
-                         <tr>
-                            <td>14주차</td>
-                            <td>11/24 ~ 11/28</td>
-                            <td>- 최종 시연 준비 및 리허설 (전체)<br>- 최종 보고서 검토 및 수정 (전체)</td>
-                        </tr>
-                         <tr>
-                            <td>15주차</td>
-                            <td>12/1 ~ 12/5</td>
-                            <td>**최종 발표 및 시연**</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-             <p class="text-sm text-gray-500 mt-4">* 위 일정은 잠정적인 계획이며, 진행 상황에 따라 일부 조정될 수 있습니다.</p>
-        </section>
-
+  <!-- Top Bar / Actions -->
+  <div class="no-print sticky top-0 z-50 backdrop-blur border-b border-slate-200 bg-white/75">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="text-sm text-slate-600">📄 캡스톤 디자인 II · 10주차</div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.99] transition">
+          🖨️ 인쇄/저장(PDF)
+        </button>
+        <a href="#schedule" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium bg-slate-900 text-white hover:bg-slate-800">📅 일정으로 점프</a>
+      </div>
     </div>
+  </div>
 
+  <main class="page max-w-5xl mx-auto px-4 lg:px-6 py-10 lg:py-14">
+    <!-- Header -->
+    <header class="mb-10">
+      <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200">
+        <div class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 p-8 sm:p-10 text-white">
+          <h1 class="text-3xl sm:text-4xl font-black tracking-tight">캡스톤 디자인 II – 10주차 진도 보고</h1>
+          <p class="mt-2 text-lg/7 opacity-95">프로젝트명: <span class="font-semibold">스마트 우산꽂이 시스템</span></p>
+          <div class="mt-5 flex flex-wrap items-center gap-2 text-xs font-medium">
+            <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur">발표자: 손윤제 · 하드웨어 외관 조립/일정</span>
+            <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur">발표일: 2025-10-31</span>
+            <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur">캠퍼스: 조선대학교</span>
+          </div>
+        </div>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white">
+          <div class="rounded-2xl border border-slate-200 p-4">
+            <div class="text-xs text-slate-500">외관 조립 진행률</div>
+            <div class="mt-1 flex items-end gap-2">
+              <div class="text-2xl font-bold">70%</div>
+              <div class="text-xs text-blue-600">(+20% 주간)</div>
+            </div>
+            <div class="mt-3 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full bg-blue-600 rounded-full" style="width:70%"></div>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 p-4">
+            <div class="text-xs text-slate-500">컴포넌트 테스트</div>
+            <div class="mt-1 flex items-end gap-2">
+              <div class="text-2xl font-bold">7/7</div>
+              <div class="text-xs text-emerald-600">정상</div>
+            </div>
+            <div class="mt-3 flex gap-1 text-[10px] flex-wrap">
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">팬</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">UV-C</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">수위</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">도어</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">LED</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">DC-DC 5V</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">DC-DC 12V</span>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 p-4">
+            <div class="text-xs text-slate-500">이슈/리스크</div>
+            <div class="mt-1 text-2xl font-bold">2건</div>
+            <ul class="mt-2 text-xs list-disc list-inside text-slate-600">
+              <li>경첩·손잡이 배송 지연</li>
+              <li>물받이통 제작 일정 변동</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 p-4">
+            <div class="text-xs text-slate-500">다음 마일스톤</div>
+            <div class="mt-1 text-2xl font-bold">11/07</div>
+            <div class="text-xs text-slate-600 mt-1">내부 부품 고정 & 통신 테스트 착수</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 목차 -->
+    <nav class="no-print mb-10">
+      <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-4">
+        <div class="text-sm font-semibold text-slate-700 mb-2">목차</div>
+        <ol class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-slate-600">
+          <li><a href="#team" class="hover:text-blue-600">1. 팀 활동</a></li>
+          <li><a href="#assembly" class="hover:text-blue-600">2. 외관 조립 진행</a></li>
+          <li><a href="#gallery" class="hover:text-blue-600">3. 조립 현황 갤러리</a></li>
+          <li><a href="#hardware" class="hover:text-blue-600">4. 하드웨어 작동 확인</a></li>
+          <li><a href="#risks" class="hover:text-blue-600">5. 리스크 & 대응</a></li>
+          <li><a href="#schedule" class="hover:text-blue-600">6. 향후 일정</a></li>
+          <li><a href="#bom" class="hover:text-blue-600">7. 자재(BOM) 요약</a></li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- 1) 팀 활동 -->
+    <section id="team" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">팀 활동</h2>
+      <figure class="mt-5 flex justify-center">
+        <img src="https://i.postimg.cc/vTq6YHJ1/timwon-sajin1.jpg" alt="팀원 작업 사진" class="max-w-md w-full rounded-xl shadow border" />
+      </figure>
+      <figcaption class="text-center text-sm text-slate-500 mt-2">팀원 작업 모습</figcaption>
+    </section>
+
+    <!-- 2) 외관 조립 진행 -->
+    <section id="assembly" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">하드웨어 외관 조립 진행 상황</h2>
+      <div class="grid lg:grid-cols-2 gap-8 mt-6">
+        <div>
+          <h3 class="text-xl font-semibold text-slate-800 mb-3">목표</h3>
+          <ul class="list-disc list-inside space-y-1 text-slate-700">
+            <li>설계된 디자인을 바탕으로 실제 우산꽂이 외형 제작</li>
+            <li>내부 부품(센서, 팬, LED 등) 배치 공간 확보 및 고정 구조 마련</li>
+            <li>사용 편의성 및 심미성을 고려한 최종 마감</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-slate-800 mb-3">진행 내용</h3>
+          <ul class="space-y-2 text-slate-700">
+            <li class="flex items-start gap-2"><span class="mt-1">✅</span><span><b>자재 선정/구매 완료:</b> 아크릴 + 공구(드릴비트, 아크릴본드 등) 확보</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1">✅</span><span><b>기본 골격 조립:</b> 우산 수납부·제어부 외형 프레임 완성</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1">✅</span><span><b>내부 부품 배치:</b> 팬·수위 센서 등 위치/고정 방식 검토 완료</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1">📦</span><span><b>(예정) 추가 부품 부착:</b> 문 경첩, 손잡이, 우산 고리</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1">🧩</span><span><b>(예정) 물받이통 제작:</b> 누수 방지 및 배수 구조 포함</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 배송현황 -->
+      <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+        <div class="text-sm text-slate-600">* 일부 부품 배송 중</div>
+        <div class="mt-2 flex items-center gap-4">
+          <img src="https://i.postimg.cc/KjqgGv63/golijaseog.png" alt="경첩 배송 중" class="h-16 w-auto border rounded-md" />
+          <img src="https://i.postimg.cc/ryQ4CQKB/sonjabi-doeomunjaseog.png" alt="손잡이 배송 중" class="h-16 w-auto border rounded-md" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) 조립 현황 갤러리 -->
+    <section id="gallery" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">외관 조립 현황</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <figure class="group rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/tTzxczDv/hadeuweeoteseuteu6.jpg" alt="우산꽂이 외관 1" class="w-full h-48 object-cover group-hover:scale-[1.02] transition" />
+          <figcaption class="text-center text-sm bg-slate-50 py-2">외관 조립 1</figcaption>
+        </figure>
+        <figure class="group rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/L4NPBNJm/usankkojioegwan1.jpg" alt="우산꽂이 외관 2" class="w-full h-48 object-cover group-hover:scale-[1.02] transition" />
+          <figcaption class="text-center text-sm bg-slate-50 py-2">외관 조립 2</figcaption>
+        </figure>
+        <figure class="group rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/dVdDXBVF/dongyeongsang-usankkojioegwan2.gif" alt="외관 조립 GIF" class="w-full h-48 object-cover group-hover:scale-[1.02] transition" />
+          <figcaption class="text-center text-sm bg-slate-50 py-2">외관 조립 (GIF)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 4) 하드웨어 작동 확인 -->
+    <section id="hardware" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">주요 하드웨어 작동 확인</h2>
+      <p class="text-slate-700 mt-4">앱 연동 전, 개별 하드웨어 컴포넌트의 정상 작동을 확인했습니다.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <!-- 카드 컴포넌트 템플릿: 이미지 + 라벨 -->
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/pdz8fvF8/hadeuweeoteseuteu10.jpg" alt="쿨러 작동" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>쿨링 팬 작동 테스트</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/FH23kz7G/hadeuweeoteseuteu11.jpg" alt="UV 라이트 작동" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>UV-C 라이트 작동 테스트</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/sx6ZjDkr/hadeuweeoteseuteu2.jpg" alt="수위 센서 작동" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>수위 센서 작동 테스트</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/V6FChF40/hadeuweeoteseuteu4.jpg" alt="도어 센서 작동" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>도어 센서 작동 테스트</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/63hvPhzM/hadeuweeoteseuteu5.jpg" alt="LED 작동" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>LED 스트립 작동 테스트</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/TwxbQsjR/hadeuweeoteseuteu8.jpg" alt="DC-DC 컨버터 5V" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>DC-DC 컨버터 (5V) 작동</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <img src="https://i.postimg.cc/g08RVpZ8/hadeuweeoteseuteu9.jpg" alt="DC-DC 컨버터 12V" class="w-full h-48 object-cover" />
+          <figcaption class="flex items-center justify-between text-sm bg-slate-50 py-2 px-3">
+            <span>DC-DC 컨버터 (12V) 작동</span>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 border border-emerald-200">PASS</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 5) 리스크 & 대응 -->
+    <section id="risks" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">리스크 및 대응 계획</h2>
+      <div class="mt-6 grid md:grid-cols-2 gap-6">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-semibold text-slate-800">주요 리스크</h3>
+          <ul class="mt-3 space-y-2 text-slate-700 text-sm">
+            <li>• 경첩·손잡이 배송 지연으로 문 부착 일정 지연 가능</li>
+            <li>• 물받이통 제작 공정(실리콘 경화/누수 테스트) 시간 소요</li>
+          </ul>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-semibold text-slate-800">대응 방안</h3>
+          <ul class="mt-3 space-y-2 text-slate-700 text-sm">
+            <li>• 대체 부품(규격 호환) 확보 및 임시 힌지로 문 위치 피팅</li>
+            <li>• 물받이통 제작은 <b>T-1일</b>에 마감 후 24h 경화 → 익일 누수 테스트</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6) 향후 일정 -->
+    <section id="schedule" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">향후 일정 계획</h2>
+      <p class="text-slate-700 mt-4">프로젝트 완료까지 남은 기간 동안의 주요 계획입니다.</p>
+
+      <!-- 표 -->
+      <div class="mt-4 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50">
+            <tr class="text-left">
+              <th class="p-3 font-medium w-[10%] text-center">주차</th>
+              <th class="p-3 font-medium w-[20%] text-center">기간</th>
+              <th class="p-3 font-medium">주요 활동 내용 (담당자)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t">
+              <td class="p-3 text-center font-semibold">11주차</td>
+              <td class="p-3 text-center">11/3 ~ 11/7</td>
+              <td class="p-3">- 내부 전자 부품 최종 배치 및 고정 (하드웨어 전체)<br />- 서버-하드웨어 간 통신 테스트 시작 (백엔드, 하드웨어)</td>
+            </tr>
+            <tr class="border-t">
+              <td class="p-3 text-center font-semibold">12주차</td>
+              <td class="p-3 text-center">11/10 ~ 11/14</td>
+              <td class="p-3">- 외관 최종 마감 및 도색/필름 작업 (손윤제)<br />- 앱-서버-하드웨어 전체 시스템 연동 테스트 (전체)</td>
+            </tr>
+            <tr class="border-t">
+              <td class="p-3 text-center font-semibold">13주차</td>
+              <td class="p-3 text-center">11/17 ~ 11/21</td>
+              <td class="p-3">- 통합 테스트 기반 시스템 안정화 및 오류 수정 (전체)<br />- 발표 자료 및 최종 보고서 작성 시작 (전체)</td>
+            </tr>
+            <tr class="border-t">
+              <td class="p-3 text-center font-semibold">14주차</td>
+              <td class="p-3 text-center">11/24 ~ 11/28</td>
+              <td class="p-3">- 최종 시연 준비 및 리허설 (전체)<br />- 최종 보고서 검토 및 수정 (전체)</td>
+            </tr>
+            <tr class="border-t">
+              <td class="p-3 text-center font-semibold">15주차</td>
+              <td class="p-3 text-center">12/1 ~ 12/5</td>
+              <td class="p-3 font-semibold">⭐ 최종 발표 및 시연</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 타임라인 (시각요소) -->
+      <div class="mt-6 grid gap-4 sm:grid-cols-5">
+        <div class="flex sm:flex-col items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+          <div class="text-xs text-slate-600">10주차<br/>진도 보고</div>
+        </div>
+        <div class="hidden sm:block h-0.5 bg-slate-200 self-center"></div>
+        <div class="flex sm:flex-col items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+          <div class="text-xs text-slate-600">11주차<br/>통신 테스트</div>
+        </div>
+        <div class="hidden sm:block h-0.5 bg-slate-200 self-center"></div>
+        <div class="flex sm:flex-col items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+          <div class="text-xs text-slate-600">12~13주차<br/>통합 안정화</div>
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-500 mt-4">* 위 일정은 잠정 계획이며, 진행 상황에 따라 일부 조정될 수 있습니다.</p>
+    </section>
+
+    <!-- 7) BOM 요약 -->
+    <section id="bom" class="mb-12">
+      <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3 border-b-2 border-blue-500 pb-2">자재(BOM) 요약</h2>
+      <div class="mt-4 grid md:grid-cols-2 gap-4">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-semibold">구매 완료</h3>
+          <ul class="mt-2 text-sm text-slate-700 space-y-1">
+            <li>• 아크릴 판재 및 보강재</li>
+            <li>• 공구: 드릴비트, 아크릴 본드</li>
+            <li>• 쿨링 팬, UV-C 라이트, LED 스트립</li>
+            <li>• 수위 센서, 도어(자석) 센서</li>
+            <li>• DC-DC 컨버터 (5V, 12V)</li>
+          </ul>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-semibold">추가 조달 예정</h3>
+          <ul class="mt-2 text-sm text-slate-700 space-y-1">
+            <li>• 문 경첩/손잡이(배송 중)</li>
+            <li>• 우산 고리/걸이</li>
+            <li>• 물받이통(제작)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer / Notes -->
+    <footer class="pt-6 border-t border-slate-200 text-xs text-slate-500">
+      <p>본 문서는 Tailwind CSS로 제작되었으며, 발표용/인쇄용(프린트) 모두 최적화되어 있습니다.</p>
+      <p class="mt-1">이미지 출처: 프로젝트 현장 사진 및 테스트 자료</p>
+    </footer>
+  </main>
 </body>
 </html>
