@@ -1,198 +1,347 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캡스톤 11주차 진도 보고서 | 스마트 우산꽂이</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (White/Gray + Blue Accent) -->
-    <!-- Application Structure Plan: 탭 기반 SPA 구조를 선택했습니다. 사용자가 '요약', '외관 조립', '시스템 테스트', '향후 계획' 등 주요 주제 사이를 빠르게 이동할 수 있어, 긴 스크롤 방식의 보고서보다 정보 탐색이 용이합니다. 이 주제별 분류는 선형적인 보고서 구조보다 직관적인 탐색을 돕습니다. -->
-    <!-- Visualization & Content Choices: 보고서의 핵심은 시각적 증거(GIF/Image)입니다. 따라서 차트(Chart.js) 대신, '외관 조립' 및 '시스템 테스트' 섹션에 캡션이 있는 HTML/CSS 갤러리 그리드를 사용하여 진행 상황을 명확히 시연합니다. '향후 계획'은 테이블 대신 스타일링된 목록으로 재구성하여 가독성을 높였습니다. SVG/Mermaid는 사용하지 않았습니다. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f9fafb; }
-        .tab-link { transition: all 0.2s ease-in-out; border-bottom: 3px solid transparent; }
-        .tab-link.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 700; }
-        .content-section { display: none; }
-        .content-section.active { display: block; animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .gallery-item { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05); }
-        .gallery-item img { display: block; width: 100%; height: 240px; object-fit: cover; }
-        .gallery-item figcaption { background-color: #f9fafb; padding: 12px 16px; font-size: 0.875rem; text-align: center; color: #374151; font-weight: 500;}
-        .list-check { list-style-type: '✅ '; padding-left: 1.5rem; }
-        .list-check li { margin-bottom: 0.5rem; padding-left: 0.5rem; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>캡스톤 11주차 진도 보고서 | 스마트 우산꽂이</title>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- 한글 폰트 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <!-- SEO & Social -->
+  <meta name="description" content="캡스톤 디자인 II 11주차 진도 보고서 - 스마트 우산꽂이 시스템(외관 조립/시스템 테스트/향후 계획)" />
+  <meta property="og:title" content="캡스톤 디자인 II - 11주차 진도 보고서" />
+  <meta property="og:description" content="스마트 우산꽂이 시스템 | 외관 조립 완료 · SW/HW 테스트 성공 · 차주 통합 계획" />
+  <meta property="og:type" content="website" />
+
+  <!-- 스타일: 최소 커스텀만 사용 (Tailwind 위주) -->
+  <style>
+    :root {
+      --ring: #2563eb;
+    }
+    html, body { font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    /* 탭 전환 페이드 */
+    .fade-enter { opacity: 0; transform: translateY(6px); }
+    .fade-enter-active { opacity: 1; transform: translateY(0); transition: all .25s ease; }
+    /* 갤러리 캡션 */
+    .caption { background-color: rgba(249,250,251,.9); }
+    /* 프린트 최적화 */
+    @media print {
+      .no-print { display: none !important; }
+      header, nav { position: static !important; backdrop-filter: none !important; }
+      a[href]:after { content: ""; } /* 인쇄시 링크 주소 미표시 */
+      body { color: #000; }
+      .page { max-width: 100% !important; padding: 0 !important; }
+      .card { box-shadow: none !important; border-color: #e5e7eb !important; }
+    }
+  </style>
 </head>
-<body class="text-gray-800">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+  <div class="page max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <div class="max-w-5xl mx-auto p-4 md:p-8">
-        
-        <!-- 헤더 -->
-        <header class="mb-8">
-            <div class="bg-blue-600 text-white p-6 rounded-xl shadow-lg">
-                <h1 class="text-3xl md:text-4xl font-bold">캡스톤 디자인 II - 11주차 진도 보고서</h1>
-                <p class="text-xl mt-2 opacity-90">스마트 우산꽂이 시스템</p>
-                <p class="text-sm mt-4 opacity-80">발표자: 손윤재 (하드웨어 외관 조립 및 일정 계획 담당)</p>
-            </div>
-        </header>
+    <!-- 헤더 -->
+    <header class="mb-8">
+      <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+        <div class="p-7 sm:p-10">
+          <p class="text-sm/5 opacity-90">캡스톤 디자인 II · 11주차</p>
+          <h1 class="mt-1 text-3xl sm:text-4xl font-extrabold tracking-tight">
+            스마트 우산꽂이 시스템 — 진도 보고서
+          </h1>
+          <p class="mt-2 text-base/6 opacity-95">
+            발표자: 손윤재 (하드웨어 외관 조립 & 일정 계획)
+          </p>
+          <p class="mt-1 text-sm/5 opacity-80">업데이트: <time id="today"></time></p>
 
-        <!-- 탭 네비게이션 -->
-        <nav class="flex space-x-4 md:space-x-8 border-b-2 border-gray-200 mb-8">
-            <button class="tab-link active py-3 px-1 text-base md:text-lg" data-target="overview">핵심 요약</button>
-            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="assembly">외관 조립</button>
-            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="testing">시스템 테스트</button>
-            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="schedule">향후 계획</button>
-        </nav>
+          <!-- 우측 상단 툴들 -->
+          <div class="no-print absolute top-4 right-4 flex items-center gap-2">
+            <button
+              id="printBtn"
+              class="inline-flex items-center rounded-lg bg-white/15 hover:bg-white/25 px-3 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-inset ring-white/20 focus:outline-none focus:ring-2 focus:ring-white/80 transition">
+              PDF로 저장
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-        <!-- 컨텐츠 섹션 -->
-        <main>
-            <!-- 1. 핵심 요약 -->
-            <section id="overview" class="content-section active">
-                <h2 class="text-2xl font-bold mb-6">금주 핵심 성과</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                        <h3 class="text-xl font-bold mb-3 text-blue-600">1. 하드웨어 외관 조립 최종 완료</h3>
-                        <p class="text-gray-700">10주차의 기본 골격 조립에 이어, 금주 문손잡이, 내부 우산꽂이 고리, 문 경첩 등을 장착하여 최종 외관을 완성했습니다.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                        <h3 class="text-xl font-bold mb-3 text-blue-600">2. 주요 시스템 파트별 테스트 성공</h3>
-                        <ul class="list-check text-gray-700">
-                            <li>(S/W) 모바일 앱 ↔ 클라우드 서버 간 양방향 통신에 성공했습니다.</li>
-                            <li>(H/W) 라즈베리파이 ↔ 실제 부품(센서, 쿨러 등) 간 시나리오 테스트에 성공했습니다.</li>
-                        </ul>
-                    </div>
-                </div>
+    <!-- 탭 네비게이션 -->
+    <nav
+      class="no-print sticky top-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-gray-900/60 border-b border-gray-200/70 dark:border-gray-800/80">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div role="tablist" aria-label="섹션 탭" class="flex gap-1 overflow-x-auto">
+          <button role="tab" aria-selected="true" aria-controls="panel-overview" id="tab-overview"
+                  class="tab-btn relative whitespace-nowrap px-4 py-3 text-sm sm:text-base font-semibold border-b-2 border-transparent data-[active=true]:text-blue-600 data-[active=true]:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[--ring] rounded-t">
+            핵심 요약
+          </button>
+          <button role="tab" aria-selected="false" aria-controls="panel-assembly" id="tab-assembly"
+                  class="tab-btn relative whitespace-nowrap px-4 py-3 text-sm sm:text-base font-semibold border-b-2 border-transparent data-[active=true]:text-blue-600 data-[active=true]:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[--ring] rounded-t">
+            외관 조립
+          </button>
+          <button role="tab" aria-selected="false" aria-controls="panel-testing" id="tab-testing"
+                  class="tab-btn relative whitespace-nowrap px-4 py-3 text-sm sm:text-base font-semibold border-b-2 border-transparent data-[active=true]:text-blue-600 data-[active=true]:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[--ring] rounded-t">
+            시스템 테스트
+          </button>
+          <button role="tab" aria-selected="false" aria-controls="panel-schedule" id="tab-schedule"
+                  class="tab-btn relative whitespace-nowrap px-4 py-3 text-sm sm:text-base font-semibold border-b-2 border-transparent data-[active=true]:text-blue-600 data-[active=true]:border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[--ring] rounded-t">
+            향후 계획
+          </button>
+        </div>
+      </div>
+    </nav>
 
-                <h3 class="text-2xl font-bold mt-10 mb-6">팀 활동</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <figure class="gallery-item">
-                        <img src="https://i.postimg.cc/NjffZNbK/timwondeul-hwaldongsajin2.jpg" alt="팀원 전체 테스트 사진">
-                        <figcaption>시스템 연동을 위한 전체 팀원 야간 테스트</figcaption>
-                    </figure>
-                    <figure class="gallery-item">
-                        <img src="https://i.postimg.cc/DwyyRC58/jonghyeoni-janeunsajin.jpg" alt="팀원 휴식">
-                        <figcaption>장시간 테스트 작업 후 휴식</figcaption>
-                    </figure>
-                </div>
-            </section>
+    <!-- 메인 -->
+    <main class="mt-6 space-y-10">
 
-            <!-- 2. 외관 조립 -->
-            <section id="assembly" class="content-section">
-                <h2 class="text-2xl font-bold mb-6">하드웨어 외관 조립 (최종 완료)</h2>
-                <p class="text-gray-600 mb-6">이번 주, 문손잡이, 내부 고리, 경첩 등을 장착하여 외관을 최종 완성했습니다. 아래는 완성된 외관의 모습입니다.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <figure class="gallery-item">
-                        <img src="https://i.postimg.cc/ydkD27hy/usankkojitongoegwan-wanseong.jpg" alt="외관 완성 사진">
-                        <figcaption>최종 외관 완성</figcaption>
-                    </figure>
-                    <figure class="gallery-item">
-                        <img src="https://i.postimg.cc/nzRL1g6t/oegwan-yeodadi-dongyeongsang.gif" alt="문 개폐 GIF">
-                        <figcaption>문 개폐 시연 (GIF)</figcaption>
-                    </figure>
-                    <figure class="gallery-item">
-                        <img src="https://i.postimg.cc/qvbMr8Zp/2ilchahadeuweeo-jeonche.jpg" alt="전체 하드웨어 연결">
-                        <figcaption>내부 하드웨어 구성</figcaption>
-                    </figure>
-                </div>
-            </section>
+      <!-- 1) 핵심 요약 -->
+      <section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+        <!-- 통계 카드 -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400">하드웨어 외관 조립 최종 완료</h3>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">
+              10주차 기본 골격 이후, 문손잡이·내부 고리·경첩 장착을 마치며 최종 외관 완성.
+            </p>
+          </div>
+          <div class="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400">시스템 파트 테스트 성공</h3>
+            <ul class="mt-2 space-y-1 text-gray-700 dark:text-gray-300 list-disc list-inside">
+              <li>(S/W) 모바일 앱 ↔ 클라우드 서버 양방향 통신 확인</li>
+              <li>(H/W) 라즈베리파이 ↔ 센서/쿨러 등 부품 제어 시나리오 성공</li>
+            </ul>
+          </div>
+        </div>
 
-            <!-- 3. 시스템 테스트 -->
-            <section id="testing" class="content-section">
-                <h2 class="text-2xl font-bold mb-6">시스템 파트별 테스트 (성공)</h2>
-                <p class="text-gray-600 mb-6">이번 주는 앱-서버, 하드웨어-부품 두 개의 축을 각각 테스트하고 연동에 성공했습니다. 다음 주 이 두 축을 최종 연결할 예정입니다.</p>
+        <!-- 팀 활동 갤러리 -->
+        <h2 class="mt-10 text-2xl font-extrabold tracking-tight">팀 활동</h2>
+        <div class="mt-4 grid gap-6 sm:grid-cols-2">
+          <figure class="overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/NjffZNbK/timwondeul-hwaldongsajin2.jpg" alt="시스템 연동을 위한 팀 야간 테스트 장면"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+              시스템 연동을 위한 전체 팀원 야간 테스트
+            </figcaption>
+          </figure>
+          <figure class="overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/DwyyRC58/jonghyeoni-janeunsajin.jpg" alt="장시간 테스트 작업 후 휴식 장면"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+              장시간 테스트 작업 후 휴식
+            </figcaption>
+          </figure>
+        </div>
+      </section>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- S/W 테스트 -->
-                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                        <h3 class="text-xl font-bold mb-4">가. S/W (앱 ↔ 서버) 연동</h3>
-                        <p class="text-gray-700 mb-4">모바일 앱에서 제어 명령(쿨러 켜기 등)을 전송하면, Render 서버의 상태가 변경되고, 이 상태가 다시 앱 UI에 반영되는 양방향 통신을 확인했습니다.</p>
-                        <figure class="gallery-item">
-                            <img src="https://i.postimg.cc/fT7JGSNd/pen-uvv-logeuttuiugi.gif" alt="앱-서버 로그 시연">
-                            <figcaption>앱 이벤트 → 서버 로그 실시간 확인 (GIF)</figcaption>
-                        </figure>
-                        <figure class="gallery-item mt-4">
-                            <img src="https://i.postimg.cc/MKJn3bhB/mulbaditong-11-05-23-09-40.gif" alt="수위 센서-앱 시연">
-                            <figcaption>서버 상태 → 앱 UI 실시간 반영 (GIF)</figcaption>
-                        </figure>
-                    </div>
+      <!-- 2) 외관 조립 -->
+      <section id="panel-assembly" role="tabpanel" aria-labelledby="tab-assembly" hidden>
+        <h2 class="text-2xl font-extrabold tracking-tight">하드웨어 외관 조립 (최종 완료)</h2>
+        <p class="mt-2 text-gray-600 dark:text-gray-300">
+          문손잡이, 내부 고리, 경첩 등을 장착하여 외관을 최종 완성했습니다. 아래는 완성된 외관의 모습입니다.
+        </p>
 
-                    <!-- H/W 테스트 -->
-                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                        <h3 class="text-xl font-bold mb-4">나. H/W (라즈베리파이 ↔ 부품) 시나리오</h3>
-                        <p class="text-gray-700 mb-4">라즈베리파이가 도어 센서, 수위 센서 등 입력값을 받아 쿨러, UV-C 등 부품을 시나리오대로 제어하는 데 성공했습니다.</p>
-                        <figure class="gallery-item">
-                            <img src="https://i.postimg.cc/fT7JGSNS/pengeonjo-dongjag.gif" alt="쿨러 제어 시연">
-                            <figcaption>라즈베리파이 → 쿨러 제어 (GIF)</figcaption>
-                        </figure>
-                        <figure class="gallery-item mt-4">
-                            <img src="https://i.postimg.cc/9FPr6whR/uv-cdongjag.gif" alt="UV-C 제어 시연">
-                            <figcaption>라즈베리파이 → UV-C 제어 (GIF)</figcaption>
-                        </figure>
-                    </div>
-                </div>
-                 <h3 class="text-xl font-bold mt-8 mb-4">전체 시스템 연동 시연 (GIF)</h3>
-                 <div class="flex justify-center">
-                    <figure class="gallery-item max-w-lg">
-                        <img src="https://i.postimg.cc/GmcHd33R/jeonche-dongjag-5cho.gif" alt="전체 동작 GIF">
-                        <figcaption>앱 ↔ 서버 ↔ 하드웨어 전체 시스템 연동 (개별 테스트 종합)</figcaption>
-                    </figure>
-                 </div>
-            </section>
+        <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <figure class="overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/ydkD27hy/usankkojitongoegwan-wanseong.jpg" alt="스마트 우산꽂이 외관 최종 완성 사진"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">최종 외관 완성</figcaption>
+          </figure>
+          <figure class="overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/nzRL1g6t/oegwan-yeodadi-dongyeongsang.gif" alt="외관 문 개폐 시연 GIF"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">문 개폐 시연 (GIF)</figcaption>
+          </figure>
+          <figure class="overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/qvbMr8Zp/2ilchahadeuweeo-jeonche.jpg" alt="내부 하드웨어 구성 전체"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">내부 하드웨어 구성</figcaption>
+          </figure>
+        </div>
+      </section>
 
-            <!-- 4. 향후 계획 -->
-            <section id="schedule" class="content-section">
-                <h2 class="text-2xl font-bold mb-6">차주 계획 (12주차)</h2>
-                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                    <ul class="list-check space-y-3 text-gray-700">
-                        <li>
-                            <strong class="text-red-600 font-bold">[핵심 과제] 시스템 최종 통합 (서버 ↔ 라즈베리파이 연동)</strong>
-                            <p class="text-sm ml-6 text-gray-600">현재 분리된 두 파트(S/W, H/W)를 연결합니다. 라즈베리파이가 Render 서버에 접속하여 명령을 받아오도록 구현합니다.</p>
-                        </li>
-                        <li>
-                            <strong class="text-gray-800">하드웨어 최종 조립</strong>
-                            <p class="text-sm ml-6 text-gray-600">모든 전자 부품(PCB, 센서, 팬)을 완성된 외관에 글루건과 본드를 사용해 최종 장착합니다.</p>
-                        </li>
-                        <li>
-                            <strong class="text-gray-800">물받이통 제작</strong>
-                            <p class="text-sm ml-6 text-gray-600">아크릴 판을 이용해 내부 물받이통을 제작하고, 누수 테스트를 진행합니다.</p>
-                        </li>
-                        <li>
-                            <strong class="text-gray-800">통합 시나리오 테스트</strong>
-                            <p class="text-sm ml-6 text-gray-600">"앱 버튼 클릭 → 서버 → 라즈베리파이 → 실제 쿨러 작동"으로 이어지는 전체 시나리오를 최종 점검하고 디버깅합니다.</p>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-        </main>
-    </div>
+      <!-- 3) 시스템 테스트 -->
+      <section id="panel-testing" role="tabpanel" aria-labelledby="tab-testing" hidden>
+        <h2 class="text-2xl font-extrabold tracking-tight">시스템 파트별 테스트 (성공)</h2>
+        <p class="mt-2 text-gray-600 dark:text-gray-300">
+          앱-서버, 하드웨어-부품 두 축을 각각 테스트하여 연동에 성공했습니다. 다음 주 두 축을 최종 연결할 예정입니다.
+        </p>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tabs = document.querySelectorAll('.tab-link');
-        const sections = document.querySelectorAll('.content-section');
+        <div class="mt-6 grid gap-8 lg:grid-cols-2">
+          <!-- S/W -->
+          <div class="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold">가. S/W (앱 ↔ 서버) 연동</h3>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">
+              앱에서 제어 명령을 전송하면 Render 서버 상태가 변경되고, 이 상태가 다시 앱 UI에 반영되는 양방향 통신을 확인했습니다.
+            </p>
+            <figure class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+              <img loading="lazy" src="https://i.postimg.cc/fT7JGSNd/pen-uvv-logeuttuiugi.gif" alt="앱 이벤트에 따른 서버 로그 실시간 반영 GIF"
+                   class="w-full aspect-[4/3] object-cover" />
+              <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+                앱 이벤트 → 서버 로그 실시간 확인 (GIF)
+              </figcaption>
+            </figure>
+            <figure class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+              <img loading="lazy" src="https://i.postimg.cc/MKJn3bhB/mulbaditong-11-05-23-09-40.gif" alt="서버 상태가 앱 UI로 실시간 반영되는 GIF"
+                   class="w-full aspect-[4/3] object-cover" />
+              <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+                서버 상태 → 앱 UI 실시간 반영 (GIF)
+              </figcaption>
+            </figure>
+          </div>
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.getAttribute('data-target');
+          <!-- H/W -->
+          <div class="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold">나. H/W (라즈베리파이 ↔ 부품) 시나리오</h3>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">
+              라즈베리파이가 도어·수위 센서 입력을 받아 쿨러/UV-C를 시나리오대로 제어하는 데 성공했습니다.
+            </p>
+            <figure class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+              <img loading="lazy" src="https://i.postimg.cc/fT7JGSNS/pengeonjo-dongjag.gif" alt="라즈베리파이가 쿨러를 제어하는 장면 GIF"
+                   class="w-full aspect-[4/3] object-cover" />
+              <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+                라즈베리파이 → 쿨러 제어 (GIF)
+              </figcaption>
+            </figure>
+            <figure class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+              <img loading="lazy" src="https://i.postimg.cc/9FPr6whR/uv-cdongjag.gif" alt="라즈베리파이가 UV-C를 제어하는 장면 GIF"
+                   class="w-full aspect-[4/3] object-cover" />
+              <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+                라즈베리파이 → UV-C 제어 (GIF)
+              </figcaption>
+            </figure>
+          </div>
+        </div>
 
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+        <!-- 전체 연동 -->
+        <h3 class="mt-8 text-xl font-bold">전체 시스템 연동 시연 (GIF)</h3>
+        <div class="mt-3 flex justify-center">
+          <figure class="max-w-xl w-full overflow-hidden rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-800/80 shadow-sm">
+            <img loading="lazy" src="https://i.postimg.cc/GmcHd33R/jeonche-dongjag-5cho.gif" alt="앱↔서버↔하드웨어 전체 연동 시연 GIF"
+                 class="w-full aspect-[4/3] object-cover" />
+            <figcaption class="caption px-4 py-2 text-center text-sm text-gray-700 dark:text-gray-300">
+              앱 ↔ 서버 ↔ 하드웨어 전체 시스템 연동 (개별 테스트 종합)
+            </figcaption>
+          </figure>
+        </div>
+      </section>
 
-                sections.forEach(s => {
-                    if (s.id === target) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
-            });
-        });
+      <!-- 4) 향후 계획 -->
+      <section id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule" hidden>
+        <h2 class="text-2xl font-extrabold tracking-tight">차주 계획 (12주차)</h2>
+        <div class="mt-4 card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm p-6">
+          <ul class="space-y-4 text-gray-700 dark:text-gray-300">
+            <li>
+              <p class="font-bold text-red-600 dark:text-red-400">[핵심 과제] 시스템 최종 통합 (서버 ↔ 라즈베리파이)</p>
+              <p class="text-sm mt-1">분리된 S/W와 H/W 파트를 연결해, 라즈베리파이가 Render 서버에서 명령을 받아 실행하도록 구현.</p>
+            </li>
+            <li>
+              <p class="font-semibold">하드웨어 최종 조립</p>
+              <p class="text-sm mt-1">PCB·센서·팬을 외관에 안전하게 고정(글루건/본드) 및 배선 정리.</p>
+            </li>
+            <li>
+              <p class="font-semibold">물받이통 제작</p>
+              <p class="text-sm mt-1">아크릴 판 제작 및 누수 테스트.</p>
+            </li>
+            <li>
+              <p class="font-semibold">통합 시나리오 테스트</p>
+              <p class="text-sm mt-1">“앱 버튼 → 서버 → 라즈베리파이 → 실제 쿨러 작동” 엔드-투-엔드 점검 및 디버깅.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
 
-        // 초기 로드 시 'overview' 활성화 (이미 HTML에 active가 있지만, JS로도 제어)
-        document.querySelector('.tab-link[data-target="overview"]').click();
+    <!-- 바닥글 -->
+    <footer class="mt-12 pb-6 text-center text-sm text-gray-500 dark:text-gray-400">
+      © 2025 스마트 우산꽂이 팀 – Capstone Design II
+    </footer>
+  </div>
+
+  <!-- 스크립트: 탭 전환(+해시), 접근성, 날짜/인쇄 -->
+  <script>
+    // 날짜(로컬)
+    (function setToday(){
+      try {
+        const t = new Date();
+        const y = t.getFullYear();
+        const m = String(t.getMonth()+1).padStart(2,'0');
+        const d = String(t.getDate()).padStart(2,'0');
+        document.getElementById('today').textContent = `${y}-${m}-${d}`;
+      } catch {}
+    })();
+
+    // 인쇄 버튼
+    document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+
+    // 탭 로직 (ARIA + 해시 지원)
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+
+    function activate(id, pushHash = true) {
+      // 비주얼 전환
+      panels.forEach(p => {
+        const show = p.id === id.replace('tab','panel');
+        if (show) {
+          p.hidden = false;
+          p.classList.add('fade-enter');
+          requestAnimationFrame(() => p.classList.add('fade-enter-active'));
+          setTimeout(() => p.classList.remove('fade-enter','fade-enter-active'), 260);
+        } else {
+          p.hidden = true;
+        }
+      });
+
+      tabs.forEach(t => {
+        const active = t.id === id;
+        t.setAttribute('aria-selected', active);
+        t.dataset.active = active ? 'true' : 'false';
+        if (active) t.focus({ preventScroll: true });
+      });
+
+      // 해시 업데이트
+      if (pushHash) {
+        const key = id.replace('tab-','');
+        history.replaceState(null, '', `#${key}`);
+      }
+    }
+
+    // 탭 클릭
+    tabs.forEach(t => {
+      t.addEventListener('click', () => activate(t.id, true));
+      t.addEventListener('keydown', (e) => {
+        const idx = tabs.indexOf(t);
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          const next = tabs[(idx + 1) % tabs.length];
+          activate(next.id, true);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
+          activate(prev.id, true);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          activate(tabs[0].id, true);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          activate(tabs[tabs.length-1].id, true);
+        }
+      });
     });
-</script>
 
+    // 초기 활성화: 해시 우선, 없으면 overview
+    (function initFromHash(){
+      const hash = (location.hash || '').replace('#','');
+      const start = ['overview','assembly','testing','schedule'].includes(hash) ? `tab-${hash}` : 'tab-overview';
+      activate(start, false);
+    })();
+
+    // 해시 변경(뒤로가기 등) 대응
+    window.addEventListener('hashchange', () => {
+      const hash = (location.hash || '').replace('#','');
+      const target = document.getElementById(`tab-${hash}`);
+      if (target) activate(target.id, false);
+    });
+  </script>
 </body>
 </html>
