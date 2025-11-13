@@ -6,13 +6,15 @@
     <title>캡스톤 13주차 진도 보고서 | 스마트 우산꽂이</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (White/Gray + Blue Accent) -->
+    <!-- html2pdf.js 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" xintegrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBALEAoU8C/VxcoVssWPGkP5vcwGS2LhG8oKxGiC/xjo==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <!-- Application Structure Plan: 탭 기반 SPA 구조를 선택했습니다. 사용자가 '핵심 성과', '핵심 시나리오', '외관 조립', '향후 계획' 4개의 주요 주제를 빠르게 탐색할 수 있도록 설계했습니다. 이 구조는 선형적인 보고서 대신 성과 중심의 직관적인 탐색을 제공하며, 특히 '핵심 시나리오' 탭에서 GIF 시연을 통해 이번 주 가장 큰 성과인 End-to-End 통신을 시각적으로 강조합니다. -->
     <!-- Visualization & Content Choices: 
-        - [시나리오 1,2,3] -> 시연 -> GIF 임베드 (HTML/CSS) -> '앱->H/W' 및 'H/W->앱'의 양방향 통신을 실제로 보여줌 -> 상호작용성 극대화.
-        - [외관 조립] -> 정보 전달 -> 이미지 갤러리 (HTML/Tailwind Grid) -> '경첩 변경', '쿨러 부착' 등 팀의 물리적 진행 상황을 명확히 전달.
-        - [향후 계획] -> 정보 전달 -> 스타일링된 목록 (HTML/CSS) -> 차주 계획을 가독성 높게 전달.
-        - Chart.js는 본 보고서의 질적, 시연적 특성에 불필요하여 사용하지 않음. NO SVG/Mermaid. -->
+         - [시나리오 1,2,3] -> 시연 -> GIF 임베드 (HTML/CSS) -> '앱->H/W' 및 'H/W->앱'의 양방향 통신을 실제로 보여줌 -> 상호작용성 극대화.
+         - [외관 조립] -> 정보 전달 -> 이미지 갤러리 (HTML/Tailwind Grid) -> '경첩 변경', '쿨러 부착' 등 팀의 물리적 진행 상황을 명확히 전달.
+         - [향후 계획] -> 정보 전달 -> 스타일링된 목록 (HTML/CSS) -> 차주 계획을 가독성 높게 전달.
+         - Chart.js는 본 보고서의 질적, 시연적 특성에 불필요하여 사용하지 않음. NO SVG/Mermaid. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f9fafb; }
@@ -26,11 +28,25 @@
         .gallery-item figcaption { background-color: #f9fafb; padding: 12px 16px; font-size: 0.875rem; text-align: center; color: #374151; font-weight: 500;}
         .list-check { list-style-type: '✅ '; padding-left: 1.5rem; }
         .list-check li { margin-bottom: 0.5rem; padding-left: 0.5rem; }
+
+        /* PDF 인쇄 시 탭 네비게이션 숨기기 (JavaScript로 제어하지만, 예비용) */
+        @media print {
+            .no-print { display: none; }
+            .content-section { display: block !important; } /* 모든 섹션 강제 표시 */
+        }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <div class="max-w-5xl mx-auto p-4 md:p-8">
+    <!-- PDF 다운로드 버튼 컨테이너 -->
+    <div class="max-w-5xl mx-auto px-4 md:px-8 pt-4 md:pt-8 flex justify-end no-print">
+        <button id="download-pdf" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out">
+            📄 PDF로 다운로드
+        </button>
+    </div>
+
+    <!-- 인쇄될 리포트 컨텐츠 영역 -->
+    <div id="report-content" class="max-w-5xl mx-auto p-4 md:p-8 pt-4 md:pt-4">
         
         <!-- 헤더 -->
         <header class="mb-8">
@@ -41,8 +57,8 @@
             </div>
         </header>
 
-        <!-- 탭 네비게이션 -->
-        <nav class="flex space-x-4 md:space-x-8 border-b-2 border-gray-200 mb-8">
+        <!-- 탭 네비게이션 (no-print 클래스 추가) -->
+        <nav class="flex space-x-4 md:space-x-8 border-b-2 border-gray-200 mb-8 no-print">
             <button class="tab-link active py-3 px-1 text-base md:text-lg" data-target="overview">핵심 성과</button>
             <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="scenarios">핵심 시나리오</button>
             <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="assembly">외관 조립</button>
@@ -137,7 +153,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         const tabs = document.querySelectorAll('.tab-link');
         const sections = document.querySelectorAll('.content-section');
+        const downloadBtn = document.getElementById('download-pdf');
 
+        // --- 탭 기능 로직 ---
         tabs.forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -159,7 +177,51 @@
         });
 
         // 초기 로드 시 'overview' 활성화 (HTML에 이미 active가 있지만, JS로도 제어)
-        document.querySelector('.tab-link[data-target="overview"]').click();
+        // document.querySelector('.tab-link[data-target="overview"]').click();
+        // -> HTML에 active가 이미 있으므로 JS 클릭은 불필요.
+
+        // --- PDF 다운로드 로직 ---
+        downloadBtn.addEventListener('click', () => {
+            // 1. 인쇄할 요소 가져오기
+            const element = document.getElementById('report-content');
+
+            // 2. 페이지와 상호작용 없이 인쇄하기 위해 요소 복제
+            const elementClone = element.cloneNode(true);
+
+            // 3. 복제본에서 모든 컨텐츠 섹션을 찾음
+            const sectionsInClone = elementClone.querySelectorAll('.content-section');
+            
+            // 4. PDF에는 모든 섹션이 보이도록 스타일 변경
+            sectionsInClone.forEach(section => {
+                section.style.display = 'block'; // 'none'이었던 탭들도 모두 'block'으로
+                section.classList.remove('active'); // active 스타일 제거
+                section.style.animation = 'none'; // fadeIn 애니메이션 제거
+            });
+
+            // 5. PDF에는 탭 네비게이션이 필요 없으므로 숨김
+            const navInClone = elementClone.querySelector('nav');
+            if (navInClone) {
+                navInClone.style.display = 'none';
+            }
+
+            // 6. html2pdf 옵션 설정
+            const opt = {
+                margin:       [0.8, 0.5, 0.8, 0.5], // [top, left, bottom, right] in inches
+                filename:     '캡스톤_13주차_진도보고서_스마트우산꽂이.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, // 퀄리티 향상
+                    useCORS: true, // 외부 이미지(postimg.cc) 로드를 위해 필수
+                    letterRendering: true 
+                },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // 페이지 나뉨 방지
+            };
+
+            // 7. 수정된 복제본을 기반으로 PDF 생성 및 저장
+            // (참고: GIF는 PDF에서 첫 프레임만 고정된 이미지로 표시됩니다.)
+            html2pdf().from(elementClone).set(opt).save();
+        });
     });
 </script>
 
