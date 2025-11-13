@@ -3,116 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수능 사회·문화 핵심 공략 (허지현 학생 맞춤형)</title>
-    <!-- Tailwind CSS CDN 스크립트 -->
+    <title>캡스톤 13주차 진도 보고서 | 스마트 우산꽂이</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- 사용자 정의 스타일 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (White/Gray + Blue Accent) -->
+    <!-- Application Structure Plan: 탭 기반 SPA 구조를 선택했습니다. 사용자가 '핵심 성과', '핵심 시나리오', '외관 조립', '향후 계획' 4개의 주요 주제를 빠르게 탐색할 수 있도록 설계했습니다. 이 구조는 선형적인 보고서 대신 성과 중심의 직관적인 탐색을 제공하며, 특히 '핵심 시나리오' 탭에서 GIF 시연을 통해 이번 주 가장 큰 성과인 End-to-End 통신을 시각적으로 강조합니다. -->
+    <!-- Visualization & Content Choices: 
+        - [시나리오 1,2,3] -> 시연 -> GIF 임베드 (HTML/CSS) -> '앱->H/W' 및 'H/W->앱'의 양방향 통신을 실제로 보여줌 -> 상호작용성 극대화.
+        - [외관 조립] -> 정보 전달 -> 이미지 갤러리 (HTML/Tailwind Grid) -> '경첩 변경', '쿨러 부착' 등 팀의 물리적 진행 상황을 명확히 전달.
+        - [향후 계획] -> 정보 전달 -> 스타일링된 목록 (HTML/CSS) -> 차주 계획을 가독성 높게 전달.
+        - Chart.js는 본 보고서의 질적, 시연적 특성에 불필요하여 사용하지 않음. NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body {
-            font-family: 'Inter', 'sans-serif';
-        }
-        /* 카드 등장 애니메이션 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-        /* 각 카드에 지연 시간 적용 */
-        .card-1 { animation-delay: 0.1s; }
-        .card-2 { animation-delay: 0.2s; }
-        .card-3 { animation-delay: 0.3s; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f9fafb; }
+        .tab-link { transition: all 0.2s ease-in-out; border-bottom: 3px solid transparent; }
+        .tab-link.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 700; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .gallery-item { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05); }
+        .gallery-item img { display: block; width: 100%; height: 240px; object-fit: cover; }
+        .gallery-item figcaption { background-color: #f9fafb; padding: 12px 16px; font-size: 0.875rem; text-align: center; color: #374151; font-weight: 500;}
+        .list-check { list-style-type: '✅ '; padding-left: 1.5rem; }
+        .list-check li { margin-bottom: 0.5rem; padding-left: 0.5rem; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-gray-800">
 
-<!-- Header Section -->
-<header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-md border-b border-gray-200">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
-            <a href="./index.html" class="flex items-center space-x-2">
-                <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">
-                    ✨ 사회·문화 공략집
-                </span>
-            </a>
-            <div class="hidden md:flex items-center space-x-8 text-base font-medium">
-                <a href="./concepts.html" class="text-gray-600 hover:text-blue-600 transition duration-300">심화 개념</a>
-                <a href="./killer-questions.html" class="text-gray-600 hover:text-blue-600 transition duration-300">킬러 문항</a>
-                <a href="./theories.html" class="text-gray-600 hover:text-blue-600 transition duration-300">이론 적용</a>
+    <div class="max-w-5xl mx-auto p-4 md:p-8">
+        
+        <!-- 헤더 -->
+        <header class="mb-8">
+            <div class="bg-blue-600 text-white p-6 rounded-xl shadow-lg">
+                <h1 class="text-3xl md:text-4xl font-bold">캡스톤 디자인 II - 13주차 진도 보고서</h1>
+                <p class="text-xl mt-2 opacity-90">스마트 우산꽂이 시스템</p>
+                <p class="text-sm mt-4 opacity-80">작성자: 손윤재 (앱/서버 ↔ 하드웨어 연동 담당)</p>
             </div>
-        </div>
-    </nav>
-</header>
+        </header>
 
-<!-- Main Content -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- 탭 네비게이션 -->
+        <nav class="flex space-x-4 md:space-x-8 border-b-2 border-gray-200 mb-8">
+            <button class="tab-link active py-3 px-1 text-base md:text-lg" data-target="overview">핵심 성과</button>
+            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="scenarios">핵심 시나리오</button>
+            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="assembly">외관 조립</button>
+            <button class="tab-link py-3 px-1 text-base md:text-lg" data-target="schedule">향후 계획</button>
+        </nav>
 
-    <!-- Intro Section -->
-    <section id="intro" class="text-center my-16">
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
-            <span class="text-gray-800">허지현 학생,</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">만점을 향한 마지막 걸음</span>
-        </h1>
-        <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-6">
-            현재 기본 개념은 탄탄합니다. 이제 까다로운 킬러 문항을 정복하고 실수를 줄여 안정적인 1등급과 50점 만점을 향해 나아갈 시간입니다.
-            지현 학생의 약점을 보완하고 최상위권으로 도약하기 위한 맞춤형 심화 학습을 시작해 보세요.
-        </p>
-        <a href="#core-strategies" class="mt-10 inline-block bg-blue-600 text-white font-bold text-lg px-8 py-3 rounded-full shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
-            핵심 공략 시작하기
-        </a>
-    </section>
-
-    <!-- Core Strategies Section -->
-    <section id="core-strategies" class="py-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            
-            <!-- Card 1: 심화 개념 다지기 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-1 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-6">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 8.75c3.313 0 6.094 2.536 6.094 5.625S6.813 20 3.5 20C.188 20-2.5 17.313-2.5 14.375S.188 8.75 3.5 8.75zM17.5 8.75c3.313 0 6.094 2.536 6.094 5.625S20.813 20 17.5 20c-3.313 0-6.094-2.688-6.094-5.625S14.187 8.75 17.5 8.75z"></path></svg>
+        <!-- 컨텐츠 섹션 -->
+        <main>
+            <!-- 1. 핵심 성과 -->
+            <section id="overview" class="content-section active">
+                <h2 class="text-2xl font-bold mb-6">금주 핵심 성과: 시스템 전체 연동</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    지난주까지 개별 테스트했던 S/W(앱 ↔ 서버)와 H/W(라즈베리파이 ↔ 부품) 두 파트를 성공적으로 통합했습니다. 금주의 핵심 성과는 앱, 서버, 라즈베리파이, 부품 간의 End-to-End 양방향 통신을 완벽하게 구현한 것입니다.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">S/W → H/W (원격 제어)</h3>
+                        <p class="text-gray-700">클라이언트(앱)에서 발생한 이벤트가 클라우드 서버를 거쳐 물리적 디바이스(라즈베리파이)를 성공적으로 제어함을 확인했습니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">H/W → S/W (모니터링)</h3>
+                        <p class="text-gray-700">디바이스(센서)의 상태 값이 서버를 거쳐 앱 UI에 실시간으로 반영되는 전체 데이터 흐름의 검증을 완료했습니다.</p>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">심화 개념 다지기</h3>
-                <p class="text-gray-600 mb-6">자료 분석 문제의 핵심! 계층, 도표, 불평등 관련 심화 개념을 완벽하게 마스터하여 어떤 변형 문제에도 흔들리지 않는 실력을 완성합니다.</p>
-                <a href="./concepts.html" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">자세히 보기 &rarr;</a>
-            </div>
+            </section>
 
-            <!-- Card 2: 킬러 문항 정복 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-2 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 mb-6">
-                     <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            <!-- 2. 핵심 시나리오 -->
+            <section id="scenarios" class="content-section">
+                <h2 class="text-2xl font-bold mb-6">핵심 시나리오 테스트 (시연)</h2>
+                <p class="text-gray-600 mb-6">설계된 주요 시나리오 3가지가 모두 정상 작동함을 시각 자료(GIF)로 확인했습니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/WFWjzWbW/sinaliodongyeongsang1.gif" alt="시나리오 1: 문 닫힘 감지">
+                        <figcaption class="h-20 flex items-center justify-center">시나리오 1: H/W (문 닫힘) → 앱 UI 변경</figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/ft2Zy2Tr/sinaliodongyeongsang2.gif" alt="시나리오 2: 앱에서 LED 제어">
+                        <figcaption class="h-20 flex items-center justify-center">시나리오 2: 앱 → H/W (LED 원격 제어)</figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/gLxpZVxb/sinaliodongyeongsang3.gif" alt="시나리오 3: 수위 센서 감지">
+                        <figcaption class="h-20 flex items-center justify-center">시나리오 3: H/W (수위 감지) → 기능 강제 종료</figcaption>
+                    </figure>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">킬러 문항 정복</h3>
-                <p class="text-gray-600 mb-6">최고난도 도표 분석과 비판적 사고를 요구하는 문항들을 집중 공략합니다. 시간 단축을 위한 효율적인 문제 풀이 전략을 체화합니다.</p>
-                <a href="./killer-questions.html" class="font-semibold text-emerald-600 hover:text-emerald-800 transition-colors">자세히 보기 &rarr;</a>
-            </div>
+            </section>
 
-            <!-- Card 3: 이론 적용 훈련 -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:-translate-y-2 transition-transform duration-300 ease-in-out card-3 fade-in" style="opacity:0;">
-                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+            <!-- 3. 외관 조립 -->
+            <section id="assembly" class="content-section">
+                <h2 class="text-2xl font-bold mb-6">하드웨어 외관 조립 (팀 전체)</h2>
+                <p class="text-gray-600 mb-6">시스템 연동과 병행하여, 하드웨어 외관 조립 및 개선 작업을 진행했습니다. 경첩 위치를 내부로 변경하고 주요 부품을 외관에 부착했습니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/sQ6yx6DJ/oegwan-gyeongcheob-naebulo-byeongyeong.jpg" alt="경첩 위치 변경">
+                        <figcaption>경첩을 내부로 이동하여 심미성 향상</figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/N9JYFJfX/oegwan-kulleo-sajin.jpg" alt="쿨러 부착">
+                        <figcaption>우산꽂이 통 내부에 쿨러 부착</figcaption>
+                    </figure>
+                    <figure class="gallery-item">
+                        <img src="https://i.postimg.cc/YLv7W6hD/oegwan3.jpg" alt="LCD 및 라즈베리파이 부착">
+                        <figcaption>외관 제어부에 LCD 및 Pi 부착</figcaption>
+                    </figure>
                 </div>
-                <h3 class="text-2xl font-bold mb-3">이론 적용 훈련</h3>
-                <p class="text-gray-600 mb-6">개념과 실제 사례를 연결하는 훈련을 통해, 생소한 제시문이나 자료가 등장해도 배운 이론을 자신감 있게 적용하는 능력을 기릅니다.</p>
-                <a href="./theories.html" class="font-semibold text-purple-600 hover:text-purple-800 transition-colors">자세히 보기 &rarr;</a>
-            </div>
-        </div>
-    </section>
+            </section>
 
-</main>
-
-<!-- Footer Section -->
-<footer class="bg-gray-900 text-white py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-lg">&copy; 2025 허지현 학생 맞춤형 공략집</p>
-        <p class="text-base text-gray-400 mt-2">만점을 진심으로 응원합니다!</p>
+            <!-- 4. 향후 계획 -->
+            <section id="schedule" class="content-section">
+                <h2 class="text-2xl font-bold mb-6">차주 계획 (14주차)</h2>
+                <p class="text-gray-600 mb-6">금주 시스템 연동 테스트가 성공함에 따라, 차주는 완성된 하드웨어 외관에 모든 전자 부품을 통합하고 최종 시나리오를 검증하는 단계로 진입합니다.</p>
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                    <ul class="list-check space-y-4 text-gray-700">
+                        <li>
+                            <strong class="text-gray-800">하드웨어 최종 조립 (물리적 통합)</strong>
+                            <p class="text-sm ml-6 text-gray-600">테스트가 완료된 모든 전자 부품(PCB, 센서, 라즈베리파이 등)을 실제 외관 내부에 견고하게 장착하고 배선을 정리합니다.</p>
+                        </li>
+                        <li>
+                            <strong class="text-gray-800">물받이통 제작 (기능 보완)</strong>
+                            <p class="text-sm ml-6 text-gray-600">아크릴 판을 재단/접착하여 내부 누수 방지용 물받이통을 제작하고, 방수 기능을 검증한 뒤 하단에 설치합니다.</p>
+                        </li>
+                        <li>
+                            <strong class="text-red-600 font-bold">[핵심] 최종 통합 시나리오 테스트 (End-to-End 검증)</strong>
+                            <p class="text-sm ml-6 text-gray-600">"앱에서 30분 건조 설정 → 문 닫힘 감지 → 쿨러/UV 자동 작동 → 수위 감지 시 자동 중단 → 앱에 경고 표시"와 같은 복합 시나리오의 안정성을 집중 검증합니다.</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
     </div>
-</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-link');
+        const sections = document.querySelectorAll('.content-section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = tab.getAttribute('data-target');
+
+                // 탭 활성화 상태 변경
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // 컨텐츠 섹션 표시 변경
+                sections.forEach(s => {
+                    if (s.id === targetId) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // 초기 로드 시 'overview' 활성화 (HTML에 이미 active가 있지만, JS로도 제어)
+        document.querySelector('.tab-link[data-target="overview"]').click();
+    });
+</script>
 
 </body>
 </html>
-
