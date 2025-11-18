@@ -19,10 +19,10 @@
         /* 공통 페이드 인 애니메이션 */
         .page-section {
             display: none;
-            animation: fadeIn 0.35s ease-in-out;
         }
         .page-section.active {
             display: block;
+            animation: fadeIn 0.35s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -111,9 +111,23 @@
             overflow: hidden;
             text-overflow: ellipsis;          /* truncate */
         }
-        .inline-gallery-item:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.16);
+        
+        /* 세로 비율이 중요한 전체 표시용 이미지 (금주 상세 2,3번용) */
+        .inline-gallery-item-full {
+            width: 100%;
+            max-width: 720px;          /* 너무 넓어지지 않도록 최대 너비 제한 */
+            margin-left: auto;         /* 가운데 정렬 */
+            margin-right: auto;        /* 가운데 정렬 */
+        }
+        .inline-gallery-item-full img {
+            width: 100%;
+            height: auto;
+            max-height: 28rem;         /* 세로는 적당히 제한 */
+            object-fit: contain;       /* 이미지가 잘리지 않도록 전체 표시 */
+        }
+        /* 단일 이미지를 가운데 정렬하기 위한 그리드 래퍼 */
+        .gallery-full-center {
+            justify-items: center;
         }
 
         /* 상단 탭과 본문 사이의 구분선 */
@@ -152,7 +166,7 @@
         <main class="space-y-10 sm:space-y-12">
             <!-- ▼ 탭 1: 대시보드 -->
             <section id="dashboard" class="page-section active space-y-6">
- 
+  
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                     <!-- 왼쪽/오른쪽 비율 조정 대신, 모두 카드 형태로 통일 -->
@@ -196,9 +210,7 @@
 
             <!-- ▼ 탭 2: 금주 상세 -->
             <section id="details" class="page-section space-y-6">
-                <p class="text-base sm:text-lg text-slate-700 leading-relaxed">
-                    금주에 수행한 3가지 핵심 작업을 상세히 소개합니다. 각 작업의 목적, 진행 과정, 그리고 성과를 관련 자료와 함께 확인하실 수 있습니다.
-                </p>
+
 
                 <div class="space-y-6 sm:space-y-8">
                     <!-- 1. 팀원별 자료조사 및 발표 카드 -->
@@ -249,8 +261,8 @@
                         <h4 class="font-semibold text-slate-800 mt-6 mb-3 text-sm sm:text-base">
                             관련 자료
                         </h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <a href="https://i.postimg.cc/yxxw26V7/tim-won-hoelo-dan-ilhwajag-eobjung-sajin.jpg" target="_blank" class="inline-gallery-item">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 gallery-full-center">
+                            <a href="https://i.postimg.cc/yxxw26V7/tim-won-hoelo-dan-ilhwajag-eobjung-sajin.jpg" target="_blank" class="inline-gallery-item inline-gallery-item-full">
                                 <img src="https://i.postimg.cc/yxxw26V7/tim-won-hoelo-dan-ilhwajag-eobjung-sajin.jpg" alt="팀원 회로 단일화 작업 중" onerror="this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=이미지+로드+실패'; this.onerror=null;">
                                 <p>팀원 회로 단일화 작업 중</p>
                             </a>
@@ -271,8 +283,8 @@
                         <h4 class="font-semibold text-slate-800 mt-6 mb-3 text-sm sm:text-base">
                             관련 자료
                         </h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <a href="https://i.postimg.cc/nrW6x8zy/tim-won-jag-eobsajin1.jpg" target="_blank" class="inline-gallery-item">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 gallery-full-center">
+                            <a href="https://i.postimg.cc/nrW6x8zy/tim-won-jag-eobsajin1.jpg" target="_blank" class="inline-gallery-item inline-gallery-item-full">
                                 <img src="https://i.postimg.cc/nrW6x8zy/tim-won-jag-eobsajin1.jpg" alt="팀원 전체 작업 사진 (서보모터)" onerror="this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=이미지+로드+실패'; this.onerror=null;">
                                 <p>팀원 전체 작업 사진 (서보모터)</p>
                             </a>
@@ -283,9 +295,7 @@
 
             <!-- ▼ 탭 3: 프로세스 & 로드맵 -->
             <section id="process" class="page-section space-y-8">
-                <p class="text-base sm:text-lg text-slate-700 leading-relaxed">
-                    프로젝트의 기술적 과정을 시각화하여 보여줍니다. 금주의 핵심 성과인 '회로 개선' 과정과 '차주 계획'을 로드맵 형태로 탐색해 보세요.
-                </p>
+
 
                 <!-- 회로 개선 Before & After -->
                 <div class="bg-white p-6 sm:p-7 rounded-2xl shadow-lg border border-slate-100">
