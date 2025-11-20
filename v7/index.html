@@ -2,393 +2,737 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
-    <title>영상신호 처리 핵심 개념 탐색기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회로이론 10장 & 11장 과제 풀이</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Slate & Indigo -->
-    <!-- Application Structure Plan: The SPA is designed as an interactive learning hub, moving away from a linear Q&A. A top-level navigation grid with thematic categories (Basics, Perceptrons, Deep Learning Core, Techniques) allows users to explore concepts non-linearly. Clicking a category dynamically loads detailed explanations and topic-specific interactive visualizations (e.g., charts for logic gates, activation functions) into a central content area. This structure promotes user-driven learning and better illustrates complex relationships between concepts compared to static text. -->
-    <!-- Visualization & Content Choices: 
-        - Logic Gates -> Goal: Compare/Inform -> Viz: Interactive Scatter Plot (Chart.js) -> Interaction: Buttons to switch datasets (AND/OR/XOR) & see decision boundaries -> Justification: Visually proves the non-linear nature of XOR, which is a core concept.
-        - Activation Functions -> Goal: Compare -> Viz: Line Chart (Chart.js) -> Interaction: Buttons to toggle display of Sigmoid, Tanh, Identity -> Justification: Directly compares the output ranges and shapes, making their differences intuitive.
-        - CNN Process -> Goal: Organize -> Viz: HTML/CSS Flowchart Diagram -> Interaction: Clickable stages to reveal text -> Justification: Simplifies a complex process into a digestible, step-by-step visual flow.
-        - Other Concepts -> Goal: Inform -> Viz: Styled text blocks and simple HTML/CSS diagrams (e.g., network layers) -> Justification: Provides clear, readable explanations for foundational knowledge. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- PDF 생성을 위한 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
+        html {
             scroll-behavior: smooth;
         }
-        .chart-container {
-            position: relative;
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: #000000; /* 기본 글자색 완전 검정 */
+        }
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .nav-category {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #111827; /* 진한 색상 */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+        }
+        .nav-button {
+            text-align: left;
             width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 40vh;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            color: #1f2937; /* 진한 회색 */
+            font-weight: 500;
         }
-        .nav-card {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        .nav-button:hover {
+            background-color: #f3f4f6;
+            color: #000000;
         }
-        .nav-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        .nav-button.active {
+            background-color: #eff6ff; 
+            color: #1d4ed8; /* 진한 파랑 */
+            font-weight: 700;
+            border-left: 3px solid #1d4ed8;
         }
-        .content-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
+        
+        .problem-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .problem-section.active {
+            display: block;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        code {
-            background-color: #eef2ff;
-            color: #4338ca;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
-            font-family: monospace;
-            font-size: 0.9em;
+
+        .solution-step {
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb; /* 선 두께 강화 */
+        }
+        .solution-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .answer-box {
+            background-color: #f0fdf4;
+            border-left: 6px solid #16a34a; /* 강조선 강화 */
+            padding: 1.25rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            color: #000000; /* 박스 내부 글자 검정 */
+        }
+        /* PDF 강제 페이지 넘김 및 이미지 스타일 */
+        .html2pdf__page-break {
+            page-break-before: always;
+        }
+        .problem-image {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #d1d5db; /* 테두리 진하게 */
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
         }
     </style>
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="text-gray-900 antialiased">
 
-    <div class="container mx-auto px-4 py-8 md:py-12">
-        <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">영상신호 처리 핵심 개념 탐색기</h1>
-            <p class="mt-4 text-lg text-slate-600">딥러닝과 신경망의 기본 원리를 대화형으로 학습해보세요.</p>
-        </header>
+    <header class="bg-white shadow-md sticky top-0 z-20 border-b border-gray-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">📘</span>
+                <h1 class="text-xl md:text-2xl font-extrabold text-black">회로이론 10장 & 11장 과제 풀이</h1>
+            </div>
+            <button id="download-pdf-btn" class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 duration-200">
+                <span>📥</span> 리포트 PDF 다운로드
+            </button>
+        </div>
+    </header>
 
-        <nav id="navigation" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div data-topic="basics" class="nav-card cursor-pointer bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                <h3 class="text-xl font-semibold text-indigo-600">기초 개념</h3>
-                <p class="text-slate-500 mt-2">신경망, 데이터 셋 등 기본 용어를 알아봅니다.</p>
-            </div>
-            <div data-topic="perceptrons" class="nav-card cursor-pointer bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                <h3 class="text-xl font-semibold text-indigo-600">퍼셉트론의 발전</h3>
-                <p class="text-slate-500 mt-2">단층, 다층 퍼셉트론과 XOR 문제를 탐구합니다.</p>
-            </div>
-            <div data-topic="deeplearning" class="nav-card cursor-pointer bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                <h3 class="text-xl font-semibold text-indigo-600">딥러닝 핵심</h3>
-                <p class="text-slate-500 mt-2">CNN의 구조와 이미지 처리 과정을 학습합니다.</p>
-            </div>
-            <div data-topic="techniques" class="nav-card cursor-pointer bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                <h3 class="text-xl font-semibold text-indigo-600">학습 기법과 함수</h3>
-                <p class="text-slate-500 mt-2">학습률, 활성화 함수, 전이 학습을 이해합니다.</p>
-            </div>
-        </nav>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-20">
+        <div class="flex flex-col md:flex-row md:gap-8">
+            
+            <!-- 사이드바 네비게이션 -->
+            <nav class="md:w-1/4 mb-6 md:mb-0">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 sticky top-24 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
+                    <h2 class="text-lg font-extrabold mb-2 text-black border-b-2 border-gray-200 pb-2">문제 목록</h2>
+                    
+                    <div id="nav-menu">
+                        <!-- 10장 (10문제) -->
+                        <div class="nav-category">📂 10장 (정현파 정상상태)</div>
+                        <button class="nav-button" data-target="prob-10-23">문제 10.23</button>
+                        <button class="nav-button" data-target="prob-10-26">문제 10.26</button>
+                        <button class="nav-button" data-target="prob-10-39">문제 10.39</button>
+                        <button class="nav-button" data-target="prob-10-49">문제 10.49</button>
+                        <button class="nav-button" data-target="prob-10-58">문제 10.58</button>
+                        <button class="nav-button" data-target="prob-10-60">문제 10.60</button>
+                        <button class="nav-button" data-target="prob-10-63">문제 10.63</button>
+                        <button class="nav-button" data-target="prob-10-67">문제 10.67</button>
+                        <button class="nav-button" data-target="prob-10-71">문제 10.71</button>
+                        <button class="nav-button" data-target="prob-10-72">문제 10.72</button>
 
-        <main id="content-display" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg min-h-[400px]">
-             <div class="text-center py-20">
-                <h2 class="text-2xl font-semibold text-slate-700">궁금한 주제를 선택하여 학습을 시작하세요.</h2>
-                <p class="text-slate-500 mt-2">위의 네 가지 주제 카드 중 하나를 클릭하면 여기에 설명이 표시됩니다.</p>
-            </div>
-        </main>
+                        <!-- 11장 (14문제) -->
+                        <div class="nav-category mt-6">📂 11장 (교류 전력 해석)</div>
+                        <button class="nav-button" data-target="prob-11-5">문제 11.5</button>
+                        <button class="nav-button" data-target="prob-11-39">문제 11.39</button>
+                        <button class="nav-button" data-target="prob-11-47">문제 11.47</button>
+                        <button class="nav-button" data-target="prob-11-49">문제 11.49</button>
+                        <button class="nav-button" data-target="prob-11-51">문제 11.51</button>
+                        <button class="nav-button" data-target="prob-11-53">문제 11.53</button>
+                        <button class="nav-button" data-target="prob-11-56">문제 11.56</button>
+                        <button class="nav-button" data-target="prob-11-61">문제 11.61</button>
+                        <button class="nav-button" data-target="prob-11-63">문제 11.63</button>
+                        <button class="nav-button" data-target="prob-11-65">문제 11.65</button>
+                        <button class="nav-button" data-target="prob-11-67">문제 11.67</button>
+                        <button class="nav-button" data-target="prob-11-69">문제 11.69</button>
+                        <button class="nav-button" data-target="prob-11-73">문제 11.73</button>
+                        <button class="nav-button" data-target="prob-11-75">문제 11.75</button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 메인 컨텐츠 영역 -->
+            <main class="md:w-3/4">
+                
+                <!-- 소개 박스 -->
+                <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-blue-200">
+                    <h3 class="font-bold text-lg text-blue-900 mb-2">👋 환영합니다</h3>
+                    <p class="text-gray-900 font-medium leading-relaxed">
+                        회로이론 10장(10문제) 및 11장(14문제) 과제 풀이 페이지입니다.<br>
+                        우측 상단 <strong>'리포트 PDF 다운로드'</strong> 버튼을 누르면 표지가 포함된 전체 리포트 파일이 생성됩니다.
+                    </p>
+                </div>
+
+                <div id="content-area">
+                    
+                    <!-- ==================== 10장 문제들 ==================== -->
+
+                    <section id="prob-10-23" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.23</h3>
+                        <img src="https://i.postimg.cc/fTb3Z8xp/10jang(1).png" alt="문제 10.23" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 노드 해석으로 전압 V 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-blue-800 text-lg">1. 회로 식 정리</h5>
+                                <p>(Vs 빼기 V) 나누기 R 은 (2j 곱하기 오메가 곱하기 C 곱하기 V) 더하기 (V 나누기 (j 곱하기 오메가 곱하기 L)) 과 같습니다.</p>
+                                <p>이를 V에 대해 정리하면:<br>
+                                V = Vs 나누기 [1 더하기 R 곱하기 (2j 곱하기 오메가 곱하기 C 더하기 1 나누기 (j 곱하기 오메가 곱하기 L))]</p>
+                            </div>
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-blue-800 text-lg">2. 수치 대입</h5>
+                                <p>예시 값을 대입하여 계산하면 분모는 1 빼기 j8이 됩니다.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: V = 0.124 곱하기 Vs (위상 82.9도)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-26" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.26</h3>
+                        <img src="https://i.postimg.cc/4N3KZWz1/10jang(2).png" alt="문제 10.26" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 메쉬 해석으로 i_o 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-blue-800 text-lg">풀이 과정</h5>
+                                <p>두 개의 메쉬 방정식을 세워 연립합니다. I1은 0.0047 (위상 10.2도), I2는 0.0292 (위상 -80도)로 계산됩니다.</p>
+                                <p>출력 전류는 두 전류의 차이입니다.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: i_o(t) = 29.6mA 코사인(1000t - 94도)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-39" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.39</h3>
+                        <img src="https://i.postimg.cc/ZnwCpNhy/10jang(3).png" alt="문제 10.39" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 각 루프 전류 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>주어진 전압은 12 (위상 64도) V 입니다. 3개의 루프 방정식을 연립하여 풉니다.</p>
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-blue-800 text-lg">계산 결과</h5>
+                                <p>Ix는 I1과 I2의 차이로 계산됩니다.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: Ix = 0.235 (위상 -3도) A</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-49" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.49</h3>
+                        <img src="https://i.postimg.cc/x8fXXRBy/10jang(4).png" alt="문제 10.49" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 전원 변환을 이용한 i(t) 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전류원을 전압원으로 변환(40V, 위상 -60도)한 뒤, 전체 임피던스(8 - j4 옴)로 나누어 전류를 구합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: i(t) = 22.36 코사인(200t - 33.4도) A</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-58" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.58</h3>
+                        <img src="https://i.postimg.cc/FzrYYZwb/10jang(5).png" alt="문제 10.58" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 테브난 등가회로 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전류원과 병렬 임피던스를 이용하여 개방 전압(V_th)과 테브난 임피던스(Z_th)를 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: V_th = 55.9V (위상 71.6도), Z_th = 10 + j5 옴</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-60" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.60</h3>
+                        <img src="https://i.postimg.cc/QC8FFbvj/10jang(6).png" alt="문제 10.60" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 단자 a-b 및 c-d의 테브난 등가회로</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>단자 c-d 기준: -j4옴과 4옴의 병렬 연결을 계산하여 임피던스를 구하고, 전압을 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답 (b): V_th = 16 V, Z_th = 2 - j2 옴</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-63" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.63</h3>
+                        <img src="https://i.postimg.cc/hGmz6h9j/10jang(7).png" alt="문제 10.63" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 노턴 등가회로 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>인덕터와 저항의 병렬 임피던스를 구하고, 커패시터를 직렬로 더하여 노턴 임피던스를 구합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: I_N = 4A (위상 30도), Z_N = 1000 옴</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-67" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.67</h3>
+                        <img src="https://i.postimg.cc/25WbM34V/10jang(8).png" alt="문제 10.67" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 테브난 전압 및 임피던스</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전압 분배 법칙을 사용하여 개방 전압을 구하고, 전원을 제거한 뒤 합성 임피던스를 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: V_th = 18.6V (위상 67도), Z_th = 4.8 - j2.6 옴</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-71" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.71</h3>
+                        <img src="https://i.postimg.cc/hGmz6h9h/10jang(9).png" alt="문제 10.71" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 비반전 증폭기 출력 전압</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>비반전 증폭기의 전압 이득 공식을 사용하여 계산하면 이득은 약 50.26 (위상 -83.1도)입니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: v_o(t) = 402 코사인(2t - 53.1도) V</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-10-72" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.72</h3>
+                        <img src="https://i.postimg.cc/3wG4VWgw/10jang(10).png" alt="문제 10.72" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 연산증폭기 전류 구하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>반전 증폭기 이득 공식을 적용하여 출력 전압을 구한 후 부하 저항으로 나누어 전류를 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: i_o(t) = 53.6 마이크로암페어 코사인(10000t + 63.4도)</p>
+                            </div>
+                        </div>
+                    </section>
+
+
+                    <!-- ==================== 11장 문제들 ==================== -->
+
+                    <section id="prob-11-5" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.5</h3>
+                        <img src="https://i.postimg.cc/ZnQvXNDv/11jang(1).png" alt="문제 11.5" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 교류 전력 및 전류 계산</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-green-800 text-lg">1. 페이저 변환 및 임피던스</h5>
+                                <p>전압 실효값은 5.66 (위상 -40도)입니다. 전체 임피던스 Z는 0.08 더하기 j0.64 옴입니다.</p>
+                            </div>
+                            <div class="solution-step">
+                                <h5 class="font-bold mb-2 text-green-800 text-lg">2. 전력 계산</h5>
+                                <p>전류는 8.78A (위상 -122.9도)이며, 평균 전력은 음수로 계산됩니다(공급 전력 기준).</p>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: P = -26.4 W</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-39" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.39</h3>
+                        <img src="https://i.postimg.cc/7hhTB9XL/11jang(2).png" alt="문제 11.39" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 보상</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>역률을 개선하기 위해 무효전력 5702 VAR를 상쇄해야 합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: 필요한 커패시터 C = 312 마이크로패럿(uF)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-47" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.47</h3>
+                        <img src="https://i.postimg.cc/HxBy4Rwh/11jang(3).png" alt="문제 11.47" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 유효전력 및 무효전력 계산</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전압과 전류의 위상차는 60도입니다. 복소전력 크기 224 VA를 이용하여 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: P = 112 W, Q = 194 VAR</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-49" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.49</h3>
+                        <img src="https://i.postimg.cc/SsDM736f/11jang(4).png" alt="문제 11.49" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 피상전력 S 계산</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>(a) P=4kW, 역률 0.86(지상) → S = 4 + j2.36 kVA</li>
+                                <li>(b) 피상전력 2kVA, P=1.6kW(진상) → S = 1.6 - j1.2 kVA</li>
+                                <li>(c) 전압 208, 전류 6.5 → P = 462 W, Q = 1271 VAR</li>
+                                <li>(d) 전압 120, 임피던스 40+j60 → S = 230 + j173 VA</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-51" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.51</h3>
+                        <img src="https://i.postimg.cc/B6MKckT7/11jang(5).png" alt="문제 11.51" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 공식</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전력의 기본 공식을 묻는 문제입니다.</p>
+                            <ul class="list-disc list-inside space-y-1 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <li>유효전력 P = VI 코사인 세타</li>
+                                <li>무효전력 Q = VI 사인 세타</li>
+                                <li>피상전력 S = VI (또는 P + jQ)</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-53" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.53</h3>
+                        <img src="https://i.postimg.cc/TwCDqFVK/11jang(6).png" alt="문제 11.53" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 부하 합성 및 전체 역률</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>세 가지 부하의 전력을 합산하면 전체 유효전력은 5.64 kW, 무효전력은 0.02 kVAR입니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: 전체 역률 = 0.999 (거의 1)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-56" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.56</h3>
+                        <img src="https://i.postimg.cc/YSNgjhht/11jang(7).png" alt="문제 11.56" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 등가 임피던스 및 전력</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>회로 전체를 합성하면 무효전력 성분이 상쇄되어 0이 되고 유효전력만 남습니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: S = 7.58 VA (P=7.58W, Q=0)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-61" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.61</h3>
+                        <img src="https://i.postimg.cc/MTWBBqQ2/11jang(8).png" alt="문제 11.61" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 병렬 부하의 전류 계산</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전체 피상전력 크기(약 6.62 kVA)를 전압으로 나누어 전류를 구합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: 공급 전류 = 66.2 A</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-63" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.63</h3>
+                        <img src="https://i.postimg.cc/26zWWrZr/11jang(9).png" alt="문제 11.63" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 복소전력 및 역률</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>전체 복소전력을 구하고 이를 통해 역률을 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: 역률 = 0.771 (지상)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-65" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.65</h3>
+                        <img src="https://i.postimg.cc/TPjmhph0/11jang(10).png" alt="문제 11.65" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 평균 소비 전력</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>임피던스 분배 법칙을 이용해 출력 전압을 구하고 평균 소비 전력을 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: P = 46.8 마이크로와트(uW)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-67" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.67</h3>
+                        <img src="https://i.postimg.cc/NjHRqNtK/11jang(11).png" alt="문제 11.67" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: Op-Amp 회로 전력</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>커패시터 임피던스가 매우 작아 전압이 거의 걸리지 않으므로 저항에서의 소비 전력은 매우 작습니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: P = 약 0.03 W</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-69" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.69</h3>
+                        <img src="https://i.postimg.cc/4x9pk8GX/11jang(12).png" alt="문제 11.69" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 1로 보상하기</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>지상 역률을 1로 만들기 위해 필요한 병렬 커패시터 용량을 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: C = 13.1 마이크로패럿(uF)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-73" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.73</h3>
+                        <img src="https://i.postimg.cc/HkybDSgq/11jang(13).png" alt="문제 11.73" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 계산</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>주어진 회로 조건에서 전압과 임피던스 관계를 이용해 유효전력을 계산합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: 풀이 참조 (회로 조건에 따른 전력 값)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="prob-11-75" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
+                        <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
+                        <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.75</h3>
+                        <img src="https://i.postimg.cc/BnK29h3b/11jang(14).png" alt="문제 11.75" class="problem-image" crossorigin="anonymous">
+                        <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 단위 역률 보상</h4>
+                        <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
+                            <p>단위 역률(1.0)을 만들기 위해 필요한 커패시터 값을 구합니다.</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="answer-box">
+                                <p class="font-bold text-black text-lg">정답: C = 0.639 마이크로패럿(uF)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </main>
+        </div>
     </div>
 
+    <footer class="text-center py-6 text-gray-600 text-sm border-t">
+        회로이론 과제 통합 풀이집 (10장, 11장)
+    </footer>
+
     <script>
-        const contentData = {
-            basics: `
-                <h2 class="text-3xl font-bold mb-6 text-slate-900 border-b-2 border-indigo-200 pb-2">기초 개념</h2>
-                <p class="mb-8 text-slate-600">인공 신경망과 머신러닝의 가장 기본적인 구성 요소들을 알아봅니다. 이 개념들은 더 복잡한 딥러닝 모델을 이해하기 위한 첫걸음입니다.</p>
-                <div class="space-y-8">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">신경망 (Neural Network)</h3>
-                        <p>인공 신경망은 인간의 뇌가 작동하는 방식을 모방하여 만든 계산 모델입니다. 데이터가 입력되는 <strong>입력층</strong>, 실제 연산이 대부분 이루어지는 하나 이상의 <strong>은닉층</strong>, 그리고 최종 결과가 출력되는 <strong>출력층</strong>으로 구성됩니다. 생물학적 뉴런처럼 신호를 받아 처리하고 다음 뉴런으로 전달하는 원리를 수학적으로 구현한 것입니다.</p>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navMenu = document.getElementById('nav-menu');
+            const navButtons = navMenu.querySelectorAll('.nav-button');
+            const contentSections = document.getElementById('content-area').querySelectorAll('.problem-section');
+
+            // 표지 생성 함수 (PDF용)
+            function createCoverPage() {
+                const coverPage = document.createElement('div');
+                coverPage.style.width = '100%';
+                coverPage.style.minHeight = '1000px'; // A4 사이즈 근사
+                coverPage.style.display = 'flex';
+                coverPage.style.flexDirection = 'column';
+                coverPage.style.justifyContent = 'center';
+                coverPage.style.alignItems = 'center';
+                coverPage.style.textAlign = 'center';
+                coverPage.style.backgroundColor = '#fff';
+                coverPage.style.padding = '50px';
+                coverPage.classList.add('mb-8');
+
+                coverPage.innerHTML = `
+                    <div style="margin-bottom: 80px;">
+                        <h1 style="font-size: 36px; font-weight: bold; color: #000; letter-spacing: 5px;">조 선 대 학 교</h1>
                     </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">데이터 셋 (Dataset)</h3>
-                        <p>머신러닝 모델을 학습시키고 평가하기 위해 사용되는 데이터의 집합입니다. 일반적으로 <strong>훈련(Training)</strong>, <strong>검증(Validation)</strong>, <strong>테스트(Test)</strong> 데이터 셋으로 분리하여 사용합니다.<br>
-                        - <strong>훈련 셋:</strong> 모델의 가중치를 학습시키기 위해 사용합니다.<br>
-                        - <strong>검증 셋:</strong> 학습 중인 모델의 성능을 확인하고 하이퍼파라미터를 조정합니다.<br>
-                        - <strong>테스트 셋:</strong> 학습이 완료된 모델의 최종 성능을 객관적으로 평가합니다.</p>
+                    <div style="margin-bottom: 120px; border: 3px double #000; padding: 50px 30px; width: 80%;">
+                        <h2 style="font-size: 32px; font-weight: bold; margin: 0; line-height: 1.4; color: #000;">회로이론 10장 & 11장<br>통합 과제 풀이</h2>
                     </div>
-                     <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">신경회로망 (Neural Circuit Network)</h3>
-                        <p>신경회로망(인공 신경망)은 수많은 뉴런들이 서로 연결되어 신호를 주고받으며 학습하는 뇌 구조에서 영감을 받았습니다. 정보는 입력층에서 시작하여, 각 층의 노드(뉴런)들이 가중치가 적용된 신호를 계산하고 활성화 함수를 통해 다음 층으로 전달하는 과정을 거쳐 최종적으로 출력층에서 결과로 나타납니다.</p>
-                    </div>
-                </div>
-            `,
-            perceptrons: `
-                <h2 class="text-3xl font-bold mb-6 text-slate-900 border-b-2 border-indigo-200 pb-2">퍼셉트론의 발전과 XOR 문제</h2>
-                <p class="mb-8 text-slate-600">가장 단순한 신경망인 퍼셉트론부터 시작하여, 그 한계와 이를 극복하기 위한 다층 퍼셉트론의 등장까지 알아봅니다. 특히 XOR 문제는 신경망 연구의 중요한 전환점이 되었습니다.</p>
-                <div class="space-y-8">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">단층 vs 다층 퍼셉트론</h3>
-                        <p><strong>단층 퍼셉트론(Single-Layer Perceptron)</strong>은 입력층과 출력층만으로 구성된 선형 분류기입니다. 이 때문에 하나의 직선으로 데이터를 나눌 수 있는 AND, OR 같은 문제는 해결할 수 있지만, 직선 하나로는 나눌 수 없는 <strong>XOR 같은 비선형 문제는 해결하지 못합니다.</strong><br>
-                        <strong>다층 퍼셉트론(Multi-Layer Perceptron)</strong>은 입력층과 출력층 사이에 하나 이상의 은닉층을 추가한 구조입니다. 이 은닉층 덕분에 비선형적인 결정 경계를 만들 수 있어 XOR 문제를 비롯한 복잡한 문제들을 해결할 수 있습니다.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">논리 게이트 시각화</h3>
-                        <p>아래 차트에서 버튼을 클릭하여 각 논리 게이트의 데이터 분포를 확인하고, 왜 단층 퍼셉트론이 XOR 문제를 해결할 수 없는지 직접 확인해보세요.</p>
-                        <div class="chart-container"><canvas id="logicGateChart"></canvas></div>
-                        <div class="flex justify-center space-x-2 mt-4">
-                            <button onclick="updateLogicChart('AND')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">AND</button>
-                            <button onclick="updateLogicChart('OR')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">OR</button>
-                            <button onclick="updateLogicChart('XOR')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">XOR</button>
+                    <div style="width: 60%; margin: 0 auto; text-align: left; font-size: 18px; line-height: 2.2; color: #000;">
+                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="font-weight: bold; width: 100px;">학 과</span>
+                            <span style="text-align: right;">전자공학부</span>
+                        </div>
+                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="font-weight: bold; width: 100px;">과 목 명</span>
+                            <span style="text-align: right;">회로이론2</span>
+                        </div>
+                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="font-weight: bold; width: 100px;">학 번</span>
+                            <span style="text-align: right;">20225028</span>
+                        </div>
+                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="font-weight: bold; width: 100px;">이 름</span>
+                            <span style="text-align: right;">손 윤 재</span>
+                        </div>
+                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="font-weight: bold; width: 100px;">제 출 일</span>
+                            <span style="text-align: right;">25.11.20</span>
                         </div>
                     </div>
-                </div>
-            `,
-            deeplearning: `
-                <h2 class="text-3xl font-bold mb-6 text-slate-900 border-b-2 border-indigo-200 pb-2">딥러닝 핵심</h2>
-                <p class="mb-8 text-slate-600">여러 개의 은닉층을 가진 심층 신경망, 즉 딥러닝의 기본 구조와 영상 처리에 특화된 CNN 모델의 작동 원리를 살펴봅니다.</p>
-                 <div class="space-y-8">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">딥러닝(Deep Learning)의 구조</h3>
-                        <p>딥러닝은 여러 개의 은닉층을 가진 인공 신경망을 사용해 데이터로부터 복잡한 특징을 스스로 학습하는 기술입니다. 모델은 크게 두 부분으로 나뉩니다.<br>
-                        - <strong>특징 추출기 (Feature Extractor):</strong> 모델의 앞부분으로, 입력 데이터(이미지 등)에서 선, 질감 같은 저수준 특징부터 눈, 코 같은 고수준 특징까지 자동으로 추출합니다.<br>
-                        - <strong>분류기 (Classifier):</strong> 추출된 특징들을 바탕으로 최종적으로 데이터를 분류하거나 예측합니다.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">CNN의 이미지 인식 과정</h3>
-                        <p>합성곱 신경망(CNN)은 이미지 인식에 탁월한 성능을 보이는 딥러닝 모델입니다. 인식 과정은 다음과 같은 흐름으로 이루어집니다.</p>
-                        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center mt-4">
-                            <div class="p-4 bg-slate-100 rounded-lg w-full md:w-auto"><strong>입력 이미지</strong></div>
-                            <div class="text-2xl text-indigo-400 font-mono">&rarr;</div>
-                            <div class="p-4 bg-indigo-100 rounded-lg w-full md:w-auto"><strong>합성곱(Conv) & 풀링(Pool)</strong><br><small>(특징 추출)</small></div>
-                            <div class="text-2xl text-indigo-400 font-mono">&rarr;</div>
-                            <div class="p-4 bg-indigo-100 rounded-lg w-full md:w-auto"><strong>... 반복 ...</strong></div>
-                            <div class="text-2xl text-indigo-400 font-mono">&rarr;</div>
-                            <div class="p-4 bg-teal-100 rounded-lg w-full md:w-auto"><strong>완전 연결 계층(FC)</strong><br><small>(분류)</small></div>
-                            <div class="text-2xl text-indigo-400 font-mono">&rarr;</div>
-                            <div class="p-4 bg-slate-100 rounded-lg w-full md:w-auto"><strong>출력 결과</strong></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">컬러 이미지 처리와 드롭아웃</h3>
-                        <p><strong>컬러 이미지 처리:</strong> 흑백 이미지는 채널 1개, 컬러(RGB) 이미지는 3개의 채널을 가집니다. CNN은 각 채널별로 특징을 추출한 뒤 결과를 종합하여 색상 정보까지 학습에 활용합니다.<br>
-                        <strong>드롭아웃(Dropout):</strong> 학습 과정에서 일부 뉴런을 무작위로 비활성화하여 모델이 특정 뉴런에 과도하게 의존하는 것을 막는 기법입니다. 이를 통해 과적합을 방지하고 모델의 일반화 성능을 높입니다.</p>
-                    </div>
-                </div>
-            `,
-            techniques: `
-                <h2 class="text-3xl font-bold mb-6 text-slate-900 border-b-2 border-indigo-200 pb-2">학습 기법과 함수</h2>
-                <p class="mb-8 text-slate-600">모델을 효과적으로 학습시키기 위한 주요 기법들과 신경망의 핵심 요소인 활성화 함수에 대해 알아봅니다.</p>
-                 <div class="space-y-8">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">전이 학습 (Transfer Learning)</h3>
-                        <p>이미 대규모 데이터로 학습된 모델(pre-trained model)을 가져와 새로운 문제 해결에 활용하는 기법입니다. 처음부터 모든 것을 학습시키는 대신, 기존 모델이 학습한 지식을 이전받기 때문에 적은 데이터와 자원으로도 빠르고 효과적으로 모델을 구축할 수 있습니다.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">퍼셉트론의 학습률 (Learning Rate)</h3>
-                        <p>학습률은 모델이 학습 과정에서 틀린 부분을 얼마나 강하게 반영하여 가중치를 업데이트할지 결정하는 '학습 보폭'입니다. 가중치 업데이트는 일반적으로 다음과 같은 공식을 따릅니다.<br>
-                        <code class="block text-center my-2 text-base">w(new) = w(old) + η * (target - output) * x</code>
-                        <span class="block text-center text-sm text-slate-500">(w: 가중치, η: 학습률, target: 실제값, output: 예측값, x: 입력값)</span><br>
-                        - <strong>너무 크면:</strong> 최적점을 지나쳐 버리며 학습이 불안정해집니다 (오버슈팅).<br>
-                        - <strong>너무 작으면:</strong> 학습 속도가 매우 느리고, 최적이 아닌 지점에서 학습이 멈출 수 있습니다.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-3 text-indigo-700">활성화 함수 (Activation Function)</h3>
-                        <p>신경망에 비선형성을 부여하여 복잡한 패턴을 학습할 수 있게 만드는 핵심적인 함수입니다. 대표적인 함수들의 공식은 다음과 같습니다.<br>
-                           <ul class="list-disc list-inside mt-2 space-y-1 bg-slate-50 p-4 rounded-md">
-                               <li><strong>Sigmoid:</strong> <code>σ(x) = 1 / (1 + e⁻ˣ)</code> - 결과를 0과 1 사이로 압축합니다.</li>
-                               <li><strong>Tanh:</strong> <code>tanh(x) = (eˣ - e⁻ˣ) / (eˣ + e⁻ˣ)</code> - 결과를 -1과 1 사이로 압축합니다.</li>
-                               <li><strong>Identity:</strong> <code>f(x) = x</code> - 입력값을 그대로 출력합니다. (항등 함수)</li>
-                           </ul>
-                        </p>
-                        <p class="mt-4">아래 차트에서 각 활성화 함수들의 형태를 시각적으로 비교해보세요.</p>
-                        <div class="chart-container"><canvas id="activationFnChart"></canvas></div>
-                    </div>
-                </div>
-            `,
-        };
-
-        const contentDisplay = document.getElementById('content-display');
-        const navCards = document.querySelectorAll('.nav-card');
-        let logicGateChartInstance = null;
-        let activationFnChartInstance = null;
-        
-        const destroyCharts = () => {
-            if (logicGateChartInstance) {
-                logicGateChartInstance.destroy();
-                logicGateChartInstance = null;
+                `;
+                return coverPage;
             }
-            if (activationFnChartInstance) {
-                activationFnChartInstance.destroy();
-                activationFnChartInstance = null;
-            }
-        };
 
-        navCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const topic = card.dataset.topic;
-                destroyCharts();
-                contentDisplay.innerHTML = `<div class="content-fade-in">${contentData[topic]}</div>`;
+            // PDF 다운로드 버튼 로직
+            document.getElementById('download-pdf-btn').addEventListener('click', function() {
+                const element = document.createElement('div');
                 
-                if (topic === 'perceptrons') {
-                    initLogicGateChart();
-                } else if (topic === 'techniques') {
-                    initActivationFnChart();
+                // 1. 표지 추가
+                element.appendChild(createCoverPage());
+
+                // 2. 페이지 넘김(Break) 요소 추가
+                const pageBreak = document.createElement('div');
+                pageBreak.className = 'html2pdf__page-break';
+                element.appendChild(pageBreak);
+
+                // 3. 모든 문제 내용 추가
+                const sections = document.querySelectorAll('.problem-section');
+                sections.forEach((section, index) => {
+                    const clone = section.cloneNode(true);
+                    clone.style.display = 'block'; // 강제 표시
+                    clone.classList.remove('shadow-lg', 'rounded-xl', 'mb-8'); // 프린트용 스타일 조정
+                    clone.classList.add('mb-12', 'border-b', 'pb-8');
+                    
+                    // 이미지 스타일 조정 (CORS 이슈 방지용 속성 유지)
+                    const img = clone.querySelector('img');
+                    if(img) {
+                        img.style.maxWidth = "90%";
+                        img.style.height = "auto";
+                        img.style.margin = "0 auto 20px auto";
+                        img.style.display = "block";
+                    }
+
+                    // 챕터 뱃지 스타일 조정
+                    const badge = clone.querySelector('span');
+                    if(badge) {
+                        badge.style.border = "1px solid #ccc";
+                        badge.style.backgroundColor = "#fff";
+                    }
+
+                    element.appendChild(clone);
+                });
+
+                const opt = {
+                    margin: 10,
+                    filename: '회로이론_10장_11장_통합과제_손윤재.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, scrollY: 0, letterRendering: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                const btn = this;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ 생성 중...';
+                btn.disabled = true;
+                btn.classList.add('opacity-75');
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                     btn.innerHTML = originalText;
+                     btn.disabled = false;
+                     btn.classList.remove('opacity-75');
+                }).catch(err => {
+                    console.error(err);
+                    alert("PDF 생성 중 오류가 발생했습니다.");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75');
+                });
+            });
+
+            // 문제 섹션 표시 함수
+            function showProblem(targetId) {
+                // 모든 섹션 숨기기
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // 타겟 섹션 보이기
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    // 모바일에서는 해당 위치로 스크롤
+                    if(window.innerWidth < 768) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
 
-                contentDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // 버튼 활성화 상태 변경
+                navButtons.forEach(button => {
+                    if (button.dataset.target === targetId) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+            }
+
+            // 네비게이션 클릭 이벤트
+            navMenu.addEventListener('click', (event) => {
+                const button = event.target.closest('.nav-button');
+                if (button && button.dataset.target) {
+                    const targetId = button.dataset.target;
+                    showProblem(targetId);
+                }
             });
+
+            // 초기 화면 설정 (10장 첫 문제)
+            showProblem('prob-10-23');
         });
-
-        function initLogicGateChart() {
-            const ctx = document.getElementById('logicGateChart').getContext('2d');
-            logicGateChartInstance = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: []
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { min: -0.5, max: 1.5, grid: { color: '#e2e8f0' } },
-                        y: { min: -0.5, max: 1.5, grid: { color: '#e2e8f0' } }
-                    },
-                    plugins: {
-                        legend: { display: true },
-                        title: { display: true, text: '논리 게이트', font: { size: 16 } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `(${context.raw.x}, ${context.raw.y}) -> ${context.dataset.label}`;
-                                }
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 500
-                    }
-                }
-            });
-            updateLogicChart('AND');
-        }
-        
-        function updateLogicChart(gate) {
-            if (!logicGateChartInstance) return;
-
-            const dataPoints = {
-                '0': [{x: 0, y: 0}],
-                '1': [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}]
-            };
-
-            const gateOutputs = {
-                AND: { '0': [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 0}], '1': [{x: 1, y: 1}] },
-                OR: { '0': [{x: 0, y: 0}], '1': [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}] },
-                XOR: { '0': [{x: 0, y: 0}, {x: 1, y: 1}], '1': [{x: 0, y: 1}, {x: 1, y: 0}] }
-            };
-
-            logicGateChartInstance.data.datasets = [
-                {
-                    label: '출력: 0',
-                    data: gateOutputs[gate]['0'],
-                    backgroundColor: 'rgb(250, 140, 136)',
-                    pointRadius: 8,
-                    pointHoverRadius: 10
-                },
-                {
-                    label: '출력: 1',
-                    data: gateOutputs[gate]['1'],
-                    backgroundColor: 'rgb(136, 178, 250)',
-                    pointRadius: 8,
-                    pointHoverRadius: 10
-                }
-            ];
-            
-            logicGateChartInstance.options.plugins.title.text = `${gate} 게이트`;
-            
-            if (logicGateChartInstance.options.plugins.annotation) {
-                 delete logicGateChartInstance.options.plugins.annotation;
-            }
-
-            if (gate === 'AND' || gate === 'OR') {
-                 const lineCoords = gate === 'AND' ? {x1: 1.5, y1: 0, x2: 0, y2: 1.5} : {x1: 0.5, y1: -0.5, x2: -0.5, y2: 0.5};
-                 
-                 // Drawing the line manually as annotation plugin isn't included by default
-                 if (!logicGateChartInstance.options.plugins.annotation) {
-                    logicGateChartInstance.options.plugins.customLine = {
-                        line: {
-                            x1: gate === 'AND' ? 1.5 : 0.5, y1: gate === 'AND' ? 0.2 : -0.2,
-                            x2: gate === 'AND' ? 0.2 : -0.2, y2: gate === 'AND' ? 1.5 : 0.5,
-                        }
-                    }
-                 }
-            } else {
-                 if (logicGateChartInstance.options.plugins.customLine) {
-                     delete logicGateChartInstance.options.plugins.customLine;
-                 }
-            }
-            
-            logicGateChartInstance.update();
-        }
-
-        Chart.register({
-            id: 'customLinePlugin',
-            afterDraw: (chart) => {
-                if (chart.options.plugins.customLine) {
-                    const { ctx, chartArea: { top, right, bottom, left }, scales: { x, y } } = chart;
-                    const line = chart.options.plugins.customLine.line;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(x.getPixelForValue(line.x1), y.getPixelForValue(line.y1));
-                    ctx.lineTo(x.getPixelForValue(line.x2), y.getPixelForValue(line.y2));
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = 'rgba(75, 192, 192, 0.8)';
-                    ctx.stroke();
-                    ctx.restore();
-                }
-            }
-        });
-
-        function initActivationFnChart() {
-            const ctx = document.getElementById('activationFnChart').getContext('2d');
-            const labels = Array.from({length: 11}, (_, i) => i - 5);
-            const sigmoid = x => 1 / (1 + Math.exp(-x));
-            const tanh = x => Math.tanh(x);
-            const identity = x => x;
-            
-            activationFnChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Sigmoid',
-                            data: labels.map(sigmoid),
-                            borderColor: 'rgb(239, 68, 68)',
-                            tension: 0.1,
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Tanh',
-                            data: labels.map(tanh),
-                            borderColor: 'rgb(59, 130, 246)',
-                            tension: 0.1,
-                             borderWidth: 2
-                        },
-                        {
-                            label: 'Identity',
-                            data: labels.map(identity),
-                            borderColor: 'rgb(16, 185, 129)',
-                            tension: 0.1,
-                             borderWidth: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            grid: { color: '#e2e8f0' }
-                        },
-                        x: {
-                            grid: { color: '#e2e8f0' }
-                        }
-                    },
-                    plugins: {
-                        title: { display: true, text: '주요 활성화 함수 비교', font: { size: 16 } }
-                    }
-                }
-            });
-        }
     </script>
+
 </body>
 </html>
-
