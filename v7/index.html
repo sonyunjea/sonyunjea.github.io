@@ -46,6 +46,23 @@
         .html2pdf__page-break {
             page-break-before: always;
         }
+
+        /* PDF 전용 래퍼/표지 기본 스타일 */
+        #pdf-wrapper {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm 18mm;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+        .pdf-cover {
+            min-height: 250mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
     </style>
     <!-- Chosen Palette: Academic Blue & Neutral -->
     <!-- Application Structure Plan: SPA 구조 유지. PDF 생성 시 첫 페이지에 조선대학교 리포트 양식 표지 추가 기능 구현. -->
@@ -89,11 +106,16 @@
 
             <main class="md:w-3/4">
                 <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-                    <p class="text-gray-700">이 애플리케이션은 '회로이론 9장'의 연습문제 풀이를 탐색하기 쉽게 재구성한 것입니다. 왼쪽 탐색 메뉴에서 문제 번호를 클릭하면 해당 문제의 상세 풀이, 회로도, 그리고 최종 정답을 즉시 확인할 수 있습니다. 상단의 <strong>리포트 표지 포함 PDF 다운로드</strong> 버튼을 누르면 표지와 함께 전체 해설을 파일로 저장할 수 있습니다.</p>
+                    <p class="text-gray-700">
+                        이 애플리케이션은 '회로이론 9장'의 연습문제 풀이를 탐색하기 쉽게 재구성한 것입니다.
+                        왼쪽 탐색 메뉴에서 문제 번호를 클릭하면 해당 문제의 상세 풀이, 회로도, 그리고 최종 정답을 즉시 확인할 수 있습니다.
+                        상단의 <strong>리포트 표지 포함 PDF 다운로드</strong> 버튼을 누르면 표지와 함께 전체 해설을 파일로 저장할 수 있습니다.
+                    </p>
                 </div>
 
                 <div id="content-area">
                     
+                    <!-- ===== 문제 9.37 ===== -->
                     <section id="problem-9-37" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.37</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 어드미턴스 Y 구하기</h4>
@@ -122,7 +144,8 @@
                         </div>
                     </section>
 
-                    <section id="problem-9-41" class="problem-section bg-white p-6 md:p-8 rounded-lg rounded-lg shadow-lg mb-6">
+                    <!-- ===== 문제 9.41 ===== -->
+                    <section id="problem-9-41" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.41</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: RLC 회로 커패시터 전압 v(t) 구하기</h4>
                         <img src="https://i.postimg.cc/QVZxpMWk/9jang(2).png" alt="문제 9.41 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
@@ -153,8 +176,8 @@
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">5. 크기와 위상 변환</h5>
-                                <p class="text-gray-700">크기: 루트(6^2 + (-2)^2) = 6.32 V</p>
-                                <p class="text-gray-700">위상: 아크탄젠트(-2/6) = -18.4도</p>
+                                <p class="text-gray-700">크기: √(6² + (-2)²) = 6.32 V</p>
+                                <p class="text-gray-700">위상: arctan(-2/6) ≈ -18.4도</p>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -165,7 +188,8 @@
                         </div>
                     </section>
 
-                    <section id="problem-9-43" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
+                    <!-- ===== 문제 9.43 ===== -->
+                    <section id="problem-9-43" class="problem-section bg-white p-6 md:p8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.43</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 전류 I_0 구하기</h4>
                         <img src="https://i.postimg.cc/vBjmZhYv/9jang(3).png" alt="문제 9.43 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
@@ -192,7 +216,7 @@
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">4. 전류 I_0 계산</h5>
                                 <p class="text-gray-700">I_0 = 전원 / Z_tot = 60 / (105.17 + j57.93)</p>
-                                <p class="text-gray-700">I_0 = 0.500 각도 -28.8도 A</p>
+                                <p class="text-gray-700">I_0 ≈ 0.500 각도 -28.8도 A</p>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -203,6 +227,7 @@
                         </div>
                     </section>
 
+                    <!-- ===== 문제 9.47 ===== -->
                     <section id="problem-9-47" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.47</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 전원 전류 i_s(t) 구하기</h4>
@@ -212,27 +237,26 @@
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 소자 임피던스</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>인덕터(2mH): j(2000)(0.002) = j4 옴</li>
-                                    <li>커패시터(50uF): 1 / (j * 2000 * 50 * 10^-6) = -j10 옴</li>
-                                    <li>저항: 20 옴</li>
-                                    <li>Z_RL (인덕터+저항 직렬): 20 + j4 옴</li>
+                                    <li>인덕터(2mH): Z_L = jωL = j(2000)(0.002) = j4 Ω</li>
+                                    <li>커패시터(50μF): Z_C = 1/(jωC) = 1 / (j·2000·50·10⁻⁶) = -j10 Ω</li>
+                                    <li>저항: 20 Ω</li>
+                                    <li>Z_RL (인덕터+저항 직렬): 20 + j4 Ω</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 병렬 임피던스 (Z_p)</h5>
                                 <p class="text-gray-700">Z_RL과 커패시터(-j10)가 병렬</p>
-                                <p class="text-gray-700">Z_p = 4.59 - j8.62 옴</p>
+                                <p class="text-gray-700">계산 결과: Z_p ≈ 4.59 - j8.62 Ω</p>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">3. 전체 임피던스 (Z_tot)</h5>
-                                <p class="text-gray-700">왼쪽 2 옴 저항과 직렬</p>
-                                <p class="text-gray-700">Z_tot = 2 + 4.59 - j8.62 = 6.59 - j8.62 옴</p>
-                                <p class="text-gray-700">극형식 변환: 10.85 각도 -52.6도 옴</p>
+                                <p class="text-gray-700">왼쪽 2 Ω 저항과 직렬</p>
+                                <p class="text-gray-700">Z_tot = 2 + 4.59 - j8.62 = 6.59 - j8.62 Ω</p>
+                                <p class="text-gray-700">극형식: |Z_tot| ≈ 10.85, ∠Z_tot ≈ -52.6°</p>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">4. 전류 페이저 I_s</h5>
-                                <p class="text-gray-700">I_s = V_s / Z_tot = 5 각도 0도 / 10.85 각도 -52.6도</p>
-                                <p class="text-gray-700">I_s = 0.461 각도 52.6도 A</p>
+                                <p class="text-gray-700">I_s = V_s / Z_tot = 5∠0° / 10.85∠-52.6° = 0.461∠52.6° A</p>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -243,6 +267,7 @@
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.49 ===== -->
                     <section id="problem-9-49" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.49</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: i_x(t)가 주어졌을 때 v_s(t) 구하기 (역방향 풀이)</h4>
@@ -251,17 +276,19 @@
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 임피던스 및 페이저 변환</h5>
-                                <p class="text-gray-700">페이저 변환(코사인 기준): I_x = 500 각도 -90도 A = -j500 A</p>
-                                <p class="text-gray-700">각주파수(w): 200 rad/s</p>
+                                <p class="text-gray-700">코사인 기준으로 변환: sin(200t) = cos(200t - 90°)</p>
+                                <p class="text-gray-700">따라서 I_x = 500∠-90° A = -j500 A</p>
+                                <p class="text-gray-700">각주파수: ω = 200 rad/s</p>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700 mt-2">
-                                    <li>1옴 저항, 인덕터(j2), 커패시터(-j1)</li>
-                                    <li>오른쪽 가지(1옴 + C): Z_1C = 1 - j1 옴</li>
+                                    <li>1 Ω 저항, 인덕터: j2 Ω, 커패시터: -j1 Ω</li>
+                                    <li>오른쪽 가지(1 Ω + C): Z_1C = 1 - j1 Ω</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 노드 전압 V_a 계산</h5>
-                                <p class="text-gray-700">V_a = I_x * Z_1C = (-j500)(1 - j) = -500 - j500 V</p>
-                                <p class="text-gray-700">극형식: 707.1 각도 -135도 V</p>
+                                <p class="text-gray-700">V_a = I_x · Z_1C = (-j500)(1 - j)</p>
+                                <p class="text-gray-700">= -500 - j500 V</p>
+                                <p class="text-gray-700">크기: |V_a| = √(500² + 500²) = 707.1 V, 위상: -135°</p>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">3. 인덕터 전류 I_L</h5>
@@ -273,12 +300,15 @@
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">5. 전원 전압 V_s</h5>
-                                <p class="text-gray-700">V_s = V_a + (2옴 * I_s) = (-500 - j500) + 2(-250 - j250)</p>
-                                <p class="text-gray-700">V_s = -1000 - j1000 V (크기: 1414 V, 위상: -135도)</p>
+                                <p class="text-gray-700">전원 직렬 저항 2 Ω를 포함하여:</p>
+                                <p class="text-gray-700">V_s = V_a + 2·I_s = (-500 - j500) + 2(-250 - j250)</p>
+                                <p class="text-gray-700">= -500 - j500 - 500 - j500 = -1000 - j1000 V</p>
+                                <p class="text-gray-700">|V_s| = 1414 V, ∠V_s = -135°</p>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">6. 시간 함수 변환</h5>
-                                <p class="text-gray-700">v_s(t) = 1414 cos(200t - 135도) V</p>
+                                <p class="text-gray-700">v_s(t) = 1414 cos(200t - 135°) V</p>
+                                <p class="text-gray-700">또는 sin 기준으로 표현하면: v_s(t) = 1414 sin(200t - 45°) V</p>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -289,26 +319,28 @@
                         </div>
                     </section>
 
+                    <!-- ===== 문제 9.51 ===== -->
                     <section id="problem-9-51" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.51</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: i_s 구하기</h4>
                         <img src="https://i.postimg.cc/Hj1sQL7V/9jang(6).png" alt="문제 9.51 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
-                        <p class="text-gray-600 mb-4">조건: v_o = 10 cos(2t) V, w = 2 rad/s</p>
+                        <p class="text-gray-600 mb-4">조건: v_o = 10 cos(2t) V, ω = 2 rad/s</p>
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 임피던스 및 가지 전류</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>커패시터 Z_C = -j5 옴</li>
-                                    <li>인덕터 Z_L = j1 옴</li>
-                                    <li>병렬 가지 전류 I_branch = 10 / (2 - j4) = 2.24 각도 63.4도 A</li>
+                                    <li>커패시터: Z_C = 1/(jωC) = -j5 Ω</li>
+                                    <li>인덕터: Z_L = jωL = j1 Ω</li>
+                                    <li>중간 가지 임피던스: 2 - j4 Ω</li>
+                                    <li>가지 전류: I_branch = 10 / (2 - j4) ≈ 2.24∠63.4° A</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 전압 및 전체 전류</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>상단 전압 V_top = I_branch * (2 - j4 + j1) = 8.06 각도 45도 V</li>
-                                    <li>1옴 저항 전류 I_1옴 = 8.06 각도 45도 A</li>
-                                    <li>전체 전류 i_s = I_branch + I_1옴</li>
+                                    <li>상단 전압: V_top = I_branch · (2 - j4 + j1) ≈ 8.06∠45° V</li>
+                                    <li>1 Ω 저항 전류: I_1Ω = V_top / 1 Ω = 8.06∠45° A</li>
+                                    <li>전체 전류: i_s = I_branch + I_1Ω ≈ 9.98∠52° A</li>
                                 </ul>
                             </div>
                         </div>
@@ -320,6 +352,7 @@
                         </div>
                     </section>
 
+                    <!-- ===== 문제 9.53 ===== -->
                     <section id="problem-9-53" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.53</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 전류 I_o 구하기</h4>
@@ -328,15 +361,15 @@
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 등가 임피던스 계산</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>오른쪽 8옴, 10옴, j6옴, -j2옴 병렬 결합</li>
-                                    <li>등가 임피던스 Z_eq = 4.76 + j2.13 옴</li>
+                                    <li>오른쪽 8 Ω, 10 Ω, j6 Ω, -j2 Ω 병렬 결합</li>
+                                    <li>등가 임피던스: Z_eq ≈ 4.76 + j2.13 Ω</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 전체 전류 계산</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>전체 저항 = 2옴 + Z_eq = 6.76 + j2.13 옴</li>
-                                    <li>I_o = 60 각도 30도 / (6.76 + j2.13)</li>
+                                    <li>전체 저항: 2 Ω + Z_eq = 6.76 + j2.13 Ω</li>
+                                    <li>I_o = 60∠30° / (6.76 + j2.13) ≈ 8.35∠-16.9° A</li>
                                 </ul>
                             </div>
                         </div>
@@ -348,88 +381,95 @@
                         </div>
                     </section>
 
+                    <!-- ===== 문제 9.55 ===== -->
                     <section id="problem-9-55" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.55</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 임피던스 Z 구하기</h4>
                         <img src="https://i.postimg.cc/3Nvx4GNz/9jang(8).png" alt="문제 9.55 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
-                        <p class="text-gray-600 mb-4">조건: 출력전압 V_o = 4 각도 0도 V, 입력전압 V_s = 20 각도 -90도 V</p>
+                        <p class="text-gray-600 mb-4">조건: 출력전압 V_o = 4∠0° V, 입력전압 V_s = 20∠-90° V</p>
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 전압 분배 법칙 활용</h5>
-                                <p class="text-gray-700">회로 구조: j8옴과 -j4옴이 직렬, Z가 병렬 등</p>
-                                <p class="text-gray-700">전압비 |V_o / V_s| = 4/20 = 0.2</p>
+                                <p class="text-gray-700">회로 구조: j8 Ω 와 -j4 Ω 직렬, 그와 Z가 병렬로 연결된 형태</p>
+                                <p class="text-gray-700">전압비 |V_o / V_s| = 4 / 20 = 0.2</p>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 임피던스 Z 역산</h5>
-                                <p class="text-gray-700">복소수 연산을 통해 Z 도출</p>
+                                <p class="text-gray-700">복소수 전압 분배식을 이용하여 Z를 계산하면</p>
+                                <p class="text-gray-700">Z = 8 + j2 Ω</p>
                             </div>
                         </div>
                         <div class="mt-6">
                             <h5 class="text-lg font-semibold mb-2">정답</h5>
                             <div class="answer-box">
-                                <p class="text-lg font-bold text-green-800">Z = 8 + j2 옴</p>
+                                <p class="text-lg font-bold text-green-800">Z = 8 + j2 Ω</p>
                             </div>
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.65 ===== -->
                     <section id="problem-9-65" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.65</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 테브난 임피던스 Z_T와 전류 I 구하기</h4>
                         <img src="https://i.postimg.cc/3Nvx4GNS/9jang(9).png" alt="문제 9.65 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
-                        <p class="text-gray-600 mb-4">조건: 전원 120 각도 10도 V, 저항 R=2옴 등</p>
+                        <p class="text-gray-600 mb-4">조건: 전원 120∠10° V, 저항 R = 2 Ω 등</p>
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. 임피던스 계산</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>Z_1 (4옴와 -j6옴 병렬) = 2.4 - j1.6 옴</li>
-                                    <li>Z_2 (3옴와 j4옴 병렬) = 1.7 + j1.13 옴</li>
+                                    <li>Z₁ (4 Ω ‖ -j6 Ω) = 2.4 - j1.6 Ω</li>
+                                    <li>Z₂ (3 Ω ‖ j4 Ω) = 1.7 + j1.13 Ω</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. 테브난 임피던스 및 전류</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>Z_T = 2 + Z_1 + Z_2 = 6.1 - j0.47 옴</li>
-                                    <li>I = 전압 / Z_T = 120 각도 10도 / (6.1 - j0.47)</li>
+                                    <li>Z_T = 2 + Z₁ + Z₂ = 6.1 - j0.47 Ω</li>
+                                    <li>I = 120∠10° / (6.1 - j0.47) ≈ 19.6∠14.4° A</li>
                                 </ul>
                             </div>
                         </div>
                         <div class="mt-6">
                             <h5 class="text-lg font-semibold mb-2">정답</h5>
                             <div class="answer-box">
-                                <p class="text-lg font-bold text-green-800">Z_T = 6.1 - j0.47 옴, I = 19.6 각도 14.4도 A</p>
+                                <p class="text-lg font-bold text-green-800">Z_T = 6.1 - j0.47 Ω, I = 19.6 각도 14.4도 A</p>
                             </div>
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.66 ===== -->
                     <section id="problem-9-66" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.66</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 테브난 임피던스 Z_T와 개방 전압 V_ab 구하기</h4>
                         <img src="https://i.postimg.cc/C5qxB85c/9jang(10).png" alt="문제 9.66 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
-                        <p class="text-gray-600 mb-4">전원: 60 각도 90도 V</p>
+                        <p class="text-gray-600 mb-4">전원: 60∠90° V</p>
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">1. Z_T 구하기 (전원 단락)</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>(20옴 || -j5옴) + (40옴 + j10옴)</li>
-                                    <li>(4 - j1) + (40 + j10) = 44 + j9 옴</li>
+                                    <li>(20 Ω ‖ -j5 Ω) + (40 Ω + j10 Ω)</li>
+                                    <li>20 Ω ‖ -j5 Ω → 4 - j1 Ω</li>
+                                    <li>Z_T = (4 - j1) + (40 + j10) = 44 + j9 Ω</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">2. V_ab 구하기 (전압 분배/전류 분배)</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>전체 전류 I = V / Z_total</li>
-                                    <li>V_ab 계산 결과: 54.8 각도 2.4도 V</li>
+                                    <li>등가회로에서 전체 전류 I = 60∠90° / Z_total</li>
+                                    <li>전압 분배를 통해 a-b 단자 전압 V_ab 계산</li>
+                                    <li>계산 결과 V_ab ≈ 54.8∠2.4° V</li>
                                 </ul>
                             </div>
                         </div>
                         <div class="mt-6">
                             <h5 class="text-lg font-semibold mb-2">정답</h5>
                             <div class="answer-box">
-                                <p class="text-lg font-bold text-green-800">Z_T = 44 + j9 옴, V_ab = 54.8 각도 2.4도 V</p>
+                                <p class="text-lg font-bold text-green-800">Z_T = 44 + j9 Ω, V_ab = 54.8 각도 2.4도 V</p>
                             </div>
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.70 ===== -->
                     <section id="problem-9-70" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.70</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: 등가 임피던스 Z_eq 구하기</h4>
@@ -438,42 +478,44 @@
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">풀이 과정 (단순화)</h5>
                                 <ol class="list-decimal list-inside space-y-1 text-gray-700">
-                                    <li>하단 8옴과 -j5옴 병렬 -> Z_a</li>
-                                    <li>Z_a와 -j10옴 병렬 -> Z_b</li>
-                                    <li>5옴 저항과 직렬</li>
-                                    <li>(10 + j15)옴 과 2옴 저항들과의 최종 결합</li>
+                                    <li>하단 8 Ω 와 -j5 Ω 병렬 → Z_a</li>
+                                    <li>Z_a 와 -j10 Ω 병렬 → Z_b</li>
+                                    <li>Z_b 와 5 Ω 직렬</li>
+                                    <li>(10 + j15) Ω 과 2 Ω 저항들과의 최종 결합</li>
                                 </ol>
                             </div>
                         </div>
                         <div class="mt-6">
                             <h5 class="text-lg font-semibold mb-2">정답</h5>
                             <div class="answer-box">
-                                <p class="text-lg font-bold text-green-800">Z_eq = 5.93 + j6.47 옴</p>
+                                <p class="text-lg font-bold text-green-800">Z_eq = 5.93 + j6.47 Ω</p>
                             </div>
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.77 ===== -->
                     <section id="problem-9-77" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.77</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: RC 저역통과 필터 분석</h4>
-                        <img src="https://i.postimg.cc/TwSP30dj/9jang(12).png" alt="문제 9.77 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
-                        <p class="text-gray-600 mb-4">조건: R = 5옴, C = 20nF, f = 2MHz</p>
+                        <img src="https://i.postimg.cc/TwSP30dj/9jang(12).png" alt="문제 9.77 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+NotFound'">
+                        <p class="text-gray-600 mb-4">조건: R = 5 Ω, C = 20 nF, f = 2 MHz</p>
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">(a) 위상 편이 구하기</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>각주파수 w = 2 * pi * f</li>
-                                    <li>wRC = 1.2566</li>
-                                    <li>위상각 = -아크탄젠트(1.2566) = -51.8도</li>
-                                    <li><strong>정답(a): -51.8도 (지상)</strong></li>
+                                    <li>각주파수: ω = 2πf</li>
+                                    <li>ωRC ≈ 1.2566</li>
+                                    <li>위상각: φ = -tan⁻¹(ωRC) ≈ -51.8°</li>
+                                    <li><strong>정답(a): -51.8° (지상)</strong></li>
                                 </ul>
                             </div>
                             <div class="solution-step">
-                                <h5 class="text-lg font-semibold mb-2">(b) 위상 편이가 45도일 때 주파수</h5>
+                                <h5 class="text-lg font-semibold mb-2">(b) 위상 편이가 -45°일 때 주파수</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>wRC = 1 이 되는 지점</li>
-                                    <li>f = 1 / (2 * pi * R * C)</li>
-                                    <li><strong>정답(b): f = 1.59 MHz</strong></li>
+                                    <li>|φ| = 45° → ωRC = 1</li>
+                                    <li>f = 1 / (2πRC)</li>
+                                    <li>R = 5 Ω, C = 20 nF → f ≈ 1.59 MHz</li>
+                                    <li><strong>정답(b): f ≈ 1.59 MHz</strong></li>
                                 </ul>
                             </div>
                         </div>
@@ -486,30 +528,31 @@
                         </div>
                     </section>
                     
+                    <!-- ===== 문제 9.79 ===== -->
                     <section id="problem-9-79" class="problem-section bg-white p-6 md:p-8 rounded-lg shadow-lg mb-6">
                         <h3 class="text-2xl font-bold text-blue-700 mb-2">문제 9.79</h3>
                         <h4 class="text-xl font-semibold text-gray-700 mb-6">주제: R-L 병렬 3단 회로 전달함수</h4>
-                        <img src="https://i.postimg.cc/DZDzw6vg/9jang(13).png" alt="문제 9.79 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+Not+Found'">
+                        <img src="https://i.postimg.cc/DZDzw6vg/9jang(13).png" alt="문제 9.79 회로도" class="w-full max-w-md mx-auto rounded-md border border-gray-200 mb-6" onerror="this.src='https://placehold.co/600x400/eee/aaa?text=Image+NotFound'">
                         <div class="space-y-4">
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">(a) 전달함수 H 계산</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
                                     <li>오른쪽부터 차례대로 등가 임피던스를 구해나가며 노드 해석 적용</li>
-                                    <li>H = V_o / V_i</li>
+                                    <li>입력/출력 관계: H = V_o / V_i</li>
                                     <li><strong>정답(a): H = 0.297 각도 -35.4도</strong></li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">(b) 위상 특성</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>음의 위상각이므로 출력이 입력보다 뒤짐(Lagging)</li>
+                                    <li>위상각이 음수 → 출력이 입력보다 뒤지는 특성 (Lagging)</li>
                                 </ul>
                             </div>
                             <div class="solution-step">
                                 <h5 class="text-lg font-semibold mb-2">(c) 출력 전압 크기</h5>
                                 <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                    <li>입력 120V 일 때</li>
-                                    <li>|V_o| = 0.297 * 120 = 35.6V</li>
+                                    <li>입력 V_i = 120 V 일 때</li>
+                                    <li>|V_o| = |H|·|V_i| = 0.297·120 ≈ 35.6 V</li>
                                     <li><strong>정답(c): 35.6 V</strong></li>
                                 </ul>
                             </div>
@@ -535,146 +578,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            /* ================================
+               1. 좌측 네비게이션 / 문제 전환
+               ================================ */
             const navMenu = document.getElementById('nav-menu');
             const navButtons = navMenu.querySelectorAll('.nav-button');
-            const contentSections = document.getElementById('content-area').querySelectorAll('.problem-section');
-
-            function createCoverPage() {
-                const coverPage = document.createElement('div');
-                coverPage.style.width = '100%';
-                coverPage.style.minHeight = '1000px'; // A4 한 페이지 정도 높이 확보
-                coverPage.style.display = 'flex';
-                coverPage.style.flexDirection = 'column';
-                coverPage.style.justifyContent = 'center';
-                coverPage.style.alignItems = 'center';
-                coverPage.style.textAlign = 'center';
-                coverPage.style.backgroundColor = '#fff';
-                coverPage.style.padding = '50px';
-                coverPage.classList.add('mb-8');
-
-                // 로고 대신 텍스트 사용 (이미지 의존성 제거)
-                coverPage.innerHTML = `
-                    <div style="margin-bottom: 80px;">
-                        <h1 style="font-size: 36px; font-weight: bold; color: #111; letter-spacing: 5px;">조 선 대 학 교</h1>
-                    </div>
-                    <div style="margin-bottom: 120px; border: 3px double #333; padding: 50px 30px; width: 80%;">
-                        <h2 style="font-size: 32px; font-weight: bold; margin: 0; line-height: 1.4;">회로이론 9장 연습문제 풀이</h2>
-                    </div>
-                    <div style="width: 60%; margin: 0 auto; text-align: left; font-size: 18px; line-height: 2.2;">
-                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                            <span style="font-weight: bold; width: 100px;">학 과</span>
-                            <span style="text-align: right;">전자공학부</span>
-                        </div>
-                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                            <span style="font-weight: bold; width: 100px;">과 목 명</span>
-                            <span style="text-align: right;">회로이론2</span>
-                        </div>
-                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                            <span style="font-weight: bold; width: 100px;">학 번</span>
-                            <span style="text-align: right;">20225028</span>
-                        </div>
-                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                            <span style="font-weight: bold; width: 100px;">이 름</span>
-                            <span style="text-align: right;">손 윤 재</span>
-                        </div>
-                        <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                            <span style="font-weight: bold; width: 100px;">제 출 일</span>
-                            <span style="text-align: right;">25.11.20</span>
-                        </div>
-                    </div>
-                `;
-                return coverPage;
-            }
-
-            // PDF 다운로드 버튼 로직
-            document.getElementById('download-pdf-btn').addEventListener('click', function() {
-                // PDF 전용 컨테이너를 실제 DOM에 추가 (스타일이 정상적으로 적용되도록)
-                const pdfContainer = document.createElement('div');
-                pdfContainer.id = 'pdf-container';
-                pdfContainer.style.backgroundColor = '#ffffff';
-                pdfContainer.style.padding = '20px 25px';
-                pdfContainer.style.width = '800px'; // A4 비율에 맞는 적당한 너비
-                pdfContainer.style.margin = '0 auto';
-                pdfContainer.style.fontFamily = "'Inter','Noto Sans KR',sans-serif";
-
-                // 1. 표지 추가
-                pdfContainer.appendChild(createCoverPage());
-
-                // 2. 페이지 넘김(Break) 요소 추가
-                const pageBreak = document.createElement('div');
-                pageBreak.className = 'html2pdf__page-break';
-                pdfContainer.appendChild(pageBreak);
-
-                // 3. 문제 내용 추가 (모든 섹션을 표시 상태로 복제)
-                const sections = document.querySelectorAll('.problem-section');
-                sections.forEach((section) => {
-                    const clone = section.cloneNode(true);
-                    clone.style.display = 'block'; // 강제 표시
-                    clone.classList.remove('shadow-lg', 'rounded-lg'); // 프린트용 스타일 조정
-                    clone.classList.add('mb-8', 'border-b', 'pb-8');
-
-                    // 이미지 크기 및 CORS 설정
-                    const imgs = clone.querySelectorAll('img');
-                    imgs.forEach(img => {
-                        img.style.maxWidth = '80%';
-                        img.style.height = 'auto';
-                        img.style.display = 'block';
-                        img.style.margin = '0 auto 1.5rem auto';
-                        img.setAttribute('crossorigin', 'anonymous');
-                    });
-
-                    pdfContainer.appendChild(clone);
-
-                    // 필요하면 각 문제를 새 페이지에서 시작하도록 할 때 사용 (현재는 연속 배치)
-                    // const pb = document.createElement('div');
-                    // pb.className = 'html2pdf__page-break';
-                    // pdfContainer.appendChild(pb);
-                });
-
-                document.body.appendChild(pdfContainer);
-
-                const opt = {
-                    margin: 15,
-                    filename: '회로이론_9장_손윤재.pdf',
-                    image: { type: 'jpeg', quality: 0.95 },
-                    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    // 'avoid-all' 제거 → 섹션이 한 페이지를 넘을 때 잘리지 않고 자동으로 다음 페이지로 넘어가도록 함
-                    pagebreak: { mode: ['css', 'legacy'] }
-                };
-
-                const btn = this;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ PDF 생성 중...';
-                btn.disabled = true;
-
-                html2pdf()
-                    .set(opt)
-                    .from(pdfContainer)
-                    .save()
-                    .then(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                        // PDF 생성 후 임시 컨테이너 제거
-                        document.body.removeChild(pdfContainer);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert('PDF 생성 중 오류가 발생했습니다.');
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                        if (pdfContainer && pdfContainer.parentNode) {
-                            document.body.removeChild(pdfContainer);
-                        }
-                    });
-            });
+            const contentSections = document
+                .getElementById('content-area')
+                .querySelectorAll('.problem-section');
 
             function showProblem(targetId) {
                 contentSections.forEach(section => {
                     if (section.id === targetId) {
                         section.classList.add('active');
+                        section.style.display = 'block';
                     } else {
                         section.classList.remove('active');
+                        section.style.display = 'none';
                     }
                 });
 
@@ -695,7 +615,159 @@
                 }
             });
 
+            // 첫 로드시 9.37 문제 표시
             showProblem('problem-9-37');
+
+            /* =============================
+               2. PDF용 표지 엘리먼트 생성
+               ============================= */
+            function buildCoverElement() {
+                const cover = document.createElement('section');
+                cover.className = 'pdf-cover';
+
+                cover.innerHTML = `
+                    <div class="mb-24">
+                        <p class="text-4xl md:text-5xl font-bold tracking-[0.6em] text-gray-900">
+                            조 선 대 학 교
+                        </p>
+                    </div>
+
+                    <div class="border-4 border-gray-900 px-12 py-16 mb-24 w-4/5 max-w-3xl">
+                        <p class="text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
+                            회로이론 9장<br>
+                            연습문제 풀이
+                        </p>
+                    </div>
+
+                    <div class="w-3/5 max-w-xl text-lg md:text-xl text-gray-800">
+                        <div class="flex items-center border-b border-gray-300 py-2">
+                            <span class="w-28 font-semibold">학 과</span>
+                            <span class="flex-1 text-right">전자공학과</span>
+                        </div>
+                        <div class="flex items-center border-b border-gray-300 py-2">
+                            <span class="w-28 font-semibold">과 목 명</span>
+                            <span class="flex-1 text-right">회로이론2</span>
+                        </div>
+                        <div class="flex items-center border-b border-gray-300 py-2">
+                            <span class="w-28 font-semibold">학 번</span>
+                            <span class="flex-1 text-right">20225028</span>
+                        </div>
+                        <div class="flex items-center border-b border-gray-300 py-2">
+                            <span class="w-28 font-semibold">이 름</span>
+                            <span class="flex-1 text-right">손윤재</span>
+                        </div>
+                        <div class="flex items-center border-b border-gray-300 py-2">
+                            <span class="w-28 font-semibold">제 출 일</span>
+                            <span class="flex-1 text-right">2025.11.20</span>
+                        </div>
+                    </div>
+                `;
+
+                return cover;
+            }
+
+            /* =================================
+               3. PDF용 전체 문서 DOM 생성 로직
+               ================================= */
+            function buildPdfDocument() {
+                // 3-1) PDF 전용 래퍼 생성
+                const wrapper = document.createElement('div');
+                wrapper.id = 'pdf-wrapper';
+
+                // 화면에 안 보이게 밖으로 빼두기 (하지만 DOM에는 존재해야 Tailwind 스타일이 적용됨)
+                wrapper.style.position = 'absolute';
+                wrapper.style.left = '-9999px';
+                wrapper.style.top = '0';
+                wrapper.style.zIndex = '-1';
+
+                // 3-2) 표지 추가
+                const cover = buildCoverElement();
+                wrapper.appendChild(cover);
+
+                // 3-3) 표지 뒤에 페이지 브레이크 추가
+                const pageBreak = document.createElement('div');
+                pageBreak.className = 'html2pdf__page-break';
+                wrapper.appendChild(pageBreak);
+
+                // 3-4) 메인 내용 전체 복제
+                const mainClone = document.querySelector('main').cloneNode(true);
+
+                // 네비게이션/버튼 같은 건 필요 없으니 제거
+                // (현재 main 안에는 nav가 없으므로 내용은 그대로 유지됨)
+
+                // 문제 섹션들 전부 펼치기 + 그림/박스는 출력용으로 약간 정리
+                const sections = mainClone.querySelectorAll('.problem-section');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'block';   // 전부 보이도록 강제
+                    section.classList.remove('shadow-lg');
+                    section.classList.add('border-b', 'border-gray-200', 'mb-6', 'pb-6');
+                });
+
+                // 이미지 정리 (너비/정렬/CORS)
+                const imgs = mainClone.querySelectorAll('img');
+                imgs.forEach(img => {
+                    img.style.maxWidth = '80%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    img.style.margin = '0 auto 1.5rem auto';
+                    img.setAttribute('crossorigin', 'anonymous');
+                });
+
+                wrapper.appendChild(mainClone);
+
+                // 실제 DOM에 붙여두기
+                document.body.appendChild(wrapper);
+
+                return wrapper;
+            }
+
+            function cleanupPdfDocument(wrapper) {
+                if (wrapper && wrapper.parentNode) {
+                    wrapper.parentNode.removeChild(wrapper);
+                }
+            }
+
+            /* =========================
+               4. PDF 다운로드 버튼 로직
+               ========================= */
+            const downloadBtn = document.getElementById('download-pdf-btn');
+
+            downloadBtn.addEventListener('click', () => {
+                const pdfWrapper = buildPdfDocument();
+
+                const opt = {
+                    margin:       10,
+                    filename:     '회로이론_9장_손윤재.pdf',
+                    image:        { type: 'jpeg', quality: 0.95 },
+                    html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    // avoid-all 제거 → 긴 섹션도 자동으로 다음 페이지로 넘기고,
+                    // .html2pdf__page-break 를 이용해 표지 뒤에서만 강제 페이지 분리
+                    pagebreak:    { mode: ['css', 'legacy'] }
+                };
+
+                const originalLabel = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = '⏳ PDF 생성 중...';
+                downloadBtn.disabled = true;
+
+                html2pdf()
+                    .set(opt)
+                    .from(pdfWrapper)
+                    .save()
+                    .then(() => {
+                        downloadBtn.innerHTML = originalLabel;
+                        downloadBtn.disabled = false;
+                        cleanupPdfDocument(pdfWrapper);
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        alert('PDF 생성 중 오류가 발생했습니다.');
+                        downloadBtn.innerHTML = originalLabel;
+                        downloadBtn.disabled = false;
+                        cleanupPdfDocument(pdfWrapper);
+                    });
+            });
         });
     </script>
 
