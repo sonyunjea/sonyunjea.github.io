@@ -31,29 +31,6 @@
             background: #a8a8a8;
         }
 
-        /* ✅ PDF에서 글자가 흐릿한 회색으로 나오는 문제 방지용
-           - Tailwind의 text-gray-900, text-blue-900 같은 진한 회색 계열을
-             전부 순수 검정(#000)으로 강제 지정해서 화면/PDF 모두 진하게 보이도록 설정 */
-        .text-gray-900,
-        .text-gray-800,
-        .text-gray-700,
-        .text-gray-600,
-        .text-blue-900,
-        .text-blue-800,
-        .text-green-900,
-        .text-green-800,
-        header h1,
-        h1, h2, h3, h4, h5, h6,
-        p, li, span {
-            color: #000000 !important;
-        }
-
-        /* 인쇄/캡처 시 색 보정 고정 (가능한 경우) */
-        body * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
         .nav-category {
             font-size: 0.85rem;
             font-weight: 800;
@@ -124,6 +101,32 @@
             border: 2px solid #d1d5db; /* 테두리 진하게 */
             border-radius: 0.5rem;
             margin-bottom: 1.5rem;
+            /* 이미지 선명도 향상 시도 */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* ✅ PDF에서 글자가 흐릿한 회색으로 나오는 문제 방지용
+           - Tailwind의 text-gray-900, text-blue-900 같은 진한 회색 계열을
+             전부 순수 검정(#000)으로 강제 지정해서 화면/PDF 모두 진하게 보이도록 설정 */
+        .text-gray-900,
+        .text-gray-800,
+        .text-gray-700,
+        .text-gray-600,
+        .text-blue-900,
+        .text-blue-800,
+        .text-green-900,
+        .text-green-800,
+        header h1,
+        h1, h2, h3, h4, h5, h6,
+        p, li, span, strong {
+            color: #000000 !important;
+        }
+
+        /* 인쇄/캡처 시 색 보정 고정 (가능한 경우) */
+        body * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     </style>
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -673,74 +676,45 @@
                     <img src="https://i.postimg.cc/NjHRqNtK/11jang(11).png" alt="문제 11.67" class="problem-image" crossorigin="anonymous">
                     <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: Op-Amp 회로 전력</h4>
                     <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>연산증폭기 출력 전압을 구한 뒤, 저항에 걸리는 전압으로부터</p>
+                        <p>연산 증폭기의 출력 전압과 부하 저항을 이용해 복소전력을 계산한 후,</p>
                         <p class="pl-4">
-                            P = V<sub>R,rms</sub><sup>2</sup> / R
+                            S = P + jQ
                         </p>
-                        <p>을 이용해 소비 전력을 계산합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: P ≈ 0.03 W</p>
-                        </div>
+                        <p>형태로 나타냅니다.</p>
                     </div>
                 </section>
 
                 <section id="prob-11-69" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
                     <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
                     <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.69</h3>
-                    <img src="https://i.postimg.cc/4x9pk8GX/11jang(12).png" alt="문제 11.69" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 1로 보상하기</h4>
+                    <img src="https://i.postimg.cc/FF3DQMcY/11jang(12).png" alt="문제 11.69" class="problem-image" crossorigin="anonymous">
+                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 3상 교류 전력</h4>
                     <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>지상 역률 cos θ를 1로 만들기 위해 필요한 커패시터의 무효전력 Q<sub>C</sub> = −Q<sub>L</sub> 를 계산하고,</p>
-                        <p class="pl-4">
-                            Q<sub>C</sub> = V<sup>2</sup> · &omega;C
-                        </p>
-                        <p>에서 C를 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: C ≈ 13.1 μF</p>
-                        </div>
+                        <p>선간전압과 상전류의 관계를 이용하여 총 유효전력 P, 무효전력 Q, 피상전력 S 를 계산합니다.</p>
                     </div>
                 </section>
 
                 <section id="prob-11-73" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
                     <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
                     <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.73</h3>
-                    <img src="https://i.postimg.cc/HkybDSgq/11jang(13).png" alt="문제 11.73" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 계산</h4>
+                    <img src="https://i.postimg.cc/FspsdNDp/11jang(13).png" alt="문제 11.73" class="problem-image" crossorigin="anonymous">
+                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 개선을 위한 커패시터 용량</h4>
                     <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>주어진 회로에서 등가 임피던스를 구한 뒤,</p>
+                        <p>기존 역률과 목표 역률을 바탕으로 필요한 무효전력 보상량 ΔQ 를 계산한 뒤,</p>
                         <p class="pl-4">
-                            S = V I, &nbsp; P = V I cos θ
+                            Q<sub>C</sub> = V<sup>2</sup> · &omega;C
                         </p>
-                        <p>를 이용해 유효전력을 계산합니다. (자세한 수치는 회로 조건에 의존합니다.)</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: 회로 조건을 대입하여 계산한 P 값 (풀이 과정 참조)</p>
-                        </div>
+                        <p>식을 이용해 C를 구합니다.</p>
                     </div>
                 </section>
 
                 <section id="prob-11-75" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
                     <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
                     <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.75</h3>
-                    <img src="https://i.postimg.cc/BnK29h3b/11jang(14).png" alt="문제 11.75" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 단위 역률 보상</h4>
+                    <img src="https://i.postimg.cc/Yq6bR82f/11jang(14).png" alt="문제 11.75" class="problem-image" crossorigin="anonymous">
+                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 3각형 해석</h4>
                     <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>역률을 1.0 (단위 역률)로 만들기 위해 필요한 커패시터의 용량을 구하는 문제입니다.</p>
-                        <p>기존 부하의 무효전력 Q<sub>L</sub>를 상쇄하는 Q<sub>C</sub>를 구한 후,</p>
-                        <p class="pl-4">
-                            Q<sub>C</sub> = V<sup>2</sup> · &omega;C
-                        </p>
-                        <p>에서 C를 계산합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: C ≈ 0.639 μF</p>
-                        </div>
+                        <p>유효전력 P, 무효전력 Q를 알고 있을 때, 피상전력 S와 역률, 위상각을 전력 3각형으로부터 구합니다.</p>
                     </div>
                 </section>
 
@@ -749,168 +723,75 @@
     </div>
 </div>
 
-<footer class="text-center py-6 text-gray-600 text-sm border-t">
-    회로이론 과제 통합 풀이집 (10장, 11장)
-</footer>
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const navMenu = document.getElementById('nav-menu');
-        const navButtons = navMenu.querySelectorAll('.nav-button');
-        const contentSections = document.getElementById('content-area').querySelectorAll('.problem-section');
+    // 네비게이션 버튼 클릭시 해당 문제 섹션으로 이동 + 표시
+    const navButtons = document.querySelectorAll('.nav-button');
+    const sections = document.querySelectorAll('.problem-section');
 
-        // 표지 생성 함수 (PDF용)
-        function createCoverPage() {
-            const coverPage = document.createElement('div');
-            coverPage.style.width = '100%';
-            coverPage.style.minHeight = '1000px'; // A4 사이즈 근사
-            coverPage.style.display = 'flex';
-            coverPage.style.flexDirection = 'column';
-            coverPage.style.justifyContent = 'center';
-            coverPage.style.alignItems = 'center';
-            coverPage.style.textAlign = 'center';
-            coverPage.style.backgroundColor = '#fff';
-            coverPage.style.padding = '50px';
-            coverPage.classList.add('mb-8');
-
-            coverPage.innerHTML = `
-                <div style="margin-bottom: 80px;">
-                    <h1 style="font-size: 36px; font-weight: bold; color: #000; letter-spacing: 5px;">조 선 대 학 교</h1>
-                </div>
-                <div style="margin-bottom: 120px; border: 3px double #000; padding: 50px 30px; width: 80%;">
-                    <h2 style="font-size: 32px; font-weight: bold; margin: 0; line-height: 1.4; color: #000;">회로이론 10장 & 11장<br>통합 과제 풀이</h2>
-                </div>
-                <div style="width: 60%; margin: 0 auto; text-align: left; font-size: 18px; line-height: 2.2; color: #000;">
-                    <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                        <span style="font-weight: bold; width: 100px;">학 과</span>
-                        <span style="text-align: right;">전자공학과</span>
-                    </div>
-                    <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                        <span style="font-weight: bold; width: 100px;">과 목 명</span>
-                        <span style="text-align: right;">회로이론2</span>
-                    </div>
-                    <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                        <span style="font-weight: bold; width: 100px;">학 번</span>
-                        <span style="text-align: right;">20225028</span>
-                    </div>
-                    <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                        <span style="font-weight: bold; width: 100px;">이 름</span>
-                        <span style="text-align: right;">손윤재</span>
-                    </div>
-                    <div style="border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; padding: 5px 0;">
-                        <span style="font-weight: bold; width: 100px;">제 출 일</span>
-                        <span style="text-align: right;">2025.11.20</span>
-                    </div>
-                </div>
-            `;
-            return coverPage;
-        }
-
-        // PDF 다운로드 버튼 로직
-        document.getElementById('download-pdf-btn').addEventListener('click', function() {
-            const element = document.createElement('div');
-
-            // 1. 표지 추가
-            element.appendChild(createCoverPage());
-
-            // 2. 페이지 넘김(Break) 요소 추가
-            const pageBreak = document.createElement('div');
-            pageBreak.className = 'html2pdf__page-break';
-            element.appendChild(pageBreak);
-
-            // 3. 모든 문제 내용 추가
-            const sections = document.querySelectorAll('.problem-section');
-            sections.forEach((section, index) => {
-                const clone = section.cloneNode(true);
-                clone.style.display = 'block'; // 강제 표시
-                clone.classList.remove('shadow-lg', 'rounded-xl', 'mb-8'); // 프린트용 스타일 조정
-                clone.classList.add('mb-12', 'border-b', 'pb-8');
-
-                // 이미지 스타일 조정 (CORS 이슈 방지용 속성 유지)
-                const img = clone.querySelector('img');
-                if (img) {
-                    img.style.maxWidth = "90%";
-                    img.style.height = "auto";
-                    img.style.margin = "0 auto 20px auto";
-                    img.style.display = "block";
-                }
-
-                // 챕터 뱃지 스타일 조정
-                const badge = clone.querySelector('span');
-                if (badge) {
-                    badge.style.border = "1px solid #ccc";
-                    badge.style.backgroundColor = "#fff";
-                }
-
-                element.appendChild(clone);
-            });
-
-            const opt = {
-                margin: 10,
-                filename: '회로이론_10장_11장_통합과제_손윤재.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0, letterRendering: true, backgroundColor: '#ffffff' },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ 생성 중...';
-            btn.disabled = true;
-            btn.classList.add('opacity-75');
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.classList.remove('opacity-75');
-            }).catch(err => {
-                console.error(err);
-                alert("PDF 생성 중 오류가 발생했습니다.");
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.classList.remove('opacity-75');
-            });
+    function showSection(id) {
+        sections.forEach(sec => {
+            sec.classList.remove('active');
+            if (sec.id === id) sec.classList.add('active');
         });
+    }
 
-        // 문제 섹션 표시 함수
-        function showProblem(targetId) {
-            // 모든 섹션 숨기기
-            contentSections.forEach(section => {
-                section.classList.remove('active');
-            });
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            showSection(targetId);
 
-            // 타겟 섹션 보이기
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-                // 모바일에서는 해당 위치로 스크롤
-                if (window.innerWidth < 768) {
-                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
+            navButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-            // 버튼 활성화 상태 변경
-            navButtons.forEach(button => {
-                if (button.dataset.target === targetId) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-        }
-
-        // 네비게이션 클릭 이벤트
-        navMenu.addEventListener('click', (event) => {
-            const button = event.target.closest('.nav-button');
-            if (button && button.dataset.target) {
-                const targetId = button.dataset.target;
-                showProblem(targetId);
-            }
+            const sectionEl = document.getElementById(targetId);
+            const yOffset = -80;
+            const y = sectionEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
         });
+    });
 
-        // 초기 화면 설정 (10장 첫 문제)
-        showProblem('prob-10-23');
+    if (navButtons.length > 0) {
+        navButtons[0].classList.add('active');
+        const firstTarget = navButtons[0].getAttribute('data-target');
+        showSection(firstTarget);
+    }
+
+    // ✅ PDF 다운로드: 고해상도(Scale 4) + 최대 품질로 설정
+    document.getElementById('download-pdf-btn').addEventListener('click', () => {
+        const element = document.body;
+
+        const opt = {
+            margin:       10,
+            filename:     '회로이론_10장_11장_통합과제_손윤재.pdf',
+            image:        { type: 'jpeg', quality: 1.0 },
+            html2canvas:  {
+                scale: 4,           // 🔼 캡처 배율 크게 해서 글자/이미지 선명하게
+                useCORS: true,
+                scrollY: 0,
+                letterRendering: true
+            },
+            jsPDF:       {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait',
+                compressPDF: false   // 압축 끄기 → 품질 우선
+            },
+            pagebreak:   { mode: ['css', 'legacy'] }
+        };
+
+        const btn = document.getElementById('download-pdf-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>⏳</span> PDF 생성 중...';
+        btn.disabled = true;
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }).catch(err => {
+            console.error('PDF 생성 중 오류:', err);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     });
 </script>
 
