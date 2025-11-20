@@ -3,797 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회로이론 10장 & 11장 과제 풀이</title>
+    <title>스마트 우산꽂이 - 금주 진도 보고서</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PDF 생성을 위한 라이브러리 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: #f8f9fa;
-            color: #000000; /* 기본 글자색 완전 검정 */
-        }
-        /* 스크롤바 커스텀 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #F3F4F6; }
+        
+        /* 프린트 설정 */
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none !important; }
+            .page-container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            img { break-inside: avoid; }
         }
 
-        .nav-category {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: #111827; /* 진한 색상 */
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            padding-left: 0.75rem;
-        }
-        .nav-button {
-            text-align: left;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            color: #1f2937; /* 진한 회색 */
-            font-weight: 500;
-        }
-        .nav-button:hover {
-            background-color: #f3f4f6;
-            color: #000000;
-        }
-        .nav-button.active {
-            background-color: #eff6ff;
-            color: #1d4ed8; /* 진한 파랑 */
-            font-weight: 700;
-            border-left: 3px solid #1d4ed8;
-        }
-
-        .problem-section {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .problem-section.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .solution-step {
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb; /* 선 두께 강화 */
-        }
-        .solution-step:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .answer-box {
-            background-color: #f0fdf4;
-            border-left: 6px solid #16a34a; /* 강조선 강화 */
-            padding: 1.25rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-            color: #000000; /* 박스 내부 글자 검정 */
-        }
-        /* PDF 강제 페이지 넘김 및 이미지 스타일 */
-        .html2pdf__page-break {
-            page-break-before: always;
-        }
-        .problem-image {
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #d1d5db; /* 테두리 진하게 */
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-            /* 이미지 선명도 향상 시도 */
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-        }
-
-        /* ✅ PDF에서 글자가 흐릿한 회색으로 나오는 문제 방지용
-           - Tailwind의 text-gray-900, text-blue-900 같은 진한 회색 계열을
-             전부 순수 검정(#000)으로 강제 지정해서 화면/PDF 모두 진하게 보이도록 설정 */
-        .text-gray-900,
-        .text-gray-800,
-        .text-gray-700,
-        .text-gray-600,
-        .text-blue-900,
-        .text-blue-800,
-        .text-green-900,
-        .text-green-800,
-        header h1,
-        h1, h2, h3, h4, h5, h6,
-        p, li, span, strong {
-            color: #000000 !important;
-        }
-
-        /* 인쇄/캡처 시 색 보정 고정 (가능한 경우) */
-        body * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #E5E7EB; overflow: hidden; }
+        .section-title { font-size: 1.5rem; font-weight: 700; color: #1F2937; margin-bottom: 1rem; border-bottom: 2px solid #3B82F6; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .gallery-img { width: 100%; height: 250px; object-fit: cover; transition: transform 0.3s ease; cursor: pointer; }
+        .gallery-img:hover { transform: scale(1.02); }
+        .gallery-caption { padding: 0.75rem; font-size: 0.875rem; color: #4B5563; background: #F9FAFB; border-top: 1px solid #E5E7EB; font-weight: 500; text-align: center; }
     </style>
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="text-gray-900 antialiased">
+<body class="text-gray-800 py-8 px-4">
 
-<header class="bg-white shadow-md sticky top-0 z-20 border-b border-gray-300">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-2">
-            <span class="text-3xl">📘</span>
-            <h1 class="text-xl md:text-2xl font-extrabold text-black">회로이론 10장 & 11장 과제 풀이</h1>
-        </div>
-        <button id="download-pdf-btn" class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 duration-200">
-            <span>📥</span> 리포트 PDF 다운로드
+    <!-- 상단 컨트롤 바 -->
+    <div class="max-w-5xl mx-auto mb-6 flex justify-end no-print">
+        <button onclick="window.print()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            PDF로 저장 / 인쇄
         </button>
     </div>
-</header>
 
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-20">
-    <div class="flex flex-col md:flex-row md:gap-8">
+    <!-- 메인 보고서 컨테이너 -->
+    <div class="page-container max-w-5xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-200">
+        
+        <!-- 헤더 -->
+        <header class="text-center mb-12">
+            <div class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-bold mb-4">캡스톤 디자인 II</div>
+            <h1 class="text-4xl font-black text-gray-900 mb-2">금주 진도 보고서</h1>
+            <p class="text-xl text-gray-600">스마트 우산꽂이 시스템 하드웨어 및 통합 구축</p>
+            <div class="mt-6 flex justify-center gap-4 text-sm text-gray-500">
+                <span>작성자: 손윤재</span>
+                <span>|</span>
+                <span>작성일: 2025. 11. 14</span>
+            </div>
+        </header>
 
-        <!-- 사이드바 네비게이션 -->
-        <nav class="md:w-1/4 mb-6 md:mb-0">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 sticky top-24 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
-                <h2 class="text-lg font-extrabold mb-2 text-black border-b-2 border-gray-200 pb-2">문제 목록</h2>
+        <!-- 1. 핵심 진행 요약 -->
+        <section class="mb-12">
+            <h2 class="section-title">
+                <span class="text-blue-600">01</span> 금주 핵심 성과
+            </h2>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-600 font-bold mt-1">✓</span>
+                        <span><strong class="text-gray-900">물받이통 제작 및 설치:</strong> 누수 방지 및 수위 센서 연동 완료</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-600 font-bold mt-1">✓</span>
+                        <span><strong class="text-gray-900">하중 보강:</strong> 직각형 모서리 지지대 및 일자형 금속 지지대 부착으로 내구성 강화</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-600 font-bold mt-1">✓</span>
+                        <span><strong class="text-gray-900">배선 정리 (Cable Management):</strong> 내부 배선 정리 및 선정리 작업 완료 (Before & After)</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-600 font-bold mt-1">✓</span>
+                        <span><strong class="text-gray-900">수위 센서 최적화:</strong> 물받이통과 동시 테스트 성공 후 센서 내부 매립 확정</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-600 font-bold mt-1">✓</span>
+                        <span><strong class="text-gray-900">전체 시나리오 테스트:</strong> 하드웨어-소프트웨어 통합 시나리오 테스트 성공 (GIF 증빙)</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
 
-                <div id="nav-menu">
-                    <!-- 10장 (10문제) -->
-                    <div class="nav-category">📂 10장 (정현파 정상상태)</div>
-                    <button class="nav-button" data-target="prob-10-23">문제 10.23</button>
-                    <button class="nav-button" data-target="prob-10-26">문제 10.26</button>
-                    <button class="nav-button" data-target="prob-10-39">문제 10.39</button>
-                    <button class="nav-button" data-target="prob-10-49">문제 10.49</button>
-                    <button class="nav-button" data-target="prob-10-58">문제 10.58</button>
-                    <button class="nav-button" data-target="prob-10-60">문제 10.60</button>
-                    <button class="nav-button" data-target="prob-10-63">문제 10.63</button>
-                    <button class="nav-button" data-target="prob-10-67">문제 10.67</button>
-                    <button class="nav-button" data-target="prob-10-71">문제 10.71</button>
-                    <button class="nav-button" data-target="prob-10-72">문제 10.72</button>
+        <!-- 2. 상세 진행 상황 (갤러리) -->
+        <section class="mb-12">
+            <h2 class="section-title">
+                <span class="text-blue-600">02</span> 상세 진행 상황
+            </h2>
 
-                    <!-- 11장 (14문제) -->
-                    <div class="nav-category mt-6">📂 11장 (교류 전력 해석)</div>
-                    <button class="nav-button" data-target="prob-11-5">문제 11.5</button>
-                    <button class="nav-button" data-target="prob-11-39">문제 11.39</button>
-                    <button class="nav-button" data-target="prob-11-47">문제 11.47</button>
-                    <button class="nav-button" data-target="prob-11-49">문제 11.49</button>
-                    <button class="nav-button" data-target="prob-11-51">문제 11.51</button>
-                    <button class="nav-button" data-target="prob-11-53">문제 11.53</button>
-                    <button class="nav-button" data-target="prob-11-56">문제 11.56</button>
-                    <button class="nav-button" data-target="prob-11-61">문제 11.61</button>
-                    <button class="nav-button" data-target="prob-11-63">문제 11.63</button>
-                    <button class="nav-button" data-target="prob-11-65">문제 11.65</button>
-                    <button class="nav-button" data-target="prob-11-67">문제 11.67</button>
-                    <button class="nav-button" data-target="prob-11-69">문제 11.69</button>
-                    <button class="nav-button" data-target="prob-11-73">문제 11.73</button>
-                    <button class="nav-button" data-target="prob-11-75">문제 11.75</button>
+            <!-- 2-1. 물받이통 및 지지대 -->
+            <h3 class="text-lg font-bold text-gray-800 mb-4 mt-8 px-2 border-l-4 border-gray-800">가. 물받이통 및 지지대 보강</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card">
+                    <img src="https://i.postimg.cc/8ctC2tLt/mulbad-itong-bangsu-hwag-in.jpg" alt="물받이통 방수 확인" class="gallery-img">
+                    <div class="gallery-caption">물받이통 방수 테스트 및 확인</div>
+                </div>
+                <div class="card">
+                    <img src="https://i.postimg.cc/d340b4G9/mulbad-itong-gwa-suwisenseo-dongsi-hwag-in.jpg" alt="물받이통 수위센서 확인" class="gallery-img">
+                    <div class="gallery-caption">물받이통 & 수위센서 연동 확인</div>
+                </div>
+                <div class="card">
+                    <img src="https://i.postimg.cc/Ls1nJkMH/suwisenseo-sajin(naebubuchag).jpg" alt="수위센서 내부 부착" class="gallery-img">
+                    <div class="gallery-caption">수위센서 내부 최종 부착</div>
+                </div>
+                <div class="card">
+                    <img src="https://i.postimg.cc/VvY6Z30S/mitpan-jijidae-1-kupang-moseoji-jijidae-gumae-sajin.jpg" alt="지지대 자재" class="gallery-img">
+                    <div class="gallery-caption">하중 보강용 직각 지지대 (자재)</div>
+                </div>
+                <div class="card">
+                    <img src="https://i.postimg.cc/sxVXHtGZ/mitpan-jijidae-1.jpg" alt="밑판 지지대 부착 1" class="gallery-img">
+                    <div class="gallery-caption">밑판 지지대 부착 (하중 분산)</div>
+                </div>
+                <div class="card">
+                    <img src="https://i.postimg.cc/L5HXQrg2/mitpan-jijidae2.jpg" alt="밑판 지지대 부착 2" class="gallery-img">
+                    <div class="gallery-caption">도어 개폐부 하단 보강</div>
                 </div>
             </div>
-        </nav>
 
-        <!-- 메인 컨텐츠 영역 -->
-        <main class="md:w-3/4">
-
-            <!-- 소개 박스 -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-blue-200">
-                <h3 class="font-bold text-lg text-blue-900 mb-2">👋 환영합니다</h3>
-                <p class="text-gray-900 font-medium leading-relaxed">
-                    회로이론 10장(10문제) 및 11장(14문제) 과제 풀이 페이지입니다.<br>
-                    우측 상단 <strong>'리포트 PDF 다운로드'</strong> 버튼을 누르면 표지가 포함된 전체 리포트 파일이 생성됩니다.
-                </p>
+            <!-- 2-2. 선정리 (Before & After) -->
+            <h3 class="text-lg font-bold text-gray-800 mb-4 mt-8 px-2 border-l-4 border-gray-800">나. 배선 정리 (Before & After)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Before Group -->
+                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                    <h4 class="text-center font-bold text-red-600 mb-3">BEFORE (정리 전)</h4>
+                    <div class="grid gap-4">
+                        <div class="card">
+                            <img src="https://i.postimg.cc/brzJVKD7/seon-jeongli-jeon-wijjog.jpg" alt="선정리 전 위쪽" class="gallery-img">
+                            <div class="gallery-caption">상단부: 복잡한 배선 노출</div>
+                        </div>
+                        <div class="card">
+                            <img src="https://i.postimg.cc/V69vRYv8/seonjeonglijeon-dwijjog.jpg" alt="선정리 전 뒤쪽" class="gallery-img">
+                            <div class="gallery-caption">후면부: 정리되지 않은 전원선</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- After Group -->
+                <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                    <h4 class="text-center font-bold text-green-600 mb-3">AFTER (정리 후)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="card">
+                            <img src="https://i.postimg.cc/TPDpKjXK/seonjeongli-hu-apjjog.jpg" alt="선정리 후 앞쪽" class="gallery-img">
+                            <div class="gallery-caption">전면: 깔끔한 마감</div>
+                        </div>
+                        <div class="card">
+                            <img src="https://i.postimg.cc/pTQrZ2TB/seonjeonglihu-dwijjog.jpg" alt="선정리 후 뒤쪽" class="gallery-img">
+                            <div class="gallery-caption">후면: 배선 매립 및 정리</div>
+                        </div>
+                        <div class="card">
+                            <img src="https://i.postimg.cc/qRHgytkj/seonjeonglihu-anjjog(naebu).jpg" alt="선정리 후 내부" class="gallery-img">
+                            <div class="gallery-caption">내부: 간섭 없는 배선 배치</div>
+                        </div>
+                        <div class="card">
+                            <img src="https://i.postimg.cc/5tC6X5MQ/seonjeonglihu-wijjog.jpg" alt="선정리 후 위쪽" class="gallery-img">
+                            <div class="gallery-caption">상단: 제어부 연결 정리</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div id="content-area">
-
-                <!-- ==================== 10장 문제들 ==================== -->
-
-                <!-- 10.23: 수식/풀이 전부 정상 수식으로 교체 -->
-                <section id="prob-10-23" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.23</h3>
-                    <img src="https://i.postimg.cc/fTb3Z8xp/10jang(1).png" alt="문제 10.23" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 노드 해석으로 전압 V 구하기</h4>
-
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-blue-800 text-lg">1. 임피던스 및 노드 방정식 세우기</h5>
-                            <p>
-                                저항, 인덕터, 커패시터의 임피던스(또는 어드미턴스)는 다음과 같이 쓸 수 있습니다.
-                            </p>
-                            <p class="pl-4">
-                                Z<sub>R</sub> = R,&nbsp;
-                                Y<sub>C</sub> = j&nbsp;&omega;C,&nbsp;
-                                Y<sub>L</sub> = 1 / (j&nbsp;&omega;L)
-                            </p>
-                            <p>
-                                상단 노드 전압을 V, 전원 전압을 V<sub>s</sub>라고 하고, 노드에 유입되는 전류 기준으로 KCL을 쓰면
-                            </p>
-                            <p class="pl-4">
-                                (V<sub>s</sub> − V) / R = 2·j&nbsp;&omega;C·V + V / (j&nbsp;&omega;L)
-                            </p>
-                            <p>
-                                와 같이 표현할 수 있습니다.
-                            </p>
-                        </div>
-
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-blue-800 text-lg">2. V에 대한 해 구하기</h5>
-                            <p>위 식을 V에 대해 정리하면</p>
-                            <p class="pl-4">
-                                V<sub>s</sub> − V = R·V ( 2·j&nbsp;&omega;C + 1 / (j&nbsp;&omega;L) )<br>
-                                ⇒ V [ 1 + R ( 2·j&nbsp;&omega;C + 1 / (j&nbsp;&omega;L) ) ] = V<sub>s</sub><br>
-                                ⇒ V = V<sub>s</sub> / { 1 + R [ 2·j&nbsp;&omega;C + 1 / (j&nbsp;&omega;L) ] }
-                            </p>
-                            <p>
-                                교재에 주어진 수치를 R, L, C, &omega;에 대입하면
-                            </p>
-                            <p class="pl-4">
-                                1 + R [ 2·j&nbsp;&omega;C + 1 / (j&nbsp;&omega;L) ] = 1 − j 8
-                            </p>
-                            <p>
-                                이므로,
-                            </p>
-                            <p class="pl-4">
-                                V = V<sub>s</sub> / (1 − j 8)
-                            </p>
-                            <p>
-                                입니다. 이제 분모의 크기와 위상을 이용해 정리하면
-                            </p>
-                            <p class="pl-4">
-                                |1 − j 8| = √(1² + 8²) = √65 ≈ 8.06,<br>
-                                1 − j 8 = 8.06 ∠ −82.9°
-                            </p>
-                            <p>
-                                따라서
-                            </p>
-                            <p class="pl-4">
-                                1 / (1 − j 8) ≈ 0.124 ∠ 82.9°
-                            </p>
-                            <p>
-                                이고, 최종적으로
-                            </p>
-                            <p class="pl-4">
-                                V = 0.124&nbsp;V<sub>s</sub> ∠ 82.9°
-                            </p>
-                                가 됩니다.
-                            </p>
-                        </div>
+            <!-- 2-3. 전체 시나리오 테스트 -->
+            <h3 class="text-lg font-bold text-gray-800 mb-4 mt-8 px-2 border-l-4 border-gray-800">다. 전체 시나리오 테스트</h3>
+            <div class="flex justify-center">
+                <div class="card max-w-2xl w-full">
+                    <img src="https://i.postimg.cc/Bbq67dPj/sinalio-teseuteu1.gif" alt="전체 시나리오 테스트 GIF" class="w-full h-auto object-cover">
+                    <div class="gallery-caption text-lg font-bold bg-blue-50 text-blue-800">
+                        [통합 테스트 성공] 앱 제어 ↔ 서버 ↔ 하드웨어 동작
                     </div>
-
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">
-                                정답(페이저): V = 0.124&nbsp;V<sub>s</sub> ∠ 82.9°
-                            </p>
-                            <p class="mt-1">
-                                만약 v<sub>s</sub>(t) = V<sub>m</sub>cos(ωt + φ) 라면,
-                                출력은 v(t) = 0.124&nbsp;V<sub>m</sub>cos(ωt + φ + 82.9°) 로 표현할 수 있습니다.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 10.26 이하 나머지는 구조/풀이 그대로, 수식은 원래도 기호 위주라 그대로 둠 -->
-
-                <section id="prob-10-26" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.26</h3>
-                    <img src="https://i.postimg.cc/4N3KZWz1/10jang(2).png" alt="문제 10.26" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 메쉬 해석으로 i<sub>o</sub> 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-blue-800 text-lg">풀이 과정</h5>
-                            <p>각 소자의 임피던스를 Z<sub>k</sub>로 두고, 두 개의 메쉬 전류 I<sub>1</sub>, I<sub>2</sub>를 시계방향으로 가정합니다.</p>
-                            <p>각 메쉬에 대해 KVL을 적용하면</p>
-                            <p class="pl-4">
-                                (Z<sub>1</sub> + Z<sub>2</sub> + Z<sub>3</sub>) I<sub>1</sub> − Z<sub>3</sub>I<sub>2</sub> = V<sub>s1</sub><br>
-                                −Z<sub>3</sub>I<sub>1</sub> + (Z<sub>3</sub> + Z<sub>4</sub> + Z<sub>5</sub>) I<sub>2</sub> = V<sub>s2</sub>
-                            </p>
-                            <p>교재의 수치를 대입하여 연립방정식을 풀면</p>
-                            <p class="pl-4">
-                                I<sub>1</sub> = 4.7&nbsp;mA ∠ 10.2°<br>
-                                I<sub>2</sub> = 29.2&nbsp;mA ∠ −80°
-                            </p>
-                            <p>출력 전류는 i<sub>o</sub> = I<sub>2</sub> − I<sub>1</sub> 로 정의되므로,</p>
-                            <p class="pl-4">
-                                I<sub>o</sub> = 29.6&nbsp;mA ∠ −94°
-                            </p>
-                            <p>가 됩니다.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: i<sub>o</sub>(t) = 29.6&nbsp;mA · cos(1000t − 94°)</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-39" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.39</h3>
-                    <img src="https://i.postimg.cc/ZnwCpNhy/10jang(3).png" alt="문제 10.39" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 각 루프 전류 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>전원은 12∠64° V 로 주어져 있고, 각 소자는 복소 임피던스로 표현합니다.</p>
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-blue-800 text-lg">풀이 개요</h5>
-                            <p>3개의 루프 전류를 I<sub>1</sub>, I<sub>2</sub>, I<sub>3</sub>로 잡고, 각 루프에 대해 KVL을 적용하면 3×3 복소 연립방정식을 얻습니다.</p>
-                            <p>이를 행렬 형태로 정리하여 계산하면, 원하는 전류 I<sub>x</sub>는 두 루프 전류의 차로 표현되고 수치는 다음과 같이 나옵니다.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: I<sub>x</sub> = 0.235 ∠ −3° A</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-49" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.49</h3>
-                    <img src="https://i.postimg.cc/x8fXXRBy/10jang(4).png" alt="문제 10.49" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 전원 변환을 이용한 i(t) 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>전류원을 전압원으로 변환하여 등가 전압 V<sub>eq</sub>와 등가 임피던스 Z<sub>eq</sub>를 만든 뒤,</p>
-                        <p class="pl-4">
-                            I = V<sub>eq</sub> / Z<sub>eq</sub>
-                        </p>
-                        <p>로 전류의 페이저 값을 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: i(t) = 22.36 · cos(200t − 33.4°) A</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-58" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.58</h3>
-                    <img src="https://i.postimg.cc/FzrYYZwb/10jang(5).png" alt="문제 10.58" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 테브난 등가회로 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>관심 단자를 개방시킨 상태에서 개방단자 전압 V<sub>th</sub>를 구하고,</p>
-                        <p>모든 독립 전원을 0으로 만든 후 단자에서 바라본 합성 임피던스 Z<sub>th</sub>를 구하면 됩니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: V<sub>th</sub> = 55.9 V ∠ 71.6°, &nbsp; Z<sub>th</sub> = 10 + j5 Ω</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-60" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.60</h3>
-                    <img src="https://i.postimg.cc/QC8FFbvj/10jang(6).png" alt="문제 10.60" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 단자 a-b 및 c-d의 테브난 등가회로</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>단자 c–d 기준으로, 병렬 및 직렬 연결을 이용해 합성 임피던스를 구하고, 개방단자 전압을 계산하면 됩니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답 (c–d 단자): V<sub>th</sub> = 16 V, &nbsp; Z<sub>th</sub> = 2 − j2 Ω</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-63" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.63</h3>
-                    <img src="https://i.postimg.cc/hGmz6h9j/10jang(7).png" alt="문제 10.63" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 노턴 등가회로 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>단자를 단락시켜 흐르는 전류 I<sub>N</sub>과, 전원을 껐을 때의 합성 임피던스 Z<sub>N</sub>을 구하면 됩니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: I<sub>N</sub> = 4 A ∠ 30°, &nbsp; Z<sub>N</sub> = 1000 Ω</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-67" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.67</h3>
-                    <img src="https://i.postimg.cc/25WbM34V/10jang(8).png" alt="문제 10.67" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 테브난 전압 및 임피던스</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>전압 분배 법칙으로 개방 전압 V<sub>th</sub>를 계산하고, 전원을 0으로 만들었을 때의 합성 임피던스 Z<sub>th</sub>를 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: V<sub>th</sub> = 18.6 V ∠ 67°, &nbsp; Z<sub>th</sub> = 4.8 − j2.6 Ω</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-71" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.71</h3>
-                    <img src="https://i.postimg.cc/hGmz6h9h/10jang(9).png" alt="문제 10.71" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 비반전 증폭기 출력 전압</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>비반전 증폭기의 이득은</p>
-                        <p class="pl-4">
-                            A<sub>v</sub> = 1 + Z<sub>f</sub> / Z<sub>in</sub>
-                        </p>
-                        <p>형태이며, 주어진 임피던스를 대입하면 약 50.26 ∠ −83.1° 의 이득이 됩니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: v<sub>o</sub>(t) = 402 · cos(2t − 53.1°) V</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-10-72" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-blue-100 text-blue-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-blue-300">10장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 10.72</h3>
-                    <img src="https://i.postimg.cc/3wG4VWgw/10jang(10).png" alt="문제 10.72" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-blue-900 mb-6 border-l-4 border-blue-600 pl-3">주제: 연산증폭기 전류 구하기</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>반전 증폭기의 이득은</p>
-                        <p class="pl-4">
-                            A<sub>v</sub> = − Z<sub>f</sub> / Z<sub>in</sub>
-                        </p>
-                        <p>으로 표현되고, 출력 전압 V<sub>o</sub>를 구한 뒤 부하저항 R<sub>L</sub>에 대해</p>
-                        <p class="pl-4">
-                            I<sub>o</sub> = V<sub>o</sub> / R<sub>L</sub>
-                        </p>
-                        <p>로 전류를 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: i<sub>o</sub>(t) = 53.6 μA · cos(10000t + 63.4°)</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ==================== 11장 문제들 ==================== -->
-
-                <section id="prob-11-5" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.5</h3>
-                    <img src="https://i.postimg.cc/ZnQvXNDv/11jang(1).png" alt="문제 11.5" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 교류 전력 및 전류 계산</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-green-800 text-lg">1. 페이저 변환 및 임피던스</h5>
-                            <p>전압의 실효값은 5.66 ∠ −40° V 이고, 회로의 등가 임피던스는</p>
-                            <p class="pl-4">
-                                Z = 0.08 + j0.64 Ω
-                            </p>
-                            <p>으로 주어집니다.</p>
-                        </div>
-                        <div class="solution-step">
-                            <h5 class="font-bold mb-2 text-green-800 text-lg">2. 전류 및 평균 전력</h5>
-                            <p>전류의 페이저는</p>
-                            <p class="pl-4">
-                                I = V / Z = 8.78 ∠ −122.9° A
-                            </p>
-                            <p>이고, 평균 전력은</p>
-                            <p class="pl-4">
-                                P = V<sub>rms</sub> I<sub>rms</sub> cos θ
-                            </p>
-                            <p>공급자 관점에서 음수로 계산됩니다.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: P = −26.4 W</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-39" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.39</h3>
-                    <img src="https://i.postimg.cc/7hhTB9XL/11jang(2).png" alt="문제 11.39" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 보상</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>역률을 개선하기 위해 기존 부하의 무효전력 Q<sub>L</sub>을 상쇄하는 커패시터의 무효전력 Q<sub>C</sub> = −Q<sub>L</sub>가 필요합니다.</p>
-                        <p>이를 이용해</p>
-                        <p class="pl-4">
-                            Q<sub>C</sub> = V<sup>2</sup> · &omega;C
-                        </p>
-                        <p>에서 C를 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: 필요한 커패시터 C ≈ 312 μF</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-47" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.47</h3>
-                    <img src="https://i.postimg.cc/HxBy4Rwh/11jang(3).png" alt="문제 11.47" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 유효전력 및 무효전력 계산</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>복소전력의 크기가 |S| = 224 VA, 위상차가 60° 이므로,</p>
-                        <p class="pl-4">
-                            P = |S| cos 60° = 112 W<br>
-                            Q = |S| sin 60° ≈ 194 VAR
-                        </p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: P = 112 W, &nbsp; Q ≈ 194 VAR</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-49" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.49</h3>
-                    <img src="https://i.postimg.cc/SsDM736f/11jang(4).png" alt="문제 11.49" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 피상전력 S 계산</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <ul class="list-disc list-inside space-y-2">
-                            <li>(a) P = 4 kW, 역률 cos θ = 0.86 (지상) → S = 4 + j2.36 kVA</li>
-                            <li>(b) |S| = 2 kVA, P = 1.6 kW (진상) → S = 1.6 − j1.2 kVA</li>
-                            <li>(c) |S| = V I = 208 × 6.5 = 1352 VA → P = 462 W, Q = 1271 VAR</li>
-                            <li>(d) Z = 40 + j60 Ω, V = 120 V → S = V² / Z* ≈ 230 + j173 VA</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section id="prob-11-51" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.51</h3>
-                    <img src="https://i.postimg.cc/B6MKckT7/11jang(5).png" alt="문제 11.51" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 공식</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>교류 회로에서 전압과 전류의 실효값을 V, I, 위상차를 θ 라고 하면,</p>
-                        <ul class="list-disc list-inside space-y-1 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <li>유효전력(실제 소비 전력):&nbsp; P = V I cos θ</li>
-                            <li>무효전력:&nbsp; Q = V I sin θ</li>
-                            <li>피상전력(복소전력):&nbsp; S = V I = P + jQ</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section id="prob-11-53" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.53</h3>
-                    <img src="https://i.postimg.cc/TwCDqFVK/11jang(6).png" alt="문제 11.53" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 부하 합성 및 전체 역률</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>각 부하의 유효전력 P<sub>k</sub>, 무효전력 Q<sub>k</sub>를 합산하여</p>
-                        <p class="pl-4">
-                            P<sub>tot</sub> = ΣP<sub>k</sub> = 5.64 kW<br>
-                            Q<sub>tot</sub> = ΣQ<sub>k</sub> = 0.02 kVAR
-                        </p>
-                        <p>따라서 전체 역률은</p>
-                        <p class="pl-4">
-                            cos θ = P<sub>tot</sub> / |S<sub>tot</sub>| ≈ 0.999
-                        </p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: 전체 역률 ≈ 0.999 (거의 1)</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-56" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.56</h3>
-                    <img src="https://i.postimg.cc/YSNgjhht/11jang(7).png" alt="문제 11.56" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 등가 임피던스 및 전력</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>회로를 합성하면 순수 저항 성분만 남아 무효전력 Q = 0 이 됩니다.</p>
-                        <p>따라서 피상전력, 유효전력은 동일하게</p>
-                        <p class="pl-4">
-                            S = 7.58 VA, &nbsp; P = 7.58 W, &nbsp; Q = 0
-                        </p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: S = 7.58 VA (P = 7.58 W, Q = 0)</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-61" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.61</h3>
-                    <img src="https://i.postimg.cc/MTWBBqQ2/11jang(8).png" alt="문제 11.61" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 병렬 부하의 전류 계산</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>각 부하의 피상전력을 합하여 전체 피상전력 |S<sub>tot</sub>| ≈ 6.62 kVA 를 구한 후,</p>
-                        <p class="pl-4">
-                            I = |S<sub>tot</sub>| / V
-                        </p>
-                        <p>로 공급 전류를 계산합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: 공급 전류 I ≈ 66.2 A</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-63" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.63</h3>
-                    <img src="https://i.postimg.cc/26zWWrZr/11jang(9).png" alt="문제 11.63" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 복소전력 및 역률</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>여러 부하의 복소전력을 합하여 S<sub>tot</sub> = P<sub>tot</sub> + jQ<sub>tot</sub> 를 구하고,</p>
-                        <p class="pl-4">
-                            cos θ = P<sub>tot</sub> / |S<sub>tot</sub>|
-                        </p>
-                        <p>으로 전체 역률을 계산합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: 역률 ≈ 0.771 (지상)</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-65" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.65</h3>
-                    <img src="https://i.postimg.cc/TPjmhph0/11jang(10).png" alt="문제 11.65" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 평균 소비 전력</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>출력 단자의 전압을 먼저 계산한 뒤, 부하저항 R 에 대해</p>
-                        <p class="pl-4">
-                            P = V<sub>rms</sub><sup>2</sup> / R
-                        </p>
-                        <p>을 사용하여 평균 소비 전력을 구합니다.</p>
-                    </div>
-                    <div class="mt-6">
-                        <div class="answer-box">
-                            <p class="font-bold text-black text-lg">정답: P ≈ 46.8 μW</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="prob-11-67" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.67</h3>
-                    <img src="https://i.postimg.cc/NjHRqNtK/11jang(11).png" alt="문제 11.67" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: Op-Amp 회로 전력</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>연산 증폭기의 출력 전압과 부하 저항을 이용해 복소전력을 계산한 후,</p>
-                        <p class="pl-4">
-                            S = P + jQ
-                        </p>
-                        <p>형태로 나타냅니다.</p>
-                    </div>
-                </section>
-
-                <section id="prob-11-69" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.69</h3>
-                    <img src="https://i.postimg.cc/FF3DQMcY/11jang(12).png" alt="문제 11.69" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 3상 교류 전력</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>선간전압과 상전류의 관계를 이용하여 총 유효전력 P, 무효전력 Q, 피상전력 S 를 계산합니다.</p>
-                    </div>
-                </section>
-
-                <section id="prob-11-73" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.73</h3>
-                    <img src="https://i.postimg.cc/FspsdNDp/11jang(13).png" alt="문제 11.73" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 역률 개선을 위한 커패시터 용량</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>기존 역률과 목표 역률을 바탕으로 필요한 무효전력 보상량 ΔQ 를 계산한 뒤,</p>
-                        <p class="pl-4">
-                            Q<sub>C</sub> = V<sup>2</sup> · &omega;C
-                        </p>
-                        <p>식을 이용해 C를 구합니다.</p>
-                    </div>
-                </section>
-
-                <section id="prob-11-75" class="problem-section bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-200">
-                    <span class="inline-block bg-green-100 text-green-900 font-bold text-xs px-2 py-1 rounded-full mb-2 border border-green-300">11장</span>
-                    <h3 class="text-2xl font-extrabold text-black mb-4">문제 11.75</h3>
-                    <img src="https://i.postimg.cc/Yq6bR82f/11jang(14).png" alt="문제 11.75" class="problem-image" crossorigin="anonymous">
-                    <h4 class="text-xl font-bold text-green-900 mb-6 border-l-4 border-green-600 pl-3">주제: 전력 3각형 해석</h4>
-                    <div class="space-y-4 text-gray-900 font-medium leading-relaxed">
-                        <p>유효전력 P, 무효전력 Q를 알고 있을 때, 피상전력 S와 역률, 위상각을 전력 3각형으로부터 구합니다.</p>
-                    </div>
-                </section>
-
+                </div>
             </div>
-        </main>
+        </section>
+
+        <!-- 3. 차주 계획 -->
+        <section>
+            <h2 class="section-title">
+                <span class="text-blue-600">03</span> 차주 계획 (UI/UX 개선)
+            </h2>
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <div class="bg-orange-100 p-3 rounded-lg text-orange-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">하드웨어 배선 라벨링 (Labelling)</h3>
+                        <p class="text-gray-600 mb-4">
+                            현재 검정색 절연 테이프로 마감되어 배선 구분이 어려운 점을 개선합니다.
+                            유지보수 편의성을 위해 각 선마다 명확한 라벨을 부착할 예정입니다.
+                        </p>
+                        <div class="flex gap-2">
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-300">GPIO 핀 번호</span>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-300">GND (접지)</span>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-300">VCC (전원)</span>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-300">센서 종류</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 푸터 -->
+        <footer class="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
+            <p>스마트 우산꽂이 시스템 개발 프로젝트</p>
+        </footer>
+
     </div>
-</div>
-
-<script>
-    // 네비게이션 버튼 클릭시 해당 문제 섹션으로 이동 + 표시
-    const navButtons = document.querySelectorAll('.nav-button');
-    const sections = document.querySelectorAll('.problem-section');
-
-    function showSection(id) {
-        sections.forEach(sec => {
-            sec.classList.remove('active');
-            if (sec.id === id) sec.classList.add('active');
-        });
-    }
-
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            showSection(targetId);
-
-            navButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const sectionEl = document.getElementById(targetId);
-            const yOffset = -80;
-            const y = sectionEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-        });
-    });
-
-    if (navButtons.length > 0) {
-        navButtons[0].classList.add('active');
-        const firstTarget = navButtons[0].getAttribute('data-target');
-        showSection(firstTarget);
-    }
-
-    // ✅ PDF 다운로드: 고해상도(Scale 4) + 최대 품질로 설정
-    document.getElementById('download-pdf-btn').addEventListener('click', () => {
-        const element = document.body;
-
-        const opt = {
-            margin:       10,
-            filename:     '회로이론_10장_11장_통합과제_손윤재.pdf',
-            image:        { type: 'jpeg', quality: 1.0 },
-            html2canvas:  {
-                scale: 4,           // 🔼 캡처 배율 크게 해서 글자/이미지 선명하게
-                useCORS: true,
-                scrollY: 0,
-                letterRendering: true
-            },
-            jsPDF:       {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait',
-                compressPDF: false   // 압축 끄기 → 품질 우선
-            },
-            pagebreak:   { mode: ['css', 'legacy'] }
-        };
-
-        const btn = document.getElementById('download-pdf-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span>⏳</span> PDF 생성 중...';
-        btn.disabled = true;
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }).catch(err => {
-            console.error('PDF 생성 중 오류:', err);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-    });
-</script>
 
 </body>
 </html>
